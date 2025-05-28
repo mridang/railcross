@@ -15,7 +15,7 @@ const ExpiredPage: FunctionalComponent = () => {
       <body>
         <div className="h-screen w-screen bg-gray-400">
           {/* eslint-disable-next-line tailwindcss/no-custom-classname */}
-          <div className="h-modal fixed inset-0 z-50 grid size-full place-items-center items-center justify-center backdrop-blur-sm">
+          <div className="h-modal fixed inset-0 z-50 grid size-full place-items-center justify-center backdrop-blur-sm">
             <div className="container relative m-auto px-6">
               <div className="m-auto md:w-7/12">
                 <div className="rounded-md bg-white shadow-xl dark:bg-gray-800">
@@ -56,11 +56,9 @@ const ExpiredPage: FunctionalComponent = () => {
                     <div className="mt-14 space-y-4 py-3 text-center text-gray-600 dark:text-gray-400">
                       <p className="text-xs">
                         By proceeding, you agree to our
-                        <button href="#" className="underline">
-                          Terms of Use
-                        </button>
+                        <button className="underline">Terms of Use</button>
                         and confirm you have read our
-                        <button href="#" className="underline">
+                        <button className="underline">
                           Privacy and Cookie Statement
                         </button>
                         .
