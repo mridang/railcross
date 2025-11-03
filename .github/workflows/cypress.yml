@@ -21,7 +21,7 @@ jobs:
           echo "${{ github.event.inputs.release_identifier }}" > release.txt
 
       - name: Upload release identifier
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: release
           path: release.txt
