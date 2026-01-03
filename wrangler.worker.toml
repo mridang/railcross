@@ -1,0 +1,20 @@
+name = "railcross-scheduler"
+main = "worker/index.ts"
+compatibility_date = "2024-12-01"
+compatibility_flags = ["nodejs_compat"]
+
+[durable_objects]
+bindings = [
+  { name = "SCHEDULER", class_name = "SchedulerDurableObject" }
+]
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["SchedulerDurableObject"]
+
+[observability]
+enabled = true
+
+# Note: GITHUB_APP_ID and GITHUB_PRIVATE_KEY must be set as secrets:
+#   npx wrangler secret put GITHUB_APP_ID --config wrangler.worker.toml
+#   npx wrangler secret put GITHUB_PRIVATE_KEY --config wrangler.worker.toml

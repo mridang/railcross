@@ -1,8 +1,11 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
-    "isolatedModules": true
+    "isolatedModules": true,
+    "jsx": "react-jsx",
+    "module": "commonjs",
+    "moduleResolution": "node"
   },
   "include": ["**/*"],
-  "exclude": ["node_modules", "**/*.spec.ts", "dist"]
+  "exclude": ["node_modules", "dist", ".next"]
 }

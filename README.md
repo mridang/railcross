@@ -9,7 +9,7 @@ Merge windows allow you to restrict the days and times that pull
 requests may be merged.
 
 Think of it as a railway crossing, you can't cross until the
-train has passed. 🚂
+train has passed.
 
 Railcross is a low-overhead app and simply prevents your team
 from merging between 0900 and 1600. It does this by locking the
@@ -36,25 +36,19 @@ guide.
 
 ## Architecture
 
-The app is a NestJS application deployed on AWS Lambda and fronted by
-CloudFront. All SSL certificates are managed automatically via Certificate
-Manager (using DNS validation).
+The app is a Next.js application deployed on Cloudflare Workers. The
+application uses Cloudflare Durable Objects for managing lock and unlock
+schedules.
 
-To manage the lock and unlock schedules, EventBridge Scheduler is used
-which in turn invokes the Lambda. All credentials are stored in
-Secrets Manager.
-
-The application uses X-Ray for tracing and Cloudwatch for logging.
+The application uses Sentry for error tracking and monitoring.
 
 The application is designed to be stateless and does not have any sort
 of persistence—this includes all ephemeral persistence, e.g. caches.
 
-<img alt="Architecture Diagram" src="https://github.com/user-attachments/assets/d0a74846-a068-4409-88a2-12a61b7f11bd">
-
 ## Developing
 
-The app is built with Typescript 5.3 using NestJS and requires
-Node 20 to run.
+The app is built with TypeScript 5.x using Next.js 15 and requires
+Node 22 to run.
 
 After checking out the repository, run `npm install` to install all
 the required dependencies.
@@ -74,25 +68,29 @@ been deployed.
 
 Configure the `.env` file with the necessary information. This file should be set up
 with example values for a template, but you'll need to replace them with actual data
-relevant to your application. Here’s a detailed breakdown of each variable:
+relevant to your application. Here's a detailed breakdown of each variable:
 
-- `APP_ID`: The unique identifier assigned to your application by GitHub. It's crucial
+- `GITHUB_APP_ID`: The unique identifier assigned to your application by GitHub. It's crucial
   for authenticating your app with the GitHub API.
 
-- `CLIENT_ID`: Used during the OAuth process to initiate user authentication. It's
+- `GITHUB_CLIENT_ID`: Used during the OAuth process to initiate user authentication. It's
   sent to GitHub to receive an authorization code for access token exchange.
 
-- `CLIENT_SECRET`: A sensitive key used alongside the authorization code to securely
+- `GITHUB_CLIENT_SECRET`: A sensitive key used alongside the authorization code to securely
   obtain an access token from GitHub, enabling user-specific data access.
 
-- `WEBHOOK_SECRET`: Ensures the integrity and authenticity of received webhook payloads
+- `GITHUB_WEBHOOK_SECRET`: Ensures the integrity and authenticity of received webhook payloads
   by validating the signature sent with each event.
 
-- `PRIVATE_KEY`: Allows your app to authenticate directly with the GitHub API for
+- `GITHUB_PRIVATE_KEY`: Allows your app to authenticate directly with the GitHub API for
   actions or queries under the app's own identity.
+
+- `JWT_SECRET`: Secret key used for signing and verifying JWT tokens for user sessions.
 
 - `SENTRY_DSN`: Directs errors and performance data to Sentry for monitoring, aiding in
   quick identification and resolution of issues.
+
+- `DOMAIN_NAME`: The domain name where the application is hosted.
 
 > [!NOTE]
 > It is fine to add sensitive information to this file as this file only
@@ -106,15 +104,14 @@ relevant to your application. Here’s a detailed breakdown of each variable:
 To ensure the smooth operation of GitHub Actions within this project, it's
 essential to configure certain environment variables and secrets. These settings
 are crucial for various deployment tasks and integrating with external services
-like AWS and Sentry.
+like Cloudflare and Sentry.
 
 You need to set the following environment variables in the GitHub repository
 settings:
 
-- `AWS_REGION`: The AWS region where your services are deployed, e.g., `us-east-1`.
-- `SENTRY_ORG`: Your organization name in Sentry, e.g., `mridang`, required for Sentry release
+- `SENTRY_ORG`: Your organization name in Sentry, required for Sentry release
   tracking after deployments.
-- `SENTRY_PROJECT`: The name of your project in Sentry, e.g., `myapp`, required for Sentry release
+- `SENTRY_PROJECT`: The name of your project in Sentry, required for Sentry release
   tracking after deployments.
 
 These variables are used by GitHub Actions workflows to configure the deployment
@@ -124,8 +121,8 @@ Additionally, you must configure the following secrets in your GitHub repository
 These secrets are sensitive and provide access to external services essential for
 deployments and monitoring:
 
-- `AWS_ACCESS_KEY_ID`: Your AWS access key ID, used by Serverless for deployments.
-- `AWS_SECRET_ACCESS_KEY`: Your AWS secret access key, used by Serverless for deployments.
+- `CLOUDFLARE_API_TOKEN`: Your Cloudflare API token with Workers deployment permissions.
+- `CLOUDFLARE_ACCOUNT_ID`: Your Cloudflare account ID.
 - `SENTRY_AUTH_TOKEN`: A Sentry authentication token, required for Sentry release
   tracking after deployments.
 
@@ -134,7 +131,7 @@ Please treat these secrets with the utmost care and never expose them publicly.
 > [!IMPORTANT]
 > Deployments will not work correctly if these environment variables and secrets
 > are not configured properly. Ensure that you've entered the correct values
-> corresponding to your AWS and Sentry accounts to avoid any deployment issues.
+> corresponding to your Cloudflare and Sentry accounts to avoid any deployment issues.
 
 ---
 
@@ -167,32 +164,13 @@ It is not recommended to deploy from your local machine but if needed,
 it can be deployed using `npm run deploy`.
 
 > [!IMPORTANT]
-> You'll need to ensure that you have the AWS credentials configured. Read the
-> guide on how to configure the variables https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-envvars.html
-
-If you need to package the application without deploying it use
-`npm run package`. This is handy when you need to introspect the contents
-of the ZIP artifact.
+> You'll need to ensure that you have the Cloudflare credentials configured.
+> Set CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID environment variables.
 
 ### Running tests
 
-Run the test suite using `npm run test`. Most tests are designed to use
-Localstack when possible. Jest automatically starts the containers defined
-in `docker-compose.yml`.
-
-> [!NOTE]
-> If you run into any issues while running the tests locally, ensure that
-> no other services are currently listening on the same ports used by the
-> services defined in `docker-compose.yml`.
-> Run `docker ps` to list all currently running containers. Any containers
-> listening on the required ports should be stopped prior to running the
-> test suite again.
-
-> On GitHub, these can simply be configured as environment variables
-> https://docs.github.com/en/actions/learn-github-actions/variables
-
-If configured correctly, you should be able to run all the tests from
-your IDE.
+Run the test suite using `npm run test`. Jest is configured to run all
+unit tests.
 
 Jest has been configured to automatically collect coverage from tests,
 and these can be found in the `.out` directory.
@@ -202,20 +180,14 @@ which is handy when the test suite does not exit gracefully or hangs.
 
 ### Running the app
 
-To run the application locally, you can simply run `npx nest start`
-which starts the NestJS application for local usage.
-
-> [!IMPORTANT]
-> It is important to keep in mind that the way application runs locally
-> is different from how it runs on Lambda. This is due to shortcomings
-> in the Serverless framework that make emulating a Lambda environment
-> hard.
+To run the application locally, you can simply run `npm run dev`
+which starts the Next.js development server.
 
 Assuming that you have followed the instructions and configured
 everything correctly, you should be able to go to
-`http://localhost:3000/health` to see a health-check page that
-reads "OK". If you've managed to get here, it indicates that the
-application has been able to correctly initialize itself.
+`http://localhost:3000/version.svg` to see a version badge. If you've
+managed to get here, it indicates that the application has been able
+to correctly initialize itself.
 
 ## Contributing
 

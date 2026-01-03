@@ -53,18 +53,14 @@ Thumbs.db
 # Next.js build output
 .next
 
-# Nuxt.js build output
-.nuxt
-
-# Gatsby files
-.cache/
-# Comment in the public line in if your project uses Gatsby and not Next.js
-# public
-
 # vuepress build output
 .vuepress/dist
 
-# Serverless directories
+# Cloudflare
+.wrangler/
+.open-next/
+
+# Serverless (legacy)
 .serverless/
 
 # Jest coverage
@@ -72,3 +68,7 @@ Thumbs.db
 
 # Github Keys
 *.pem
+railcross.pem
+
+# Claude
+.claude

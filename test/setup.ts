@@ -1,45 +1,32 @@
-import path from 'path';
-import {
-  DockerComposeEnvironment,
-  StartedDockerComposeEnvironment,
-} from 'testcontainers';
 import { config } from 'dotenv';
-import findFreePorts from 'find-free-ports';
-
-declare global {
-  // noinspection ES6ConvertVarToLetConst
-  var DOCKER: StartedDockerComposeEnvironment;
-}
 
 config();
-// this allows test containers to work in build pipeline
-process.env.TESTCONTAINERS_RYUK_DISABLED = 'true';
 
-// noinspection JSUnusedGlobalSymbols
+/**
+ * Global setup for Jest tests.
+ * Sets up environment variables needed for testing.
+ */
 export default async function setup(): Promise<void> {
-  const port = (await findFreePorts(1))[0];
+  console.info('Setting up test environment...');
 
-  console.info(`Starting Localstack compose on port ${port}`);
-  const composeFilePath = path.resolve(__dirname, '..');
-  try {
-    globalThis.DOCKER = await new DockerComposeEnvironment(
-      composeFilePath,
-      'docker-compose.yml',
-    )
-      .withEnvironment({
-        LOCALSTACK_PORT: port.toString(),
-      })
-      .up();
+  // Set default environment variables for testing
+  // NODE_ENV is set by Jest automatically
+  process.env.SERVICE_NAME = 'railcross';
+  process.env.DOMAIN_NAME = 'test.railcross.app';
 
-    process.env.AWS_ENDPOINT_URL = `http://localhost:${port}`;
-    process.env.AWS_REGION = `us-east-1`;
-    process.env.AWS_ACCESS_KEY_ID = 'test';
-    process.env.AWS_SECRET_ACCESS_KEY = 'test';
-  } catch (err: unknown) {
-    if (err instanceof Error && err.message.includes('already in use')) {
-      console.info('Docker compose already running. Skipping bootstrap');
-      return;
-    }
-    throw err;
-  }
+  // Set mock GitHub credentials for testing
+  // These are fake values used only for testing
+  process.env.GITHUB_APP_ID = process.env.GITHUB_APP_ID || '12345';
+  process.env.GITHUB_CLIENT_ID =
+    process.env.GITHUB_CLIENT_ID || 'test_client_id';
+  process.env.GITHUB_CLIENT_SECRET =
+    process.env.GITHUB_CLIENT_SECRET || 'test_client_secret';
+  process.env.GITHUB_WEBHOOK_SECRET =
+    process.env.GITHUB_WEBHOOK_SECRET || 'test_webhook_secret';
+  process.env.GITHUB_PRIVATE_KEY =
+    process.env.GITHUB_PRIVATE_KEY ||
+    '-----BEGIN RSA PRIVATE KEY-----&MIIEpAIBAAKCAQEA...test...&-----END RSA PRIVATE KEY-----';
+  process.env.JWT_SECRET = process.env.JWT_SECRET || 'test_jwt_secret_key';
+
+  console.info('Test environment setup complete');
 }

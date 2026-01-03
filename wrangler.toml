@@ -1,0 +1,26 @@
+name = "railcross"
+compatibility_date = "2024-12-01"
+compatibility_flags = ["nodejs_compat"]
+main = ".open-next/worker.js"
+workers_dev = false
+
+routes = [
+  { pattern = "railcross.apps.mrida.ng", custom_domain = true }
+]
+
+[vars]
+SERVICE_NAME = "railcross"
+DOMAIN_NAME = "railcross.apps.mrida.ng"
+GITHUB_CLIENT_ID = "Iv1.9cb1f44a09b79eb0"
+JWT_SECRET = "00c6ec9b2734d3eb1fdc05f5ae4d051631a2683f4f898bba9986fce4a72a318a"
+
+[assets]
+directory = ".open-next/assets"
+binding = "ASSETS"
+
+[[services]]
+binding = "SCHEDULER_WORKER"
+service = "railcross-scheduler"
+
+[observability]
+enabled = true

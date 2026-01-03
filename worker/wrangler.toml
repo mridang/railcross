@@ -1,0 +1,16 @@
+name = "railcross-scheduler"
+main = "index.ts"
+compatibility_date = "2024-12-01"
+compatibility_flags = ["nodejs_compat"]
+
+[durable_objects]
+bindings = [
+  { name = "SCHEDULER", class_name = "SchedulerDurableObject" }
+]
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["SchedulerDurableObject"]
+
+[observability]
+enabled = true
