@@ -60,9 +60,6 @@ Thumbs.db
 .wrangler/
 .open-next/
 
-# Serverless (legacy)
-.serverless/
-
 # Jest coverage
 .out
 

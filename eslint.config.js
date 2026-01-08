@@ -1,7 +1,9 @@
 const mridangPlugin = require('@mridang/eslint-defaults');
+const nextPlugin = require('@next/eslint-plugin-next');
 
 module.exports = [
   ...mridangPlugin.configs.recommended,
+  nextPlugin.configs['core-web-vitals'],
   {
     ignores: [
       'public/**',

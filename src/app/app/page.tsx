@@ -1,6 +1,7 @@
 import { Metadata } from 'next';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
+import Script from 'next/script';
 import { Octokit } from '@octokit/rest';
 import { jwtVerify } from 'jose';
 import {
@@ -136,7 +137,7 @@ export default async function SetupPage() {
           <link rel="icon" type="image/x-icon" href="/favicon.ico" />
           <meta charSet="UTF-8" />
           <meta name="viewport" content="width=device-width, initial-scale=1" />
-          <script src="/js/tailwind.3.4.5.js" />
+          <Script src="/js/tailwind.3.4.5.js" strategy="beforeInteractive" />
         </head>
         <body>
           <div className="min-h-screen w-screen bg-gray-400 p-8">

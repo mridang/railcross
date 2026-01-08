@@ -1,4 +1,5 @@
 import { Metadata } from 'next';
+import Script from 'next/script';
 
 export const metadata: Metadata = {
   title: 'Session Expired - Railcross',
@@ -12,7 +13,7 @@ export default function ReauthenticatePage() {
         <link rel="icon" type="image/x-icon" href="/favicon.ico" />
         <meta charSet="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <script src="/js/tailwind.3.4.5.js" />
+        <Script src="/js/tailwind.3.4.5.js" strategy="beforeInteractive" />
       </head>
       <body>
         <div className="flex h-screen w-screen items-center justify-center bg-gray-400">
