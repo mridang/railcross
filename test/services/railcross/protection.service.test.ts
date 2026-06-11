@@ -1,5 +1,5 @@
 import { Octokit } from '@octokit/rest';
-import ProtectionService from '../../../src/services/railcross/protection.service';
+import ProtectionService from '../../../src/services/railcross/protection.service.js';
 import nock from 'nock';
 import { buildAxiosFetch } from '@lifeomic/axios-fetch';
 import axios from 'axios';

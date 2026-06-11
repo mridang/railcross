@@ -1,6 +1,6 @@
-import { InjectionToken, ModuleMetadata } from '@nestjs/common/interfaces';
+import { InjectionToken, ModuleMetadata } from '@nestjs/common';
 import { EmitterWebhookEventName } from '@octokit/webhooks';
-import { HandlerFunction } from '@octokit/webhooks/dist-types/types';
+import { HandlerFunction } from '@octokit/webhooks/types';
 
 export const WebhookHandler = Symbol('WebhookHandler');
 // eslint-disable-next-line no-redeclare

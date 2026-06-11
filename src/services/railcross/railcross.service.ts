@@ -1,6 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { Octokit } from '@octokit/rest';
-import SchedulerService from './scheduler.service';
+import SchedulerService from './scheduler.service.js';
 import {
   lastValueFrom,
   mergeMap,
@@ -11,8 +11,7 @@ import {
   tap,
   filter,
 } from 'rxjs';
-import { Logger } from 'testcontainers/build/common';
-import { doPaginate } from '../github/octokit/utils/paginate';
+import { doPaginate } from '../github/octokit/utils/paginate.js';
 
 @Injectable()
 export default class RailcrossService {
@@ -44,7 +43,7 @@ export default class RailcrossService {
         };
       }).pipe(
         tap((installation) => {
-          this.logger.info(`Listing repositories for ${installation.id}`);
+          this.logger.log(`Listing repositories for ${installation.id}`);
         }),
         mergeMap((installation) =>
           doPaginate(async (page: number) => {
@@ -62,7 +61,7 @@ export default class RailcrossService {
             };
           }).pipe(
             tap((repository) => {
-              this.logger.info(
+              this.logger.log(
                 `Fetching schedules for ${repository.full_name}`,
               );
             }),
@@ -125,7 +124,7 @@ export default class RailcrossService {
     })
       .pipe(
         tap((installation) => {
-          this.logger.info(`Listing repositories for ${installation.id}`);
+          this.logger.log(`Listing repositories for ${installation.id}`);
         }),
         mergeMap((installation) =>
           doPaginate(async (page: number) => {
@@ -143,7 +142,7 @@ export default class RailcrossService {
             };
           }).pipe(
             tap((repository) => {
-              this.logger.info(
+              this.logger.log(
                 `Fetching schedules for ${repository.full_name}`,
               );
             }),
@@ -181,7 +180,7 @@ export default class RailcrossService {
     })
       .pipe(
         tap((installation) => {
-          this.logger.info(`Listing repositories for ${installation.id}`);
+          this.logger.log(`Listing repositories for ${installation.id}`);
         }),
         mergeMap((installation) =>
           doPaginate(async (page: number) => {
@@ -202,7 +201,7 @@ export default class RailcrossService {
               return !repoIds.length || repoIds.includes(repository.id);
             }),
             tap((repository) => {
-              this.logger.info(
+              this.logger.log(
                 `Fetching schedules for ${repository.full_name}`,
               );
             }),

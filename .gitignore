@@ -72,3 +72,7 @@ Thumbs.db
 
 # Github Keys
 *.pem
+.dev.vars
+.wrangler/
+wrangler.log
+preview/

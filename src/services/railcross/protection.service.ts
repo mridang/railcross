@@ -1,7 +1,7 @@
 import { Octokit } from '@octokit/rest';
 import { Inject, Injectable, Logger } from '@nestjs/common';
-import { ensure } from '../../utils/ensure';
-import { OctokitImpl } from '../github/octokit/types';
+import { ensure } from '../../utils/ensure.js';
+import { OctokitImpl } from '../github/octokit/types.js';
 
 @Injectable()
 export default class ProtectionService {

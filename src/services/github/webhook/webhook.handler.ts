@@ -1,7 +1,7 @@
 import { EmitterWebhookEventName, Webhooks } from '@octokit/webhooks';
-import { WebhookConfig, WebhookHandler } from './webhook.interfaces';
+import { WebhookConfig, WebhookHandler } from './webhook.interfaces.js';
 import { Inject, Injectable, Logger } from '@nestjs/common';
-import { HandlerFunction } from '@octokit/webhooks/dist-types/types';
+import { HandlerFunction } from '@octokit/webhooks/types';
 
 @Injectable()
 export class DefaultWebhookHandler implements WebhookHandler {

@@ -1,9 +1,4 @@
 // noinspection JSUnusedGlobalSymbols
 export default async function teardown(): Promise<void> {
-  if (globalThis.DOCKER) {
-    console.info('Stopping docker compose');
-    await globalThis.DOCKER.down({
-      removeVolumes: true,
-    });
-  }
+  // Nothing to tear down — the suite starts no external services.
 }

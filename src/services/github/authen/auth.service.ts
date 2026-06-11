@@ -1,6 +1,6 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { type Fetch } from '@octokit/types';
-import { AuthConfig } from './auth.interfaces';
+import { AuthConfig } from './auth.interfaces.js';
 import { FetchImpl } from '@mridang/nestjs-defaults';
 
 @Injectable()

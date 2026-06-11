@@ -1,5 +1,5 @@
-import { WebhookHandler } from '../github/webhook/webhook.interfaces';
-import SchedulerService from './scheduler.service';
+import { WebhookHandler } from '../github/webhook/webhook.interfaces.js';
+import SchedulerService from './scheduler.service.js';
 import { Inject, Injectable, Logger } from '@nestjs/common';
 
 @Injectable()
@@ -15,7 +15,11 @@ export default class ProbotHandler {
       'installation_repositories.removed',
       async (context) => {
         const { id: installationId, account } = context.payload.installation;
-        logger.log(`Some repositories removed on @${account.login}`);
+        const owner =
+          account && 'login' in account
+            ? account.login
+            : (account?.slug ?? 'unknown');
+        logger.log(`Some repositories removed on @${owner}`);
 
         for (const repo of context.payload?.repositories_removed || []) {
           logger.log(`Removing schedules and rules for ${repo.full_name}`);
@@ -26,7 +30,11 @@ export default class ProbotHandler {
 
     this.webhookHandler.on('installation.deleted', async (context) => {
       const { id: installationId, account } = context.payload.installation;
-      logger.log(`Some repositories removed on @${account.login}`);
+      const owner =
+        account && 'login' in account
+          ? account.login
+          : (account?.slug ?? 'unknown');
+      logger.log(`Some repositories removed on @${owner}`);
 
       logger.log(`Uninstalling schedules and rules for ${installationId}`);
       await schedulerService.deleteSchedules(installationId);

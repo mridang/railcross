@@ -4,12 +4,12 @@ import {
   Inject,
   Logger,
   Post,
-  RawBodyRequest,
   Req,
 } from '@nestjs/common';
-import { Request } from '@mridang/nestjs-defaults';
+import type { RawBodyRequest } from '@nestjs/common';
+import type { Request } from '@mridang/nestjs-defaults';
 import { WebhookEventName } from '@octokit/webhooks-types';
-import { WebhookConfig, WebhookHandler } from './webhook.interfaces';
+import { WebhookConfig, WebhookHandler } from './webhook.interfaces.js';
 import { Webhooks } from '@octokit/webhooks';
 
 @Controller('hook')

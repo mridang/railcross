@@ -4,7 +4,7 @@ import {
   NestMiddleware,
   UnauthorizedException,
 } from '@nestjs/common';
-import { NextFunction, Request, Response } from '@mridang/nestjs-defaults';
+import type { NextFunction, Request, Response } from '@mridang/nestjs-defaults';
 import { JwtService } from '@nestjs/jwt';
 
 @Injectable()

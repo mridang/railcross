@@ -1,5 +1,5 @@
 import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
+import { AppModule } from './app.module.js';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { BetterLogger, configure } from '@mridang/nestjs-defaults';
 import { ClsService } from 'nestjs-cls';

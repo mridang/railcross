@@ -1,4 +1,4 @@
-import { InjectionToken, ModuleMetadata } from '@nestjs/common/interfaces';
+import { InjectionToken, ModuleMetadata } from '@nestjs/common';
 
 export const AuthConfig = Symbol('AuthConfig');
 // eslint-disable-next-line no-redeclare

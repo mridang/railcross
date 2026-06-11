@@ -1,5 +1,5 @@
 import { expect } from '@jest/globals';
-import { ensure } from '../../src/utils/ensure';
+import { ensure } from '../../src/utils/ensure.js';
 
 describe('ensure function tests', () => {
   test('should return the value if it is not null or undefined', () => {
