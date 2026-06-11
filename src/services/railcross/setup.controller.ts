@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Get,
+  Header,
   HttpStatus,
   Inject,
   Post,
@@ -56,6 +57,7 @@ export class SetupController {
   }
 
   @Get()
+  @Header('Content-Type', 'text/html; charset=utf-8')
   async showSetup(@Req() request: Request & { user: { accessToken: string } }) {
     if (!request.user.accessToken) {
       throw new UnauthorizedException('Unable to deduce allowed installations');

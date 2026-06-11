@@ -1,6 +1,7 @@
 import {
   Controller,
   Get,
+  Header,
   Inject,
   Optional,
   Post,
@@ -70,6 +71,7 @@ export class AuthController {
   }
 
   @Get('/reauthenticate')
+  @Header('Content-Type', 'text/html; charset=utf-8')
   expired() {
     return expiredView();
   }
