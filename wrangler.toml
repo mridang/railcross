@@ -11,6 +11,12 @@ pattern = "railcross.apps.mrida.ng"
 custom_domain = true
 
 [alias]
+# This app boots on the fetch-native CloudflareAdapter, never Express. NestFactory
+# still statically `require`s @nestjs/platform-express for its default-adapter
+# fallback (a path we never hit), so esbuild would otherwise bundle the whole
+# Express platform as dead weight. Stub it out alongside the other optional
+# platforms Nest lazily pulls in.
+"@nestjs/platform-express" = "./empty.cjs"
 "@nestjs/microservices" = "./empty.cjs"
 "@nestjs/microservices/microservices-module" = "./empty.cjs"
 "@nestjs/websockets" = "./empty.cjs"
