@@ -122,8 +122,10 @@ export default class SchedulerService {
     const prefix = `${installationId}.${repoId === undefined ? '' : `${repoId}.`}`;
     let cursor: string | undefined = undefined;
     do {
-      const page: KVNamespaceListResult<unknown, string> =
-        await this.kv.list({ prefix, cursor });
+      const page: KVNamespaceListResult<unknown, string> = await this.kv.list({
+        prefix,
+        cursor,
+      });
       for (const entry of page.keys) {
         this.logger.log(`Deleting schedule "${entry.name}"`);
         await this.kv.delete(entry.name);
@@ -140,8 +142,9 @@ export default class SchedulerService {
   async reRegisterAll(): Promise<void> {
     let cursor: string | undefined = undefined;
     do {
-      const page: KVNamespaceListResult<unknown, string> =
-        await this.kv.list({ cursor });
+      const page: KVNamespaceListResult<unknown, string> = await this.kv.list({
+        cursor,
+      });
       for (const entry of page.keys) {
         const config = await this.kv.get<ScheduleConfig>(entry.name, 'json');
         if (config) {

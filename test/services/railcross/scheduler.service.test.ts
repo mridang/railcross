@@ -25,9 +25,7 @@ class FakeKv {
     this.store.delete(key);
   }
 
-  async list({
-    prefix,
-  }: { prefix?: string } = {}): Promise<{
+  async list({ prefix }: { prefix?: string } = {}): Promise<{
     keys: { name: string }[];
     list_complete: true;
   }> {
@@ -60,14 +58,18 @@ describe('SchedulerService (KV + Durable Object alarms)', () => {
         },
       }),
     } as unknown as DurableObjectNamespace<ScheduleAlarm>;
-    service = new SchedulerService(
-      kv as unknown as KVNamespace,
-      alarms,
-    );
+    service = new SchedulerService(kv as unknown as KVNamespace, alarms);
   });
 
   test('createSchedule persists config and arms the alarm', async () => {
-    await service.createSchedule(1, 2, 'org/repo', 9, 'Europe/London', 'locker');
+    await service.createSchedule(
+      1,
+      2,
+      'org/repo',
+      9,
+      'Europe/London',
+      'locker',
+    );
 
     expect(kv.store.get('1.2.locker')).toBe(
       JSON.stringify({
@@ -88,7 +90,14 @@ describe('SchedulerService (KV + Durable Object alarms)', () => {
   test('getSchedule returns the display shape or null', async () => {
     expect(await service.getSchedule(1, 2, 'locker')).toBeNull();
 
-    await service.createSchedule(1, 2, 'org/repo', 18, 'America/New_York', 'unlocker');
+    await service.createSchedule(
+      1,
+      2,
+      'org/repo',
+      18,
+      'America/New_York',
+      'unlocker',
+    );
     expect(await service.getSchedule(1, 2, 'unlocker')).toEqual({
       ScheduleExpression: 'cron(0 18 ? * * *)',
       ScheduleExpressionTimezone: 'America/New_York',
@@ -120,6 +129,9 @@ describe('SchedulerService (KV + Durable Object alarms)', () => {
 
     await service.reRegisterAll();
 
-    expect(armed.map((a) => a.name).sort()).toEqual(['1.2.locker', '1.3.unlocker']);
+    expect(armed.map((a) => a.name).sort()).toEqual([
+      '1.2.locker',
+      '1.3.unlocker',
+    ]);
   });
 });

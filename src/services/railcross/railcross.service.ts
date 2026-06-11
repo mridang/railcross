@@ -61,9 +61,7 @@ export default class RailcrossService {
             };
           }).pipe(
             tap((repository) => {
-              this.logger.log(
-                `Fetching schedules for ${repository.full_name}`,
-              );
+              this.logger.log(`Fetching schedules for ${repository.full_name}`);
             }),
             mergeMap((repository) =>
               forkJoin({
@@ -142,9 +140,7 @@ export default class RailcrossService {
             };
           }).pipe(
             tap((repository) => {
-              this.logger.log(
-                `Fetching schedules for ${repository.full_name}`,
-              );
+              this.logger.log(`Fetching schedules for ${repository.full_name}`);
             }),
             mergeMap((repository) =>
               from(
@@ -201,9 +197,7 @@ export default class RailcrossService {
               return !repoIds.length || repoIds.includes(repository.id);
             }),
             tap((repository) => {
-              this.logger.log(
-                `Fetching schedules for ${repository.full_name}`,
-              );
+              this.logger.log(`Fetching schedules for ${repository.full_name}`);
             }),
             mergeMap((repository) =>
               from(

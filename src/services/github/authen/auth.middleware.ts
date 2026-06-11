@@ -8,9 +8,10 @@ import type { NextFunction, Request, Response } from '@mridang/nestjs-defaults';
 import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
-export class AuthMiddleware
-  implements NestMiddleware<Request & { user?: object }, Response>
-{
+export class AuthMiddleware implements NestMiddleware<
+  Request & { user?: object },
+  Response
+> {
   private readonly logger: Logger = new Logger(AuthMiddleware.name);
 
   constructor(private readonly jwtService: JwtService) {

@@ -23,8 +23,10 @@ export interface WebhookModuleOptions {
   webhookConfig: WebhookConfig;
 }
 
-export interface WebhookModuleAsyncOptions
-  extends Pick<ModuleMetadata, 'imports'> {
+export interface WebhookModuleAsyncOptions extends Pick<
+  ModuleMetadata,
+  'imports'
+> {
   inject?: InjectionToken[];
   useFactory: (
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

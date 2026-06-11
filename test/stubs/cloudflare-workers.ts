@@ -21,9 +21,7 @@ const SCHEDULES = {
   async delete(key: string): Promise<void> {
     kvStore.delete(key);
   },
-  async list({
-    prefix,
-  }: { prefix?: string } = {}): Promise<{
+  async list({ prefix }: { prefix?: string } = {}): Promise<{
     keys: { name: string }[];
     list_complete: true;
   }> {
