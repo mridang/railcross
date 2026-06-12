@@ -1,5 +1,5 @@
 export default {
-  preset: 'ts-jest/presets/js-with-ts-esm',
+  preset: 'ts-jest/presets/default-esm',
   extensionsToTreatAsEsm: ['.ts', '.tsx'],
   transform: {
     '^.+\\.m?[tj]sx?$': [
