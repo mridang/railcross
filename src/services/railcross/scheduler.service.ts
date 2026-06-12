@@ -21,7 +21,7 @@ interface ScheduleSummary {
 
 /**
  * Stores lock/unlock schedules in Workers KV and arms a Durable Object alarm
- * for each, replacing the AWS EventBridge scheduler.
+ * for each.
  */
 @Injectable()
 export default class SchedulerService {

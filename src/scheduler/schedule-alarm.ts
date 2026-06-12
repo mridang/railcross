@@ -10,8 +10,7 @@ import { ScheduleConfig, nextOccurrence } from './schedule-utils.js';
  * Each schedule (a `${installationId}.${repoId}.${taskName}` key) maps to its
  * own object via {@link DurableObjectNamespace.idFromName}, so a repository has
  * one instance for locking and one for unlocking — a Durable Object holds only
- * a single alarm. The object is the Cloudflare-native replacement for the AWS
- * EventBridge schedule that previously invoked the lock/unlock Lambdas.
+ * a single alarm, which fires at its scheduled lock or unlock time.
  */
 export class ScheduleAlarm extends DurableObject {
   /**
