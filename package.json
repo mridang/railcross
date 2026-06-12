@@ -37,7 +37,7 @@
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.4",
     "murmurhash": "^2.0.1",
-    "nestjs-cls": "^5.4.3",
+    "preact": "^10.29.2",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.2"
   },
@@ -51,7 +51,6 @@
     "@cloudflare/workers-types": "^4",
     "@jest/globals": "^30.4.1",
     "@mridang/eslint-defaults": "^1.6.3",
-    "@nestjs/cli": "^11.0.23",
     "@nestjs/schematics": "^11.1.0",
     "@nestjs/testing": "^11.1.26",
     "@tsconfig/node22": "^22.0.5",
@@ -68,7 +67,6 @@
     "prettier": "^3.8.4",
     "supertest": "^7.2.2",
     "ts-jest": "^29.4.11",
-    "ts-node": "^10.9.2",
     "typescript": "^6.0.3",
     "wrangler": "^4.99.0"
   }
