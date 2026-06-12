@@ -103,33 +103,14 @@ relevant to your application. Here’s a detailed breakdown of each variable:
 
 ### Configure the GitHub environment
 
-To ensure the smooth operation of GitHub Actions within this project, it's
-essential to configure certain environment variables and secrets. These settings
-are crucial for various deployment tasks and integrating with external services
-like AWS and Sentry.
+To deploy the Worker from GitHub Actions, you must configure the following secret
+in your GitHub repository settings. It is sensitive and grants access to deploy
+to your Cloudflare account:
 
-You need to set the following environment variables in the GitHub repository
-settings:
+- `CLOUDFLARE_API_TOKEN`: A Cloudflare API token with the "Edit Cloudflare
+  Workers" permission, used by Wrangler to publish the Worker.
 
-- `AWS_REGION`: The AWS region where your services are deployed, e.g., `us-east-1`.
-- `SENTRY_ORG`: Your organization name in Sentry, e.g., `mridang`, required for Sentry release
-  tracking after deployments.
-- `SENTRY_PROJECT`: The name of your project in Sentry, e.g., `myapp`, required for Sentry release
-  tracking after deployments.
-
-These variables are used by GitHub Actions workflows to configure the deployment
-environment correctly.
-
-Additionally, you must configure the following secrets in your GitHub repository.
-These secrets are sensitive and provide access to external services essential for
-deployments and monitoring:
-
-- `AWS_ACCESS_KEY_ID`: Your AWS access key ID, used by Serverless for deployments.
-- `AWS_SECRET_ACCESS_KEY`: Your AWS secret access key, used by Serverless for deployments.
-- `SENTRY_AUTH_TOKEN`: A Sentry authentication token, required for Sentry release
-  tracking after deployments.
-
-Please treat these secrets with the utmost care and never expose them publicly.
+Please treat this secret with the utmost care and never expose it publicly.
 
 > [!IMPORTANT]
 > Deployments will not work correctly if these environment variables and secrets
@@ -202,20 +183,14 @@ which is handy when the test suite does not exit gracefully or hangs.
 
 ### Running the app
 
-To run the application locally, you can simply run `npx nest start`
-which starts the NestJS application for local usage.
+To run the application locally, run `npm run dev` (or `npx wrangler dev`),
+which serves the Worker on a local Cloudflare runtime that closely mirrors
+production.
 
-> [!IMPORTANT]
-> It is important to keep in mind that the way application runs locally
-> is different from how it runs on Lambda. This is due to shortcomings
-> in the Serverless framework that make emulating a Lambda environment
-> hard.
-
-Assuming that you have followed the instructions and configured
-everything correctly, you should be able to go to
-`http://localhost:3000/health` to see a health-check page that
-reads "OK". If you've managed to get here, it indicates that the
-application has been able to correctly initialize itself.
+Assuming that you have followed the instructions and configured everything
+correctly, you should be able to go to `http://localhost:8787/` to see the
+home page. If you've managed to get here, it indicates that the application
+has been able to correctly initialize itself.
 
 ## Contributing
 
