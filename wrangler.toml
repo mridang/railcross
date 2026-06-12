@@ -62,3 +62,10 @@ DOMAIN_NAME = "railcross.apps.mrida.ng"
 [observability]
 enabled = true
 head_sampling_rate = 1
+
+# Distributed tracing (spans): the internal timeline of each request — subrequests
+# and binding calls (KV, Durable Objects, the GitHub API) — persisted to the
+# dashboard alongside logs. Separate switch from logs above.
+[observability.traces]
+enabled = true
+head_sampling_rate = 1
