@@ -1,14 +1,14 @@
 import { Module, DynamicModule, MiddlewareConsumer } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { AuthController } from './auth.controller';
-import { AuthGuard } from './auth.guard';
-import { AuthMiddleware } from './auth.middleware';
+import { AuthController } from './auth.controller.js';
+import { AuthGuard } from './auth.guard.js';
+import { AuthMiddleware } from './auth.middleware.js';
 import {
   AuthConfig,
   AuthModuleAsyncOptions,
   AuthModuleOptions,
-} from './auth.interfaces';
-import { AuthService } from './auth.service';
+} from './auth.interfaces.js';
+import { AuthService } from './auth.service.js';
 
 @Module({})
 export class AuthModule {
@@ -48,13 +48,7 @@ export class AuthModule {
     };
   }
 
-  constructor(private readonly authMiddleware: AuthMiddleware) {
-    //
-  }
-
-  async configure(consumer: MiddlewareConsumer) {
-    consumer
-      .apply(this.authMiddleware.use.bind(this.authMiddleware))
-      .forRoutes('app');
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(AuthMiddleware).forRoutes('app');
   }
 }

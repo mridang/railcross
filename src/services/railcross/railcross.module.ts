@@ -1,13 +1,12 @@
 import { Module } from '@nestjs/common';
-import ProtectionService from './protection.service';
-import SchedulerService from './scheduler.service';
-import { roleName, scheduleGroup } from '../../constants';
-import { SchedulerClient } from '@aws-sdk/client-scheduler';
-import { SetupController } from './setup.controller';
-import RailcrossService from './railcross.service';
-import { GithubModule } from '../github/github.module';
-import { OctokitModule } from '../github/octokit/octokit.module';
-import ProbotHandler from './probot.handler';
+import { env } from 'cloudflare:workers';
+import ProtectionService from './protection.service.js';
+import SchedulerService from './scheduler.service.js';
+import { SetupController } from './setup.controller.js';
+import RailcrossService from './railcross.service.js';
+import { GithubModule } from '../github/github.module.js';
+import { OctokitModule } from '../github/octokit/octokit.module.js';
+import ProbotHandler from './probot.handler.js';
 
 @Module({
   controllers: [SetupController],
@@ -17,24 +16,12 @@ import ProbotHandler from './probot.handler';
     SchedulerService,
     RailcrossService,
     {
-      provide: 'SCHEDULER_CLIENT',
-      useFactory: () => {
-        return new SchedulerClient({
-          maxAttempts: 10,
-        });
-      },
+      provide: 'SCHEDULES_KV',
+      useFactory: () => env.SCHEDULES,
     },
     {
-      provide: 'SCHEDULER_GROUP',
-      useFactory: () => {
-        return scheduleGroup;
-      },
-    },
-    {
-      provide: 'SCHEDULER_ROLE',
-      useFactory: () => {
-        return `arn:aws:iam::${process.env.ACCOUNT_ID}:role/${roleName}`;
-      },
+      provide: 'SCHEDULE_ALARMS',
+      useFactory: () => env.SCHEDULE_ALARMS,
     },
   ],
   imports: [OctokitModule, GithubModule],

@@ -1,7 +1,7 @@
 import { expect } from '@jest/globals';
-import ProbotHandler from '../../../src/services/railcross/probot.handler';
-import { End2EndModule } from '../../e2e.module';
-import { AppModule } from '../../../src/app.module';
+import ProbotHandler from '../../../src/services/railcross/probot.handler.js';
+import { End2EndModule } from '../../e2e.module.js';
+import { AppModule } from '../../../src/app.module.js';
 
 const testModule = new End2EndModule({
   imports: [

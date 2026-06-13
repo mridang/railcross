@@ -1,6 +1,7 @@
 import {
   Controller,
   Get,
+  Header,
   Inject,
   Optional,
   Post,
@@ -15,20 +16,16 @@ import { JwtService } from '@nestjs/jwt';
 import { Octokit } from '@octokit/rest';
 import { IsString, Length } from 'class-validator';
 import murmurhash from 'murmurhash';
-import { ensure } from '../../../utils/ensure';
+import { ensure } from '../../../utils/ensure.js';
 import { type Fetch } from '@octokit/types';
-import { AuthConfig } from './auth.interfaces';
+import { AuthConfig } from './auth.interfaces.js';
 import { from, forkJoin, map, switchMap, lastValueFrom, toArray } from 'rxjs';
-import { AuthService } from './auth.service';
+import { AuthService } from './auth.service.js';
 import { ConfigService } from '@nestjs/config';
-import {
-  CryptoImpl,
-  FetchImpl,
-  Response,
-  Request,
-} from '@mridang/nestjs-defaults';
-import { doPaginate } from '../octokit/utils/paginate';
-import expiredView from './expired.view';
+import { CryptoImpl, FetchImpl } from '@mridang/nestjs-defaults';
+import type { Request, Response } from '@mridang/nestjs-defaults';
+import { doPaginate } from '../octokit/utils/paginate.js';
+import expiredView from './expired.view.js';
 
 class CallbackDto {
   @IsString()
@@ -74,6 +71,7 @@ export class AuthController {
   }
 
   @Get('/reauthenticate')
+  @Header('Content-Type', 'text/html; charset=utf-8')
   expired() {
     return expiredView();
   }

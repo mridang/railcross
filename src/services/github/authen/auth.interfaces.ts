@@ -1,4 +1,4 @@
-import { InjectionToken, ModuleMetadata } from '@nestjs/common/interfaces';
+import { InjectionToken, ModuleMetadata } from '@nestjs/common';
 
 export const AuthConfig = Symbol('AuthConfig');
 // eslint-disable-next-line no-redeclare
@@ -14,8 +14,10 @@ export interface AuthModuleOptions {
   authTTL: number;
 }
 
-export interface AuthModuleAsyncOptions<T>
-  extends Pick<ModuleMetadata, 'imports'> {
+export interface AuthModuleAsyncOptions<T> extends Pick<
+  ModuleMetadata,
+  'imports'
+> {
   inject?: InjectionToken[];
   useFactory: (...args: T[]) => Promise<AuthModuleOptions> | AuthModuleOptions;
 }

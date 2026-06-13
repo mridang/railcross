@@ -1,8 +1,8 @@
-import { expect } from '@jest/globals';
+import { jest, expect } from '@jest/globals';
 import { HttpStatus } from '@nestjs/common';
-import { End2EndModule } from '../../e2e.module';
-import { AppModule } from '../../../src/app.module';
-import RailcrossService from '../../../src/services/railcross/railcross.service';
+import { End2EndModule } from '../../e2e.module.js';
+import { AppModule } from '../../../src/app.module.js';
+import RailcrossService from '../../../src/services/railcross/railcross.service.js';
 import request from 'supertest';
 import { JwtService } from '@nestjs/jwt';
 

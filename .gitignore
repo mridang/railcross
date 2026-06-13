@@ -64,11 +64,12 @@ Thumbs.db
 # vuepress build output
 .vuepress/dist
 
-# Serverless directories
-.serverless/
-
 # Jest coverage
 .out
 
 # Github Keys
 *.pem
+.dev.vars
+.wrangler/
+wrangler.log
+preview/

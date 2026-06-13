@@ -1,6 +1,6 @@
 # Railcross for GitHub
 
-![Status](https://railcross.agarwal.la/version.svg)
+![Status](https://railcross.apps.mrida.ng/version.svg)
 
 Railcross prevents your teams from merging pull requests outside
 merge windows.
@@ -36,25 +36,23 @@ guide.
 
 ## Architecture
 
-The app is a NestJS application deployed on AWS Lambda and fronted by
-CloudFront. All SSL certificates are managed automatically via Certificate
-Manager (using DNS validation).
+The app is a NestJS application running on Cloudflare Workers through the
+fetch-native `@mridang/nestjs-platform-cloudflare` adapter, served on a custom
+domain with Cloudflare-managed DNS and TLS.
 
-To manage the lock and unlock schedules, EventBridge Scheduler is used
-which in turn invokes the Lambda. All credentials are stored in
-Secrets Manager.
+To manage the lock and unlock schedules, each schedule is stored in Workers KV
+and armed as an alarm on a SQLite-backed Durable Object; a daily Cron Trigger
+re-arms the next day's alarms, and each alarm locks or unlocks the configured
+branches when it fires. Credentials are stored as Worker secrets, and logs and
+per-request traces are captured by Workers Observability.
 
-The application uses X-Ray for tracing and Cloudwatch for logging.
-
-The application is designed to be stateless and does not have any sort
-of persistence—this includes all ephemeral persistence, e.g. caches.
-
-<img alt="Architecture Diagram" src="https://github.com/user-attachments/assets/d0a74846-a068-4409-88a2-12a61b7f11bd">
+The application's only persistence is its scheduling state in Workers KV and
+Durable Object storage.
 
 ## Developing
 
 The app is built with Typescript 5.3 using NestJS and requires
-Node 20 to run.
+Node 22 to run.
 
 After checking out the repository, run `npm install` to install all
 the required dependencies.
@@ -103,38 +101,19 @@ relevant to your application. Here’s a detailed breakdown of each variable:
 
 ### Configure the GitHub environment
 
-To ensure the smooth operation of GitHub Actions within this project, it's
-essential to configure certain environment variables and secrets. These settings
-are crucial for various deployment tasks and integrating with external services
-like AWS and Sentry.
+To deploy the Worker from GitHub Actions, you must configure the following secret
+in your GitHub repository settings. It is sensitive and grants access to deploy
+to your Cloudflare account:
 
-You need to set the following environment variables in the GitHub repository
-settings:
+- `CLOUDFLARE_API_TOKEN`: A Cloudflare API token with the "Edit Cloudflare
+  Workers" permission, used by Wrangler to publish the Worker.
 
-- `AWS_REGION`: The AWS region where your services are deployed, e.g., `us-east-1`.
-- `SENTRY_ORG`: Your organization name in Sentry, e.g., `mridang`, required for Sentry release
-  tracking after deployments.
-- `SENTRY_PROJECT`: The name of your project in Sentry, e.g., `myapp`, required for Sentry release
-  tracking after deployments.
-
-These variables are used by GitHub Actions workflows to configure the deployment
-environment correctly.
-
-Additionally, you must configure the following secrets in your GitHub repository.
-These secrets are sensitive and provide access to external services essential for
-deployments and monitoring:
-
-- `AWS_ACCESS_KEY_ID`: Your AWS access key ID, used by Serverless for deployments.
-- `AWS_SECRET_ACCESS_KEY`: Your AWS secret access key, used by Serverless for deployments.
-- `SENTRY_AUTH_TOKEN`: A Sentry authentication token, required for Sentry release
-  tracking after deployments.
-
-Please treat these secrets with the utmost care and never expose them publicly.
+Please treat this secret with the utmost care and never expose it publicly.
 
 > [!IMPORTANT]
 > Deployments will not work correctly if these environment variables and secrets
 > are not configured properly. Ensure that you've entered the correct values
-> corresponding to your AWS and Sentry accounts to avoid any deployment issues.
+> corresponding to your Cloudflare account to avoid any deployment issues.
 
 ---
 
@@ -159,37 +138,19 @@ reformats all the code.
 
 ### Deploying the app
 
-The application is automatically deployed when a push is made to the
-default branch. You can manually trigger the deployment workflow if
-you need to deploy the latest changes.
-
-It is not recommended to deploy from your local machine but if needed,
-it can be deployed using `npm run deploy`.
+The application is deployed by triggering the deployment workflow from the
+Actions tab. You can also deploy from your local machine with `npm run deploy`,
+which builds the Worker and publishes it with Wrangler.
 
 > [!IMPORTANT]
-> You'll need to ensure that you have the AWS credentials configured. Read the
-> guide on how to configure the variables https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-envvars.html
-
-If you need to package the application without deploying it use
-`npm run package`. This is handy when you need to introspect the contents
-of the ZIP artifact.
+> Deploying requires a `CLOUDFLARE_API_TOKEN` with the "Edit Cloudflare Workers"
+> permission — configured as a repository secret for CI, or in your environment
+> for local deploys.
 
 ### Running tests
 
-Run the test suite using `npm run test`. Most tests are designed to use
-Localstack when possible. Jest automatically starts the containers defined
-in `docker-compose.yml`.
-
-> [!NOTE]
-> If you run into any issues while running the tests locally, ensure that
-> no other services are currently listening on the same ports used by the
-> services defined in `docker-compose.yml`.
-> Run `docker ps` to list all currently running containers. Any containers
-> listening on the required ports should be stopped prior to running the
-> test suite again.
-
-> On GitHub, these can simply be configured as environment variables
-> https://docs.github.com/en/actions/learn-github-actions/variables
+Run the test suite using `npm run test`. The tests run entirely in-process
+with Jest — no containers or external services are required.
 
 If configured correctly, you should be able to run all the tests from
 your IDE.
@@ -202,20 +163,14 @@ which is handy when the test suite does not exit gracefully or hangs.
 
 ### Running the app
 
-To run the application locally, you can simply run `npx nest start`
-which starts the NestJS application for local usage.
+To run the application locally, run `npm run dev` (or `npx wrangler dev`),
+which serves the Worker on a local Cloudflare runtime that closely mirrors
+production.
 
-> [!IMPORTANT]
-> It is important to keep in mind that the way application runs locally
-> is different from how it runs on Lambda. This is due to shortcomings
-> in the Serverless framework that make emulating a Lambda environment
-> hard.
-
-Assuming that you have followed the instructions and configured
-everything correctly, you should be able to go to
-`http://localhost:3000/health` to see a health-check page that
-reads "OK". If you've managed to get here, it indicates that the
-application has been able to correctly initialize itself.
+Assuming that you have followed the instructions and configured everything
+correctly, you should be able to go to `http://localhost:8787/` to see the
+home page. If you've managed to get here, it indicates that the application
+has been able to correctly initialize itself.
 
 ## Contributing
 

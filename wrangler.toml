@@ -1,0 +1,71 @@
+name = "railcrossapp"
+main = "worker.mjs"
+account_id = "779037e608ab1102679ef8b1bd499d49"
+compatibility_date = "2025-09-15"
+compatibility_flags = [ "nodejs_compat" ]
+
+# Custom domain on the Cloudflare-managed `mrida.ng` zone. Cloudflare provisions
+# the DNS record and TLS certificate automatically on deploy.
+[[routes]]
+pattern = "railcross.apps.mrida.ng"
+custom_domain = true
+
+[alias]
+# This app boots on the fetch-native CloudflareAdapter, never Express. NestFactory
+# still statically `require`s @nestjs/platform-express for its default-adapter
+# fallback (a path we never hit), so esbuild would otherwise bundle the whole
+# Express platform as dead weight. Stub it out alongside the other optional
+# platforms Nest lazily pulls in.
+"@nestjs/platform-express" = "./empty.cjs"
+"@nestjs/microservices" = "./empty.cjs"
+"@nestjs/microservices/microservices-module" = "./empty.cjs"
+"@nestjs/websockets" = "./empty.cjs"
+"@nestjs/websockets/socket-module" = "./empty.cjs"
+"@aws-sdk/client-secrets-manager" = "./empty.cjs"
+"@aws-sdk/client-scheduler" = "./empty.cjs"
+"@sentry/node" = "./empty.cjs"
+"@nestjs/serve-static" = "./empty.cjs"
+"@codegenie/serverless-express" = "./empty.cjs"
+"@nestjs/graphql" = "./empty.cjs"
+"@apollo/subgraph" = "./empty.cjs"
+"@apollo/subgraph/package.json" = "./empty.json"
+"@apollo/subgraph/dist/directives" = "./empty.cjs"
+ts-morph = "./empty.cjs"
+"class-transformer/storage" = "./empty.cjs"
+
+[[kv_namespaces]]
+binding = "SCHEDULES"
+id = "7f77e9b125194412b894fb78ad4731c9"
+
+[[durable_objects.bindings]]
+name = "SCHEDULE_ALARMS"
+class_name = "ScheduleAlarm"
+
+# SQLite-backed Durable Object — available on the Workers free plan.
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = [ "ScheduleAlarm" ]
+
+# Daily re-registration of the next day's alarms from KV.
+[triggers]
+crons = [ "0 0 * * *" ]
+
+[vars]
+NODE_ENV = "production"
+SERVICE_NAME = "railcross"
+SERVICE_VERSION = "cloudflare"
+DOMAIN_NAME = "railcross.apps.mrida.ng"
+
+# Workers Observability: capture console logs (the winston output) and per-request
+# invocation traces (status, duration, CPU), queryable in the dashboard. Sample
+# 100% of requests — traffic is low enough that full fidelity is cheap.
+[observability]
+enabled = true
+head_sampling_rate = 1
+
+# Distributed tracing (spans): the internal timeline of each request — subrequests
+# and binding calls (KV, Durable Objects, the GitHub API) — persisted to the
+# dashboard alongside logs. Separate switch from logs above.
+[observability.traces]
+enabled = true
+head_sampling_rate = 1

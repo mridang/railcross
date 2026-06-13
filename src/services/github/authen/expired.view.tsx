@@ -1,4 +1,5 @@
-import { FunctionalComponent, render } from '@mridang/nestjs-defaults';
+import { render } from '@mridang/nestjs-defaults';
+import type { FunctionalComponent } from '@mridang/nestjs-defaults';
 
 const ExpiredPage: FunctionalComponent = () => {
   return (
@@ -16,7 +17,7 @@ const ExpiredPage: FunctionalComponent = () => {
         <div className="h-screen w-screen bg-gray-400">
           {/* eslint-disable-next-line tailwindcss/no-custom-classname */}
           <div className="h-modal fixed inset-0 z-50 grid size-full place-items-center justify-center backdrop-blur-sm">
-            <div className="container relative m-auto px-6">
+            <div className="relative container m-auto px-6">
               <div className="m-auto md:w-7/12">
                 <div className="rounded-md bg-white shadow-xl dark:bg-gray-800">
                   <div className="p-8">

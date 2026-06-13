@@ -1,18 +1,24 @@
-module.exports = {
-  preset: 'ts-jest/presets/js-with-ts',
+export default {
+  extensionsToTreatAsEsm: ['.ts', '.tsx'],
   transform: {
     '^.+\\.m?[tj]sx?$': [
       'ts-jest',
       {
+        useESM: true,
         tsconfig: 'tsconfig.jest.json',
       },
     ],
   },
   testEnvironment: 'node',
+  setupFiles: ['<rootDir>/test/env.ts'],
   testMatch: ['**/*.+(spec|test).[tj]s?(x)'],
   moduleFileExtensions: ['js', 'jsx', 'ts', 'tsx', 'json', 'node'],
   moduleNameMapper: {
-    '#(.*)': '<rootDir>/src/$1',
+    // The Workers-only runtime module is stubbed so imports resolve under Jest.
+    '^cloudflare:workers$': '<rootDir>/test/stubs/cloudflare-workers.ts',
+    // Under NodeNext, source imports carry a `.js` suffix that ts-jest must map
+    // back to the `.ts` source it compiles on the fly.
+    '^(\\.{1,2}/.*)\\.js$': '$1',
   },
   testPathIgnorePatterns: ['/node_modules/', '/frontend/', '/dist/'],
   resetModules: false,

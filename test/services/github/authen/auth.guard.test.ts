@@ -1,5 +1,5 @@
 import { expect } from '@jest/globals';
-import { AuthGuard } from '../../../../src/services/github/authen/auth.guard';
+import { AuthGuard } from '../../../../src/services/github/authen/auth.guard.js';
 import { JwtService } from '@nestjs/jwt';
 import { ExecutionContext } from '@nestjs/common/interfaces/features/execution-context.interface';
 import murmurhash from 'murmurhash';
@@ -10,7 +10,7 @@ import {
   Type,
   WsArgumentsHost,
 } from '@nestjs/common/interfaces';
-import { Request } from '@mridang/nestjs-defaults';
+import type { Request } from '@mridang/nestjs-defaults';
 
 describe('auth.guard tests', () => {
   class MockExecutionContext implements ExecutionContext {

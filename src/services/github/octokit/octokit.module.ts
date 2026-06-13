@@ -4,7 +4,7 @@ import { createAppAuth } from '@octokit/auth-app';
 import { Octokit } from '@octokit/rest';
 import { Module } from '@nestjs/common';
 import { retry } from '@octokit/plugin-retry';
-import { OctokitImpl } from './types';
+import { OctokitImpl } from './types.js';
 
 @Module({
   controllers: [

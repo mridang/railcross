@@ -1,12 +1,12 @@
 import { DynamicModule, Module } from '@nestjs/common';
-import { WebhookController } from './webhook.controller';
+import { WebhookController } from './webhook.controller.js';
 import {
   WebhookConfig,
   WebhookHandler,
   WebhookModuleAsyncOptions,
   WebhookModuleOptions,
-} from './webhook.interfaces';
-import { DefaultWebhookHandler } from './webhook.handler';
+} from './webhook.interfaces.js';
+import { DefaultWebhookHandler } from './webhook.handler.js';
 
 @Module({})
 export class WebhookModule {

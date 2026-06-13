@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Get,
+  Header,
   HttpStatus,
   Inject,
   Post,
@@ -10,13 +11,13 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { IsArray, IsInt, IsOptional, Max, Min } from 'class-validator';
-import { IsSupportedTimeZone } from './timezone.validator';
-import RailcrossService from './railcross.service';
-import { Request } from '@mridang/nestjs-defaults';
+import { IsSupportedTimeZone } from './timezone.validator.js';
+import RailcrossService from './railcross.service.js';
+import type { Request } from '@mridang/nestjs-defaults';
 import { Octokit } from '@octokit/rest';
-import { OctokitImpl } from '../github/octokit/types';
+import { OctokitImpl } from '../github/octokit/types.js';
 import { Expose, Type } from 'class-transformer';
-import setupView from './setup.view';
+import setupView from './setup.view.js';
 
 class ScheduleDto {
   @IsInt()
@@ -56,6 +57,7 @@ export class SetupController {
   }
 
   @Get()
+  @Header('Content-Type', 'text/html; charset=utf-8')
   async showSetup(@Req() request: Request & { user: { accessToken: string } }) {
     if (!request.user.accessToken) {
       throw new UnauthorizedException('Unable to deduce allowed installations');
