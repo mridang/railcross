@@ -8,5 +8,9 @@ module.exports = {
   // worker is Express-free, so @nestjs/platform-express stays undeclared.
   // `cloudflare:workers` is a virtual module provided by the runtime, not an
   // installable package.
-  ignoreDependencies: ['@nestjs/platform-express', 'cloudflare', 'cloudflare:workers'],
+  ignoreDependencies: [
+    '@nestjs/platform-express',
+    'cloudflare',
+    'cloudflare:workers',
+  ],
 };
