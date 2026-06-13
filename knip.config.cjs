@@ -6,7 +6,7 @@ module.exports = {
   ignore: ['empty.cjs', 'public/js/tailwind.3.4.5.js'],
   // The e2e test imports the NestExpressApplication type only; the deployed
   // worker is Express-free, so @nestjs/platform-express stays undeclared.
-  // `cloudflare` is the `cloudflare:workers` virtual module provided by the
-  // runtime, not an installable package.
-  ignoreDependencies: ['@nestjs/platform-express', 'cloudflare'],
+  // `cloudflare:workers` is a virtual module provided by the runtime, not an
+  // installable package; match the full specifier with a pattern.
+  ignoreDependencies: ['@nestjs/platform-express', /^cloudflare/],
 };
