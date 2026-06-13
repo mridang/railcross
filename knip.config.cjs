@@ -7,6 +7,6 @@ module.exports = {
   // The e2e test imports the NestExpressApplication type only; the deployed
   // worker is Express-free, so @nestjs/platform-express stays undeclared.
   // `cloudflare:workers` is a virtual module provided by the runtime, not an
-  // installable package; match the full specifier with a pattern.
-  ignoreDependencies: ['@nestjs/platform-express', /^cloudflare/],
+  // installable package.
+  ignoreDependencies: ['@nestjs/platform-express', 'cloudflare', 'cloudflare:workers'],
 };
