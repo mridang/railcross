@@ -8,16 +8,23 @@ export default [
       'coverage/**',
       '.out/**',
       'public/**',
-      // The worker entry imports the compiled `dist/`, absent at lint time, and
-      // the ambient types file uses a triple-slash reference for Workers types.
-      'worker.mjs',
-      'src/worker-env.d.ts',
+      'preview/**',
     ],
   },
   ...mridangPlugin.configs.recommended,
   {
-    // `cloudflare:workers` is a virtual runtime module the resolver cannot see;
-    // treat it as a core module so import/no-unresolved leaves it alone.
+    // cloudflare:workers is a runtime-provided virtual module the import
+    // resolver cannot see; treat it as a core module.
     settings: { 'import/core-modules': ['cloudflare:workers'] },
+  },
+  {
+    // The worker entry imports the compiled dist, which is absent at lint time.
+    files: ['worker.mjs'],
+    rules: { 'import/no-unresolved': 'off' },
+  },
+  {
+    // Ambient declaration files legitimately use triple-slash references.
+    files: ['**/*.d.ts'],
+    rules: { '@typescript-eslint/triple-slash-reference': 'off' },
   },
 ];

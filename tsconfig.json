@@ -11,7 +11,8 @@
     "esModuleInterop": true,
     "outDir": "dist",
     "jsx": "react-jsx",
-    "jsxImportSource": "preact"
+    "jsxImportSource": "preact",
+    "isolatedModules": true
   },
   "include": ["**/*"],
   "exclude": ["node_modules", "**/*.spec.ts", "dist"]
