@@ -1,8 +1,8 @@
 /**
- * Test stub for the `cloudflare:workers` runtime module, which only exists
- * inside the Workers runtime. It provides an in-memory KV namespace and a
- * no-op Durable Object namespace so code that touches the schedule bindings
- * runs under Jest without a live Worker.
+ * Shared stub factory for the `cloudflare:workers` runtime module, which only
+ * exists inside the Workers runtime. Each test file still calls
+ * `jest.unstable_mockModule('cloudflare:workers', cloudflareWorkersStub)`
+ * itself, because module mocks register per-test under ESM.
  */
 
 const kvStore = new Map<string, string>();
@@ -40,11 +40,19 @@ const SCHEDULE_ALARMS = {
   }),
 };
 
-export const env: Record<string, unknown> = { SCHEDULES, SCHEDULE_ALARMS };
-
-export class DurableObject {
+class DurableObject {
   constructor(
     protected ctx: unknown,
     protected env: unknown,
   ) {}
 }
+
+const env: Record<string, unknown> = { SCHEDULES, SCHEDULE_ALARMS };
+
+/**
+ * Factory passed to `jest.unstable_mockModule('cloudflare:workers', ...)`.
+ */
+export const cloudflareWorkersStub = (): {
+  env: Record<string, unknown>;
+  DurableObject: typeof DurableObject;
+} => ({ env, DurableObject });

@@ -1,10 +1,17 @@
 import { jest, expect } from '@jest/globals';
 import { HttpStatus } from '@nestjs/common';
-import { End2EndModule } from '../../e2e.module.js';
-import { AppModule } from '../../../src/app.module.js';
-import RailcrossService from '../../../src/services/railcross/railcross.service.js';
 import request from 'supertest';
 import { JwtService } from '@nestjs/jwt';
+import { cloudflareWorkersStub } from '../../helpers/cloudflare-workers-stub.js';
+
+jest.unstable_mockModule('cloudflare:workers', cloudflareWorkersStub, {
+  virtual: true,
+});
+
+const { End2EndModule } = await import('../../e2e.module.js');
+const { AppModule } = await import('../../../src/app.module.js');
+const { default: RailcrossService } =
+  await import('../../../src/services/railcross/railcross.service.js');
 
 const railcrossServiceMock = {
   updateSchedules: jest.fn(),
@@ -38,7 +45,7 @@ describe('setup.controller test', () => {
 
   test('that the setup page renders correctly', async () => {
     const jwtService = testModule.app.get(JwtService);
-    railcrossServiceMock.listSchedules.mockResolvedValue([]);
+    railcrossServiceMock.listSchedules.mockResolvedValue([] as never);
 
     await request(testModule.app.getHttpServer())
       .get('/app')
@@ -66,7 +73,7 @@ describe('setup.controller test', () => {
       unlock_time: 2,
       timezone: 'Asia/Bangkok',
     };
-    railcrossServiceMock.updateSchedules.mockResolvedValue(null); // Assuming updateSchedules doesn't return anything
+    railcrossServiceMock.updateSchedules.mockResolvedValue(null as never); // Assuming updateSchedules doesn't return anything
 
     await request(testModule.app.getHttpServer())
       .post('/app/setup')

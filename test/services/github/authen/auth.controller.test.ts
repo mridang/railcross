@@ -1,11 +1,16 @@
-import { End2EndModule } from '../../../e2e.module.js';
-import { AppModule } from '../../../../src/app.module.js';
+import { jest } from '@jest/globals';
 import nock from 'nock';
 import request from 'supertest';
 import { HttpStatus } from '@nestjs/common';
-import { buildAxiosFetch } from '@lifeomic/axios-fetch';
-import axios from 'axios';
 import { CryptoImpl, FetchImpl } from '@mridang/nestjs-defaults';
+import { cloudflareWorkersStub } from '../../../helpers/cloudflare-workers-stub.js';
+
+jest.unstable_mockModule('cloudflare:workers', cloudflareWorkersStub, {
+  virtual: true,
+});
+
+const { End2EndModule } = await import('../../../e2e.module.js');
+const { AppModule } = await import('../../../../src/app.module.js');
 
 const testModule = new End2EndModule({
   imports: [
@@ -26,7 +31,7 @@ describe('auth.controller tests', () => {
           getRandomValues: crypto.getRandomValues,
         })
         .overrideProvider(FetchImpl)
-        .useValue(buildAxiosFetch(axios.create()));
+        .useValue(globalThis.fetch);
 
       return testModule;
     });

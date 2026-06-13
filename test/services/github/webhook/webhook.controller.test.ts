@@ -1,10 +1,16 @@
-import { expect } from '@jest/globals';
+import { jest, expect } from '@jest/globals';
 import request from 'supertest';
 import { HttpStatus } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { End2EndModule } from '../../../e2e.module.js';
-import { AppModule } from '../../../../src/app.module.js';
-import { hmacSha256 } from '../../../../src/utils/crypto.js';
+import { cloudflareWorkersStub } from '../../../helpers/cloudflare-workers-stub.js';
+
+jest.unstable_mockModule('cloudflare:workers', cloudflareWorkersStub, {
+  virtual: true,
+});
+
+const { End2EndModule } = await import('../../../e2e.module.js');
+const { AppModule } = await import('../../../../src/app.module.js');
+const { hmacSha256 } = await import('../../../../src/utils/crypto.js');
 
 const testModule = new End2EndModule({
   imports: [
