@@ -36,7 +36,7 @@ export const HOME_HTML = `<!doctype html>
 
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,500&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet" />
-<script src="https://cdn.tailwindcss.com"></script>
+<script src="/js/tailwind.3.4.5.js"></script>
 <script>tailwind.config={theme:{extend:{fontFamily:{sans:['Inter','system-ui','sans-serif'],display:['Fraunces','Georgia','serif'],mono:['JetBrains Mono','monospace']}}}}</script>
 <style>body{-webkit-font-smoothing:antialiased}.display{font-optical-sizing:auto}</style>
 

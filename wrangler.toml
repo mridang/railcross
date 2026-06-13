@@ -69,3 +69,8 @@ head_sampling_rate = 1
 [observability.traces]
 enabled = true
 head_sampling_rate = 1
+
+# Serve the static files in public/ (favicons, fonts, vendored JS) via the
+# Workers assets binding. Non-asset paths fall through to the NestJS worker.
+[assets]
+directory = "./public"
