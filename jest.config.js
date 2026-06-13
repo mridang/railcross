@@ -1,5 +1,4 @@
 export default {
-  preset: 'ts-jest/presets/default-esm',
   extensionsToTreatAsEsm: ['.ts', '.tsx'],
   transform: {
     '^.+\\.m?[tj]sx?$': [
@@ -11,6 +10,7 @@ export default {
     ],
   },
   testEnvironment: 'node',
+  setupFiles: ['<rootDir>/test/env.ts'],
   testMatch: ['**/*.+(spec|test).[tj]s?(x)'],
   moduleFileExtensions: ['js', 'jsx', 'ts', 'tsx', 'json', 'node'],
   moduleNameMapper: {

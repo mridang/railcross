@@ -1,4 +1,4 @@
-import { expect, jest, describe, test, beforeEach } from '@jest/globals';
+import { expect, describe, test, beforeEach } from '@jest/globals';
 import type {
   KVNamespace,
   DurableObjectNamespace,

@@ -3,15 +3,14 @@ name: Deploy to Cloudflare Workers
 concurrency:
   group: deploy
 
-# Triggered manually for now. Re-enable the push trigger below once the
-# decoupled `@mridang/nestjs-defaults` is published to npm — until then a clean
-# `npm ci` pulls the AWS-coupled registry build, and the deployed Worker would
-# carry the winston/stdout logging bug that the locally patched build fixes.
+# Deploys on every push to master, plus manual runs. The decoupled
+# `@mridang/nestjs-defaults` (v3) is on npm, so a clean `npm ci` pulls a
+# Workers-safe build.
 on:
   workflow_dispatch:
-  # push:
-  #   branches:
-  #     - master
+  push:
+    branches:
+      - master
 
 defaults:
   run:

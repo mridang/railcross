@@ -39,7 +39,7 @@ jobs:
           node-version-file: '.nvmrc'
 
       - name: Install Dependencies
-        run: npm ci --no-optional --no-optional
+        run: npm ci
 
       - name: Run Cypress Tests
         uses: cypress-io/github-action@v6

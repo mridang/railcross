@@ -1,5 +1,4 @@
-import { jest } from '@jest/globals';
-import { expect } from '@jest/globals';
+import { jest, expect } from '@jest/globals';
 import { HttpStatus } from '@nestjs/common';
 import { End2EndModule } from '../../e2e.module.js';
 import { AppModule } from '../../../src/app.module.js';

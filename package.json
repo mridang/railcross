@@ -19,8 +19,9 @@
   },
   "dependencies": {
     "@lifeomic/axios-fetch": "^3.1.0",
-    "@mridang/nestjs-defaults": "^2.4.0",
+    "@mridang/nestjs-defaults": "^3.0.0",
     "@mridang/nestjs-platform-cloudflare": "^1.2.0",
+    "@sentry/cloudflare": "^10.57.0",
     "@nestjs/common": "^11.1.26",
     "@nestjs/config": "^4.0.4",
     "@nestjs/core": "^11.1.26",
