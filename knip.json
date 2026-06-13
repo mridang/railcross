@@ -1,5 +1,0 @@
-{
-  "entry": ["worker.mjs"],
-  "ignore": ["empty.cjs", "public/js/tailwind.3.4.5.js"],
-  "ignoreDependencies": ["cloudflare"]
-}
