@@ -1,4 +1,8 @@
 export default {
-  ignore: ['knip.config.ts'],
-  ignoreDependencies: [/^@semantic-release\//],
+  ignore: ['empty.cjs', 'public/js/*.js'],
+  ignoreDependencies: [
+    /^@semantic-release\//,
+    'cloudflare',
+    '@nestjs/platform-express',
+  ],
 };
