@@ -1,8 +1,6 @@
 import { Octokit } from '@octokit/rest';
 import ProtectionService from '../../../src/services/railcross/protection.service.js';
 import nock from 'nock';
-import { buildAxiosFetch } from '@lifeomic/axios-fetch';
-import axios from 'axios';
 import { HttpStatus } from '@nestjs/common';
 
 describe('protection.service test', () => {
@@ -412,7 +410,7 @@ describe('protection.service test', () => {
       return new Octokit({
         auth: 'no',
         request: {
-          fetch: buildAxiosFetch(axios),
+          fetch: globalThis.fetch,
         },
       });
     });
@@ -425,7 +423,7 @@ describe('protection.service test', () => {
       return new Octokit({
         auth: 'no',
         request: {
-          fetch: buildAxiosFetch(axios),
+          fetch: globalThis.fetch,
         },
       });
     });

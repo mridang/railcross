@@ -1,7 +1,14 @@
-import { expect } from '@jest/globals';
-import ProbotHandler from '../../../src/services/railcross/probot.handler.js';
-import { End2EndModule } from '../../e2e.module.js';
-import { AppModule } from '../../../src/app.module.js';
+import { jest, expect } from '@jest/globals';
+import { cloudflareWorkersStub } from '../../helpers/cloudflare-workers-stub.js';
+
+jest.unstable_mockModule('cloudflare:workers', cloudflareWorkersStub, {
+  virtual: true,
+});
+
+const { default: ProbotHandler } =
+  await import('../../../src/services/railcross/probot.handler.js');
+const { End2EndModule } = await import('../../e2e.module.js');
+const { AppModule } = await import('../../../src/app.module.js');
 
 const testModule = new End2EndModule({
   imports: [
