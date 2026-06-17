@@ -48,6 +48,7 @@
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4",
+    "@eslint/compat": "^2.1.0",
     "@jest/globals": "^30.4.1",
     "@mridang/eslint-defaults": "^1.6.3",
     "@nestjs/schematics": "^11.1.0",
@@ -62,7 +63,7 @@
     "eslint": "^9.39.4",
     "jest": "^30.4.2",
     "jest-junit": "^17.0.0",
-    "knip": "^5.88.1",
+    "knip": "^6.17.1",
     "nock": "^14.0.15",
     "prettier": "^3.8.4",
     "supertest": "^7.2.2",
