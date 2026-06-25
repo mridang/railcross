@@ -1,5 +1,5 @@
 export default {
-  ignore: ['empty.cjs', 'public/js/*.js'],
+  ignore: ['empty.cjs', 'src/styles/*.css'],
   ignoreDependencies: [
     /^@semantic-release\//,
     'cloudflare',
