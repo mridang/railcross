@@ -62,7 +62,7 @@ export const HOME_HTML = `<!doctype html>
         </div>
       </div>
       <div class="rounded-2xl border border-zinc-200 bg-white shadow-[0_1px_3px_rgba(0,0,0,0.04)] overflow-hidden">
-        <div class="px-7 pt-7"><div class="font-mono text-[11px] uppercase tracking-widest text-zinc-400">merge window</div><div class="mt-2 font-display display text-2xl font-medium">main &middot; acme/web</div></div>
+        <div class="px-7 pt-7"><div class="font-mono text-[11px] uppercase tracking-widest text-zinc-500">merge window</div><div class="mt-2 font-display display text-2xl font-medium">main &middot; acme/web</div></div>
         <div class="mt-5 px-7 space-y-3 text-sm">
           <div class="flex items-center justify-between"><span class="text-zinc-500">Lock</span><span class="font-mono text-[13px]">18:00</span></div>
           <div class="flex items-center justify-between"><span class="text-zinc-500">Unlock</span><span class="font-mono text-[13px]">09:00</span></div>
