@@ -1,4 +1,4 @@
-import { Controller, Get, Header, StreamableFile } from '@nestjs/common';
+import { Controller, Get, Header } from '@nestjs/common';
 import { HOME_HTML } from './home.html.js';
 import { OG_PNG_BASE64 } from './og-image.js';
 
@@ -25,10 +25,10 @@ export class HomeController {
    * @returns The 1200×630 share image for `GET /og.png`.
    */
   @Get('og.png')
+  @Header('Content-Type', 'image/png')
+  @Header('Cross-Origin-Resource-Policy', 'cross-origin')
   @Header('Cache-Control', 'public, max-age=86400, immutable')
-  getOgImage(): StreamableFile {
-    return new StreamableFile(Buffer.from(OG_PNG_BASE64, 'base64'), {
-      type: 'image/png',
-    });
+  getOgImage(): Buffer {
+    return Buffer.from(OG_PNG_BASE64, 'base64');
   }
 }

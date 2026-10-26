@@ -20,3 +20,28 @@ describe('HomeController', () => {
     expect(html).toContain('application/ld+json');
   });
 });
+
+describe('HomeController og.png', () => {
+  const controller = new HomeController();
+
+  test('serves the share card as PNG bytes', () => {
+    const png = controller.getOgImage();
+    expect(Buffer.isBuffer(png)).toBe(true);
+    expect(png.subarray(1, 4).toString()).toBe('PNG');
+  });
+
+  test('lets other sites embed the share card', () => {
+    const headers: Array<{ name: string; value: string }> = Reflect.getMetadata(
+      '__headers__',
+      HomeController.prototype.getOgImage,
+    );
+    expect(headers).toContainEqual({
+      name: 'Cross-Origin-Resource-Policy',
+      value: 'cross-origin',
+    });
+    expect(headers).toContainEqual({
+      name: 'Content-Type',
+      value: 'image/png',
+    });
+  });
+});

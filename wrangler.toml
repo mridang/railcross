@@ -74,3 +74,15 @@ head_sampling_rate = 1
 # Workers assets binding. Non-asset paths fall through to the NestJS worker.
 [assets]
 directory = "./public"
+
+# Per-address request limit (the library's rate limiter, binding RL_SITE). The
+# webhook route /hook is never counted. namespace_id is account-wide, so it is
+# unique to this Worker.
+[[ratelimits]]
+name = "RL_SITE"
+namespace_id = "7401"
+simple = { limit = 300, period = 60 }
+
+# The deployed version id keys the edge cache, so a deploy never serves old copies.
+[version_metadata]
+binding = "CF_VERSION_METADATA"

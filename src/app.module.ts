@@ -12,6 +12,7 @@ import { HomeController } from './home/home.controller.js';
     DefaultsModule.register({
       assets: false,
       sentry: true,
+      cachedPaths: ['/', '/og.png'],
     }),
     GithubModule,
     RailcrossModule,
