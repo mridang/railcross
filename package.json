@@ -49,6 +49,8 @@
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4",
+    "@emnapi/core": "^1.11.3",
+    "@emnapi/runtime": "^1.11.3",
     "@eslint/compat": "^2.1.0",
     "@jest/globals": "^30.4.1",
     "@mridang/eslint-defaults": "^1.6.3",
