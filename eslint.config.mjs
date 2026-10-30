@@ -8,8 +8,14 @@ export default [
     // public/ holds committed static assets (favicons, fonts) and the generated
     // stylesheet, worker.mjs is the wrangler entry that imports the compiled
     // dist (generated post-build), and worker-env.d.ts is an ambient types
-    // file — none are source to lint.
-    ignores: ['public/**', 'worker.mjs', 'src/worker-env.d.ts'],
+    // file — none are source to lint. wrangler.jsonc is JSONC (comments and
+    // trailing commas) which the preset's strict JSON language rejects.
+    ignores: [
+      'public/**',
+      'worker.mjs',
+      'src/worker-env.d.ts',
+      'wrangler.jsonc',
+    ],
   },
   ...mridang.configs.recommended,
   {
