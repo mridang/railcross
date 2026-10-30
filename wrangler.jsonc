@@ -95,4 +95,20 @@
     "SERVICE_VERSION": "cloudflare",
     "DOMAIN_NAME": "railcross.apps.mrida.ng",
   },
+  // Worker secrets (set via `wrangler secret put`), not plaintext vars. A deploy
+  // fails if one is missing, and only these names are typed and loaded from .env.
+  // SENTRY_DSN is also a secret but optional (Sentry stays off without it), so it is
+  // not listed.
+  "secrets": {
+    "required": [
+      "GITHUB_APP_ID",
+      "GITHUB_CLIENT_ID",
+      "GITHUB_CLIENT_SECRET",
+      "GITHUB_PRIVATE_KEY",
+      "GITHUB_WEBHOOK_SECRET",
+    ],
+  },
+  // Uploads source maps with the Worker so stack traces in logs and traces
+  // point at the original source.
+  "upload_source_maps": true,
 }
