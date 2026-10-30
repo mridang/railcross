@@ -19,7 +19,7 @@
     "cypress:run": "cypress run --browser chrome"
   },
   "dependencies": {
-    "@mridang/nestjs-defaults": "^3.1.0",
+    "@mridang/nestjs-defaults": "^3.2.0",
     "@mridang/nestjs-platform-cloudflare": "^1.2.0",
     "@nestjs/common": "^11.1.26",
     "@nestjs/config": "^4.0.4",
