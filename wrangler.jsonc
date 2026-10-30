@@ -1,12 +1,57 @@
 {
+  "$schema": "node_modules/wrangler/config-schema.json",
   "name": "railcrossapp",
   "main": "worker.mjs",
   "account_id": "779037e608ab1102679ef8b1bd499d49",
   "compatibility_date": "2025-09-15",
   "compatibility_flags": ["nodejs_compat"],
+  // Wrangler's own usage telemetry for this project (anonymous CLI usage; the
+  // setting overrides each developer's personal preference).
+  "send_metrics": true,
+  // Workers Observability, everything on at 100% (the volume is tiny and the data
+  // is what debugging needs): the app's own log lines, the automatic per-request
+  // invocation logs, distributed traces, and real-time Issues. Query strings are
+  // stripped from the URLs in logs and traces, because they can carry search
+  // text, addresses and sign-in codes.
+  "observability": {
+    "enabled": true,
+    "head_sampling_rate": 1,
+    "redact_query_string": true,
+    "issues": { "enabled": true },
+    "logs": {
+      "enabled": true,
+      "head_sampling_rate": 1,
+      "invocation_logs": true,
+    },
+    "traces": {
+      "enabled": true,
+      "head_sampling_rate": 1,
+    },
+  },
   // Custom domain on the Cloudflare-managed `mrida.ng` zone. Cloudflare provisions
-  // the DNS record and TLS certificate automatically on deploy.
+  // the DNS record and TLS certificate automatically on deploy. The workers.dev
+  // subdomain is disabled so the canonical URL is the one we control.
+  "workers_dev": false,
   "routes": [{ "pattern": "railcross.apps.mrida.ng", "custom_domain": true }],
+  // Serve the static files in public/ (favicons, fonts, vendored JS) via the
+  // Workers assets binding. Non-asset paths fall through to the NestJS worker.
+  "assets": {
+    "directory": "./public",
+  },
+  // The deployed version id keys the edge cache, so a deploy never serves old copies.
+  "version_metadata": {
+    "binding": "CF_VERSION_METADATA",
+  },
+  // Per-address request limit (the library's rate limiter, binding RL_SITE). The
+  // webhook route /hook is never counted. namespace_id is account-wide, so it is
+  // unique to this Worker.
+  "ratelimits": [
+    {
+      "name": "RL_SITE",
+      "namespace_id": "7401",
+      "simple": { "limit": 300, "period": 60 },
+    },
+  ],
   "alias": {
     // This app boots on the fetch-native CloudflareAdapter, never Express. NestFactory
     // still statically `require`s @nestjs/platform-express for its default-adapter
@@ -49,38 +94,5 @@
     "SERVICE_NAME": "railcross",
     "SERVICE_VERSION": "cloudflare",
     "DOMAIN_NAME": "railcross.apps.mrida.ng",
-  },
-  // Workers Observability: capture console logs (the winston output) and per-request
-  // invocation traces (status, duration, CPU), queryable in the dashboard. Sample
-  // 100% of requests — traffic is low enough that full fidelity is cheap.
-  "observability": {
-    "enabled": true,
-    "head_sampling_rate": 1,
-    // Distributed tracing (spans): the internal timeline of each request — subrequests
-    // and binding calls (KV, Durable Objects, the GitHub API) — persisted to the
-    // dashboard alongside logs. Separate switch from logs above.
-    "traces": {
-      "enabled": true,
-      "head_sampling_rate": 1,
-    },
-  },
-  // Serve the static files in public/ (favicons, fonts, vendored JS) via the
-  // Workers assets binding. Non-asset paths fall through to the NestJS worker.
-  "assets": {
-    "directory": "./public",
-  },
-  // Per-address request limit (the library's rate limiter, binding RL_SITE). The
-  // webhook route /hook is never counted. namespace_id is account-wide, so it is
-  // unique to this Worker.
-  "ratelimits": [
-    {
-      "name": "RL_SITE",
-      "namespace_id": "7401",
-      "simple": { "limit": 300, "period": 60 },
-    },
-  ],
-  // The deployed version id keys the edge cache, so a deploy never serves old copies.
-  "version_metadata": {
-    "binding": "CF_VERSION_METADATA",
   },
 }
