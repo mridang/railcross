@@ -13,7 +13,7 @@
  */
 
 /** What a span attribute may hold. */
-export type ContextValue = string | number | boolean;
+type ContextValue = string | number | boolean;
 
 /** Attributes to set; those left undefined are dropped. */
 export type ContextAttributes = Readonly<
