@@ -78,6 +78,7 @@
     "wrangler": "^4.156.0"
   },
   "overrides": {
+    "multer": "2.5.0",
     "wrangler": {
       "@cloudflare/workers-types": "$@cloudflare/workers-types"
     }
