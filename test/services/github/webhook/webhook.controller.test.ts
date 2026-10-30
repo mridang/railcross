@@ -1,12 +1,11 @@
-import { jest, expect } from '@jest/globals';
+import { expect } from '@jest/globals';
 import request from 'supertest';
 import { HttpStatus } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { installFakeTracing } from '../../../utils/observability/fake-tracing.js';
 import { cloudflareWorkersStub } from '../../../helpers/cloudflare-workers-stub.js';
 
-jest.unstable_mockModule('cloudflare:workers', cloudflareWorkersStub, {
-  virtual: true,
-});
+const fake = installFakeTracing(cloudflareWorkersStub);
 
 const { End2EndModule } = await import('../../../e2e.module.js');
 const { AppModule } = await import('../../../../src/app.module.js');
@@ -28,6 +27,82 @@ describe('webhook.controller tests', () => {
 
   afterAll(async () => {
     await testModule.afterAll();
+  });
+
+  beforeEach(() => {
+    for (const key of Object.keys(fake.attributes)) {
+      delete fake.attributes[key];
+    }
+  });
+
+  test('should put the event, delivery and numeric ids on the span', async () => {
+    const webhookSecret = await testModule.app
+      .get(ConfigService)
+      .getOrThrow('GITHUB_WEBHOOK_SECRET');
+    const body = JSON.stringify({
+      action: 'created',
+      installation: { id: 77, node_id: 'not-kept' },
+      repository: { id: 123, name: 'Hello-World' },
+    });
+
+    await request(testModule.app.getHttpServer())
+      .post('/hook')
+      .set({
+        'x-github-delivery': 'delivery-1',
+        'x-github-event': 'installation',
+        'x-hub-signature-256': `sha256=${hmacSha256(webhookSecret, body)}`,
+        'Content-Type': 'application/json',
+      })
+      .send(body)
+      .expect(HttpStatus.CREATED);
+
+    expect(fake.attributes).toEqual({
+      'webhook.event': 'installation',
+      'webhook.delivery_id': 'delivery-1',
+      'github.installation_id': 77,
+      'github.repository_id': 123,
+    });
+  });
+
+  test('should drop ids that are not numbers', async () => {
+    const webhookSecret = await testModule.app
+      .get(ConfigService)
+      .getOrThrow('GITHUB_WEBHOOK_SECRET');
+    const body = JSON.stringify({ repository: { id: 'abc' } });
+
+    await request(testModule.app.getHttpServer())
+      .post('/hook')
+      .set({
+        'x-github-delivery': 'delivery-2',
+        'x-github-event': 'ping',
+        'x-hub-signature-256': `sha256=${hmacSha256(webhookSecret, body)}`,
+        'Content-Type': 'application/json',
+      })
+      .send(body)
+      .expect(HttpStatus.CREATED);
+
+    expect(fake.attributes).toEqual({
+      'webhook.event': 'ping',
+      'webhook.delivery_id': 'delivery-2',
+    });
+  });
+
+  test('should still tag the event when the signature is bad', async () => {
+    await request(testModule.app.getHttpServer())
+      .post('/hook')
+      .set({
+        'x-github-delivery': 'delivery-3',
+        'x-github-event': 'push',
+        'x-hub-signature-256': 'sha256=bad',
+        'Content-Type': 'application/json',
+      })
+      .send('{"repository":{"id":9}}')
+      .expect(HttpStatus.BAD_REQUEST);
+
+    expect(fake.attributes).toEqual({
+      'webhook.event': 'push',
+      'webhook.delivery_id': 'delivery-3',
+    });
   });
 
   test('should return 201 when the headers all valid', async () => {

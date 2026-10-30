@@ -6,6 +6,7 @@ import type {
 } from '@cloudflare/workers-types';
 import { nextOccurrence } from '../../scheduler/schedule-utils.js';
 import type { ScheduleConfig } from '../../scheduler/schedule-utils.js';
+import { setErrorContext } from '../../utils/observability/context.js';
 import type { ScheduleAlarm } from '../../scheduler/schedule-alarm.js';
 
 /**
@@ -140,6 +141,7 @@ export default class SchedulerService {
    * always reflect the current configuration.
    */
   async reRegisterAll(): Promise<void> {
+    await setErrorContext({ 'job.name': 'schedule.reregister' });
     let cursor: string | undefined = undefined;
     do {
       const page: KVNamespaceListResult<unknown, string> = await this.kv.list({

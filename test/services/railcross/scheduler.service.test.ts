@@ -3,8 +3,11 @@ import type {
   KVNamespace,
   DurableObjectNamespace,
 } from '@cloudflare/workers-types';
+import { installFakeTracing } from '../../utils/observability/fake-tracing.js';
 import SchedulerService from '../../../src/services/railcross/scheduler.service.js';
 import type { ScheduleAlarm } from '../../../src/scheduler/schedule-alarm.js';
+
+const fake = installFakeTracing();
 
 class FakeKv {
   readonly store = new Map<string, string>();
@@ -133,5 +136,13 @@ describe('SchedulerService (KV + Durable Object alarms)', () => {
       '1.2.locker',
       '1.3.unlocker',
     ]);
+  });
+
+  test('reRegisterAll names the job on the span', async () => {
+    delete fake.attributes['job.name'];
+
+    await service.reRegisterAll();
+
+    expect(fake.attributes['job.name']).toBe('schedule.reregister');
   });
 });

@@ -2,6 +2,7 @@ import { DurableObject } from 'cloudflare:workers';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from '../app.module.js';
 import ProtectionService from '../services/railcross/protection.service.js';
+import { setErrorContext } from '../utils/observability/context.js';
 import { ScheduleConfig, nextOccurrence } from './schedule-utils.js';
 
 /**
@@ -41,6 +42,7 @@ export class ScheduleAlarm extends DurableObject {
    * alarms is ever missed.
    */
   async alarm(): Promise<void> {
+    await setErrorContext({ 'job.name': 'schedule.alarm' });
     const config = await this.ctx.storage.get<ScheduleConfig>('config');
     if (!config) {
       return;
