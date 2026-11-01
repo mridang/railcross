@@ -16,16 +16,40 @@ import RailcrossService from './railcross.service.js';
 import type { Request } from '@mridang/nestjs-defaults';
 import { Octokit } from '@octokit/rest';
 import { OctokitImpl } from '../github/octokit/types.js';
-import { Expose, Type } from 'class-transformer';
+import { Expose, Transform, Type } from 'class-transformer';
 import setupView from './setup.view.js';
 
+/**
+ * The hour of day a time field names: the form's clock time on the hour
+ * ("22:00") or a plain hour ("22"). Anything else, a time with minutes
+ * included, comes through as NaN and fails the integer check.
+ */
+export function hourOf(value: unknown): unknown {
+  if (typeof value !== 'string') {
+    return value;
+  }
+  if (value.trim() === '') {
+    return Number.NaN;
+  }
+  const clock = /^(\d{1,2}):00(?::00)?$/.exec(value);
+  return clock ? Number(clock[1]) : Number(value);
+}
+
 class ScheduleDto {
+  // Read from the raw body: by the time `value` arrives, implicit conversion to
+  // a number has already turned "22:00" into NaN.
+  @Transform(({ obj }: { obj: Record<string, unknown> }) =>
+    hourOf(obj['lock_time']),
+  )
   @IsInt()
   @Min(0)
   @Max(23)
   @Expose({ name: 'lock_time' })
   lockTime!: number;
 
+  @Transform(({ obj }: { obj: Record<string, unknown> }) =>
+    hourOf(obj['unlock_time']),
+  )
   @IsInt()
   @Min(0)
   @Max(23)

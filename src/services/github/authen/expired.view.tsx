@@ -23,7 +23,12 @@ const ExpiredPage: FunctionalComponent = () => {
                   <div className="p-8">
                     <div className="space-y-4">
                       <div className="w-16">
-                        <img src="/static/icon.svg" alt="Logo" />
+                        <img
+                          src="/static/icon.svg"
+                          alt="Logo"
+                          width="64"
+                          height="64"
+                        />
                       </div>
                       <h2 className="mb-8 text-2xl font-bold text-cyan-900 dark:text-white">
                         Your session expired.

@@ -1,8 +1,9 @@
-import { jest, expect } from '@jest/globals';
+import { jest, expect, test } from '@jest/globals';
 import { HttpStatus } from '@nestjs/common';
 import request from 'supertest';
 import { JwtService } from '@nestjs/jwt';
 import { cloudflareWorkersStub } from '../../helpers/cloudflare-workers-stub.js';
+import { hourOf } from '../../../src/services/railcross/setup.controller.js';
 
 jest.unstable_mockModule('cloudflare:workers', cloudflareWorkersStub, {
   virtual: true,
@@ -105,6 +106,58 @@ describe('setup.controller test', () => {
     );
   });
 
+  test("/POST setup reads the form's clock times as hours of the day", async () => {
+    const jwtService = testModule.app.get(JwtService);
+    railcrossServiceMock.updateSchedules.mockResolvedValue(null as never);
+
+    await request(testModule.app.getHttpServer())
+      .post('/app/setup')
+      .set(
+        'Cookie',
+        `jwt=${jwtService.sign(
+          { installationIds: [1, 2], accessToken: 'token' },
+          { subject: 'mridang', issuer: 'jest', audience: ['mridang/testing'] },
+        )}`,
+      )
+      .send({
+        lock_time: '22:00',
+        unlock_time: '02:00',
+        timezone: 'Asia/Bangkok',
+      })
+      .expect(HttpStatus.FOUND);
+
+    expect(railcrossServiceMock.updateSchedules).toHaveBeenCalledWith(
+      expect.any(Object),
+      undefined,
+      22,
+      2,
+      'Asia/Bangkok',
+    );
+  });
+
+  test('/POST setup refuses a clock time that is not on the hour', async () => {
+    const jwtService = testModule.app.get(JwtService);
+    railcrossServiceMock.updateSchedules.mockClear();
+
+    await request(testModule.app.getHttpServer())
+      .post('/app/setup')
+      .set(
+        'Cookie',
+        `jwt=${jwtService.sign(
+          { installationIds: [1, 2], accessToken: 'token' },
+          { subject: 'mridang', issuer: 'jest', audience: ['mridang/testing'] },
+        )}`,
+      )
+      .send({
+        lock_time: '22:30',
+        unlock_time: '02:00',
+        timezone: 'Asia/Bangkok',
+      })
+      .expect(HttpStatus.BAD_REQUEST);
+
+    expect(railcrossServiceMock.updateSchedules).not.toHaveBeenCalled();
+  });
+
   test('/POST setup with invalid body should return bad request and not invoke updateSchedules', async () => {
     const jwtService = testModule.app.get(JwtService);
     const scheduleDto = {
@@ -133,5 +186,20 @@ describe('setup.controller test', () => {
       .expect(HttpStatus.BAD_REQUEST);
 
     expect(railcrossServiceMock.updateSchedules).not.toHaveBeenCalled();
+  });
+});
+
+describe('hourOf', () => {
+  test.each([
+    ['22:00', 22],
+    ['02:00:00', 2],
+    ['7', 7],
+    [5, 5],
+  ])('reads %p as hour %p', (value, hour) => {
+    expect(hourOf(value)).toBe(hour);
+  });
+
+  test.each(['22:30', '', 'late'])('reads %p as not an hour', (value) => {
+    expect(hourOf(value)).toBeNaN();
   });
 });
