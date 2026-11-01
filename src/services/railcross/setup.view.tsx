@@ -1,5 +1,6 @@
 import { render } from '@mridang/nestjs-defaults';
 import type { FunctionalComponent } from '@mridang/nestjs-defaults';
+import { formatHour } from '../../utils/intl.js';
 
 const SetupView: FunctionalComponent<{
   schedules: {
@@ -28,7 +29,7 @@ const SetupView: FunctionalComponent<{
             <select name="lock_time" id="lock-time">
               {Array.from({ length: 24 }, (_, hour) => (
                 <option key={hour} value={hour}>
-                  {hour.toString().padStart(2, '0')}:00
+                  {formatHour(hour)}
                 </option>
               ))}
             </select>
@@ -37,7 +38,7 @@ const SetupView: FunctionalComponent<{
             <select name="unlock_time" id="unlock-time">
               {Array.from({ length: 24 }, (_, hour) => (
                 <option key={hour} value={hour}>
-                  {hour.toString().padStart(2, '0')}:00
+                  {formatHour(hour)}
                 </option>
               ))}
             </select>
