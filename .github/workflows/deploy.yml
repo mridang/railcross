@@ -20,6 +20,7 @@ jobs:
   deploy-app:
     environment:
       name: production
+      url: https://railcross.apps.mrida.ng
     runs-on: ubuntu-latest
 
     steps:
