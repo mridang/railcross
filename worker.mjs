@@ -4,6 +4,8 @@ import { AppModule } from './dist/app.module.js';
 import SchedulerService from './dist/services/railcross/scheduler.service.js';
 import { configure } from '@mridang/nestjs-defaults';
 import * as Sentry from '@sentry/cloudflare';
+import { corsOptions } from './dist/utils/cors.js';
+import { permissionsPolicy } from './dist/utils/permissions-policy.js';
 
 // Boot once at top level on the fetch-native Cloudflare adapter — no Express,
 // no node:http, no port. init() runs first with the no-op logger so Nest's
@@ -18,6 +20,11 @@ const app = await NestFactory.create(AppModule, adapter, {
 });
 await app.init();
 configure(app);
+// configure() reflects any origin with credentials; replace it with the app's own policy.
+app.enableCors(corsOptions);
+// The defaults library sends a six-feature Permissions-Policy; send the full one. It is
+// mounted last so its header wins.
+adapter.useExpressMiddleware(permissionsPolicy);
 
 // Wrap the worker entry with Sentry so both the fetch and the scheduled (cron)
 // handlers run inside a request scope: unhandled errors are captured, exceptions
