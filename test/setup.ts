@@ -10,7 +10,7 @@ config();
 // Hermetic defaults so the app boots in tests (and in CI, which has no .env)
 // without real credentials. The private key is generated at runtime, so no key
 // material is committed to the repository.
-// eslint-disable-next-line n/no-sync -- sync is fine in a script/bootstrap
+// eslint-disable-next-line n/no-sync -- jest globalSetup is loaded by native Node TS stripping, which cannot resolve a shared async helper (.js maps to no file, .ts import fails tsc TS5097 without allowImportingTsExtensions)
 const { privateKey } = generateKeyPairSync('rsa', {
   modulusLength: 2048,
   publicKeyEncoding: { type: 'spki', format: 'pem' },
