@@ -1,3 +1,6 @@
+/**
+ * @file Tests for the GitHub webhook controller.
+ */
 import { expect } from '@jest/globals';
 import request from 'supertest';
 import { HttpStatus } from '@nestjs/common';
@@ -20,6 +23,7 @@ const testModule = new End2EndModule({
   ],
 });
 
+// eslint-disable-next-line sonarjs/max-lines-per-function -- one describe block holds the whole suite and shares one fixture
 describe('webhook.controller tests', () => {
   beforeAll(async () => {
     await testModule.beforeAll();
@@ -143,6 +147,7 @@ describe('webhook.controller tests', () => {
       });
   });
 
+  // eslint-disable-next-line sonarjs/assertions-in-tests -- the supertest .expect() chain is the assertion
   test('should return 400 without x-github-delivery header', async () => {
     const webhookSecret = await testModule.app
       .get(ConfigService)
@@ -170,6 +175,7 @@ describe('webhook.controller tests', () => {
       .expect(HttpStatus.BAD_REQUEST);
   });
 
+  // eslint-disable-next-line sonarjs/assertions-in-tests -- the supertest .expect() chain is the assertion
   test('should return 400 without x-github-event header', async () => {
     const webhookSecret = await testModule.app
       .get(ConfigService)
@@ -197,6 +203,7 @@ describe('webhook.controller tests', () => {
       .expect(HttpStatus.BAD_REQUEST);
   });
 
+  // eslint-disable-next-line sonarjs/assertions-in-tests -- the supertest .expect() chain is the assertion
   test('should return 400 without x-hub-signature-256 header', async () => {
     const webhookSecret = await testModule.app
       .get(ConfigService)
@@ -225,6 +232,7 @@ describe('webhook.controller tests', () => {
       .expect(HttpStatus.BAD_REQUEST);
   });
 
+  // eslint-disable-next-line sonarjs/assertions-in-tests -- the supertest .expect() chain is the assertion
   test('that pull_request.closed event are handled', async () => {
     const webhookSecret = await testModule.app
       .get(ConfigService)
@@ -408,6 +416,7 @@ describe('webhook.controller tests', () => {
       .expect('');
   });
 
+  // eslint-disable-next-line sonarjs/assertions-in-tests -- the supertest .expect() chain is the assertion
   test('that installation.created events are handled', async () => {
     const webhookSecret = await testModule.app
       .get(ConfigService)
@@ -515,6 +524,7 @@ describe('webhook.controller tests', () => {
       .expect('');
   });
 
+  // eslint-disable-next-line sonarjs/assertions-in-tests -- the supertest .expect() chain is the assertion
   test('that installation_repositories.added event are handled', async () => {
     const webhookSecret = await testModule.app
       .get(ConfigService)
@@ -624,6 +634,7 @@ describe('webhook.controller tests', () => {
       .expect('');
   });
 
+  // eslint-disable-next-line sonarjs/assertions-in-tests -- the supertest .expect() chain is the assertion
   test('that installation_repositories.removed event are handled', async () => {
     const webhookSecret = await testModule.app
       .get(ConfigService)

@@ -1,3 +1,6 @@
+/**
+ * @file Fake Workers tracing API that records attributes for observability tests.
+ */
 import { jest } from '@jest/globals';
 
 /** What a fake span was told. */
@@ -13,9 +16,17 @@ export interface FakeTracing {
 }
 
 /**
- * Stand in for `cloudflare:workers`, which exists only in the Workers runtime.
- * Pass `extra` to add other exports of the module. Call it before importing the code under test; the returned object shows what
+ * Stands in for `cloudflare:workers`, which exists only in the Workers runtime.
+ *
+ * Call it before importing the code under test. The returned object shows what
  * that code put on the active span.
+ * @param extra - Returns other exports to add to the mocked module.
+ * @returns The fake span state that a test can inspect and change.
+ * @example
+ * ```ts
+ * const tracing = installFakeTracing();
+ * tracing.active = false;
+ * ```
  */
 export function installFakeTracing(
   extra: () => Record<string, unknown> = () => ({}),

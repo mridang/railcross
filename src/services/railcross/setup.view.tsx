@@ -1,3 +1,6 @@
+/**
+ * @file Setup page that lists repositories with their lock and unlock times and a form to change them.
+ */
 import { render } from '@mridang/nestjs-defaults';
 import type { FunctionalComponent } from '@mridang/nestjs-defaults';
 
@@ -14,7 +17,7 @@ const SetupView: FunctionalComponent<{
     <html lang="en">
       <head>
         <link rel="icon" type="image/x-icon" href="/static/favicon.ico" />
-        <meta charset="UTF-8" />
+        <meta charset="utf-8" />
         <meta name="robots" content="noindex, nofollow" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <title>Log in</title>
@@ -87,7 +90,16 @@ const SetupView: FunctionalComponent<{
   );
 };
 
-export default (
+/**
+ * Renders the setup page for the given repository schedules.
+ * @param schedules - The repositories to list, each with its optional lock and unlock times.
+ * @returns The rendered page markup.
+ * @example
+ * ```ts
+ * renderSetupPage([{ installationId: 1, repoId: 2, repoName: 'octo/repo', lockTime: 'cron(0 7 ? * * *) Europe/London' }]);
+ * ```
+ */
+const renderSetupPage = (
   schedules: {
     installationId: number;
     repoId: number;
@@ -96,3 +108,5 @@ export default (
     unlockTime?: string;
   }[],
 ) => render(<SetupView schedules={schedules} />);
+
+export default renderSetupPage;

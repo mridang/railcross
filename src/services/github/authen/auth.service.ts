@@ -1,3 +1,6 @@
+/**
+ * @file Service that exchanges GitHub OAuth codes for tokens and reads the signed-in user.
+ */
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { type Fetch } from '@octokit/types';
 import { AuthConfig } from './auth.interfaces.js';

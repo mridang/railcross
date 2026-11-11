@@ -1,3 +1,6 @@
+/**
+ * @file Durable Object that holds one schedule alarm and runs its lock or unlock task when it fires.
+ */
 import { DurableObject } from 'cloudflare:workers';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from '../app.module.js';
@@ -18,6 +21,10 @@ export class ScheduleAlarm extends DurableObject {
    * Arm the alarm to fire at a given instant for a given schedule.
    * @param fireAtMs - The instant to fire at, in epoch milliseconds.
    * @param config - The schedule this object should act on when it fires.
+   * @example
+   * ```ts
+   * await stub.arm(Date.parse('2026-11-11T07:00:00Z'), config);
+   * ```
    */
   async arm(fireAtMs: number, config: ScheduleConfig): Promise<void> {
     await this.ctx.storage.put('config', config);
@@ -26,6 +33,10 @@ export class ScheduleAlarm extends DurableObject {
 
   /**
    * Cancel any pending alarm and drop the stored schedule.
+   * @example
+   * ```ts
+   * await stub.disarm();
+   * ```
    */
   async disarm(): Promise<void> {
     await this.ctx.storage.deleteAlarm();
@@ -39,6 +50,10 @@ export class ScheduleAlarm extends DurableObject {
    * {@link ProtectionService} rather than duplicating the GitHub logic. The
    * re-arm is a backstop in case the daily cron that normally re-registers
    * alarms is ever missed.
+   * @example
+   * ```ts
+   * await stub.alarm();
+   * ```
    */
   async alarm(): Promise<void> {
     await setErrorContext({ 'job.name': 'schedule.alarm' });

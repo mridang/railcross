@@ -1,3 +1,6 @@
+/**
+ * @file HTTP routes for GitHub sign-in, the OAuth callback and re-authentication.
+ */
 import {
   Controller,
   Get,

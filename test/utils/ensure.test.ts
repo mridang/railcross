@@ -1,3 +1,6 @@
+/**
+ * @file Tests for the ensure helper.
+ */
 import { expect } from '@jest/globals';
 import { ensure } from '../../src/utils/ensure.js';
 

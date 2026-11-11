@@ -1,9 +1,15 @@
+/**
+ * @file Tests for the repository protection service.
+ */
+import { expect } from '@jest/globals';
 import { Octokit } from '@octokit/rest';
 import ProtectionService from '../../../src/services/railcross/protection.service.js';
 import nock from 'nock';
 import { HttpStatus } from '@nestjs/common';
 
+// eslint-disable-next-line sonarjs/max-lines-per-function -- one describe block holds the whole suite and shares one fixture
 describe('protection.service test', () => {
+  // eslint-disable-next-line sonarjs/max-lines-per-function -- one describe block holds the whole suite and shares one fixture
   beforeEach(() => {
     nock('https://api.github.com')
       .persist()
@@ -415,7 +421,9 @@ describe('protection.service test', () => {
       });
     });
 
-    await protectionService.toggleProtection('mridang/testing', 0, true);
+    expect(
+      await protectionService.toggleProtection('mridang/testing', 0, true),
+    ).toBeUndefined();
   });
 
   test('that branches with existing rules get protected"', async () => {
@@ -428,6 +436,8 @@ describe('protection.service test', () => {
       });
     });
 
-    await protectionService.toggleProtection('mridang/foobar', 0, false);
+    expect(
+      await protectionService.toggleProtection('mridang/foobar', 0, false),
+    ).toBeUndefined();
   });
 });

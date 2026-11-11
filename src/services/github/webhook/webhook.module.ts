@@ -1,3 +1,6 @@
+/**
+ * @file Nest module that registers the GitHub webhook controller and handler.
+ */
 import { DynamicModule, Module } from '@nestjs/common';
 import { WebhookController } from './webhook.controller.js';
 import {

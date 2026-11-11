@@ -1,3 +1,6 @@
+/**
+ * @file Tests for the authentication middleware.
+ */
 import { jest, expect } from '@jest/globals';
 import type { NextFunction, Request, Response } from '@mridang/nestjs-defaults';
 import { AuthMiddleware } from '../../../../src/services/github/authen/auth.middleware.js';

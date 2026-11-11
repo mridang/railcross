@@ -1,3 +1,6 @@
+/**
+ * @file Tests for the Permissions-Policy header middleware.
+ */
 import { expect, jest } from '@jest/globals';
 import type { NextFunction, Request, Response } from 'express';
 import {

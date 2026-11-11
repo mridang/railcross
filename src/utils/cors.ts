@@ -1,4 +1,8 @@
 /**
+ * @file CORS policy that denies cross-origin browser access to the application.
+ */
+
+/**
  * CORS policy for the whole app. Railcross is server-rendered HTML plus a GitHub
  * webhook (server to server), so no other website needs to read its responses from
  * a browser. Every cross-origin origin is denied and credentials are never allowed,

@@ -1,4 +1,8 @@
 /**
+ * @file Holds the HTML string of the marketing home page.
+ */
+
+/**
  * The marketing home page served at `GET /`.
  *
  * Kept as a single self-contained HTML string so the Worker can return it

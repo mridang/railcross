@@ -1,4 +1,8 @@
 /**
+ * @file Holds the base64 encoded Open Graph share image.
+ */
+
+/**
  * The 1200×630 Open Graph / social-share card served at `GET /og.png`.
  *
  * Stored as a base64 string so the Worker can return the bytes without a

@@ -1,3 +1,6 @@
+/**
+ * @file Stores lock and unlock schedules in Workers KV and arms a Durable Object alarm for each.
+ */
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import type {
   KVNamespace,
@@ -38,11 +41,15 @@ export default class SchedulerService {
   }
 
   /**
-   * Build the canonical key for a schedule.
+   * Builds the canonical KV key for a schedule.
    * @param installationId - The GitHub App installation id.
    * @param repoId - The repository id.
    * @param taskName - Either `locker` or `unlocker`.
    * @returns The `${installationId}.${repoId}.${taskName}` key.
+   * @example
+   * ```ts
+   * this.keyFor(12, 34, 'locker'); // '12.34.locker'
+   * ```
    */
   private keyFor(
     installationId: number,
@@ -53,11 +60,16 @@ export default class SchedulerService {
   }
 
   /**
-   * Look up a single schedule.
+   * Looks up a single schedule.
    * @param installationId - The GitHub App installation id.
    * @param repoId - The repository id.
    * @param taskName - Either `locker` or `unlocker`.
    * @returns The schedule summary, or `null` when none is configured.
+   * @example
+   * ```ts
+   * const summary = await scheduler.getSchedule(12, 34, 'locker');
+   * // { ScheduleExpression: 'cron(0 7 ? * * *)', ScheduleExpressionTimezone: 'Europe/London' }
+   * ```
    */
   async getSchedule(
     installationId: number,
@@ -78,13 +90,17 @@ export default class SchedulerService {
   }
 
   /**
-   * Persist a schedule and arm its Durable Object alarm.
+   * Persists a schedule and arms its Durable Object alarm.
    * @param installationId - The GitHub App installation id.
    * @param repoId - The repository id.
    * @param repoName - The repository's full name (`owner/repo`).
    * @param hour - The local hour-of-day (0–23) the task fires at.
    * @param timeZone - The IANA timezone the hour is expressed in.
    * @param taskName - Either `locker` or `unlocker`.
+   * @example
+   * ```ts
+   * await scheduler.createSchedule(12, 34, 'octo/repo', 7, 'Europe/London', 'locker');
+   * ```
    */
   async createSchedule(
     installationId: number,
@@ -108,16 +124,21 @@ export default class SchedulerService {
   }
 
   /**
-   * Delete every schedule under an installation, optionally scoped to a repo.
+   * Deletes every schedule under an installation, optionally scoped to a repo.
    * @param installationId - The GitHub App installation id.
    * @param repoId - When given, only that repository's schedules are removed.
+   * @example
+   * ```ts
+   * await scheduler.deleteSchedules(12, 34);
+   * ```
    */
   async deleteSchedules(
     installationId: number,
     repoId?: number,
   ): Promise<void> {
-    const prefix = `${installationId}.${repoId === undefined ? '' : `${repoId}.`}`;
-    let cursor: string | undefined = undefined;
+    const repoPart = repoId === undefined ? '' : `${repoId}.`;
+    const prefix = `${installationId}.${repoPart}`;
+    let cursor: string | undefined;
     do {
       const page: KVNamespaceListResult<unknown, string> = await this.kv.list({
         prefix,
@@ -133,12 +154,17 @@ export default class SchedulerService {
   }
 
   /**
-   * Re-arm every stored schedule from KV. Invoked by the daily cron so alarms
-   * always reflect the current configuration.
+   * Re-arms every stored schedule from KV.
+   *
+   * Invoked by the daily cron so alarms always reflect the current configuration.
+   * @example
+   * ```ts
+   * await scheduler.reRegisterAll();
+   * ```
    */
   async reRegisterAll(): Promise<void> {
     await setErrorContext({ 'job.name': 'schedule.reregister' });
-    let cursor: string | undefined = undefined;
+    let cursor: string | undefined;
     do {
       const page: KVNamespaceListResult<unknown, string> = await this.kv.list({
         cursor,
@@ -154,9 +180,13 @@ export default class SchedulerService {
   }
 
   /**
-   * Arm the Durable Object alarm for a schedule at its next occurrence.
+   * Arms the Durable Object alarm for a schedule at its next occurrence.
    * @param key - The schedule key, used as the Durable Object name.
    * @param config - The schedule to act on.
+   * @example
+   * ```ts
+   * await this.arm('12.34.locker', config);
+   * ```
    */
   private async arm(key: string, config: ScheduleConfig): Promise<void> {
     const fireAt = nextOccurrence(config.hour, config.timeZone, Date.now());
@@ -165,8 +195,12 @@ export default class SchedulerService {
   }
 
   /**
-   * Cancel the Durable Object alarm for a schedule.
+   * Cancels the Durable Object alarm for a schedule.
    * @param key - The schedule key, used as the Durable Object name.
+   * @example
+   * ```ts
+   * await this.disarm('12.34.locker');
+   * ```
    */
   private async disarm(key: string): Promise<void> {
     const stub = this.alarms.get(this.alarms.idFromName(key));

@@ -1,3 +1,6 @@
+/**
+ * @file Page shown when the GitHub login session has expired, with a button to log in again.
+ */
 import { render } from '@mridang/nestjs-defaults';
 import type { FunctionalComponent } from '@mridang/nestjs-defaults';
 
@@ -6,7 +9,7 @@ const ExpiredPage: FunctionalComponent = () => {
     <html lang="en">
       <head>
         <link rel="icon" type="image/x-icon" href="/static/favicon.ico" />
-        <meta charset="UTF-8" />
+        <meta charset="utf-8" />
         <meta name="robots" content="noindex, nofollow" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <title>Log in</title>
@@ -46,6 +49,7 @@ const ExpiredPage: FunctionalComponent = () => {
                           <div className="relative flex items-center justify-center space-x-4">
                             <svg
                               xmlns="http://www.w3.org/2000/svg"
+                              aria-hidden="true"
                               fill="currentColor"
                               className="absolute left-0 w-5 text-gray-700"
                               viewBox="0 0 16 16"
@@ -81,4 +85,14 @@ const ExpiredPage: FunctionalComponent = () => {
   );
 };
 
-export default () => render(<ExpiredPage />);
+/**
+ * Renders the session-expired page to HTML.
+ * @returns The rendered page markup.
+ * @example
+ * ```ts
+ * return renderExpiredPage();
+ * ```
+ */
+const renderExpiredPage = () => render(<ExpiredPage />);
+
+export default renderExpiredPage;

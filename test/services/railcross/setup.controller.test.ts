@@ -1,3 +1,6 @@
+/**
+ * @file Tests for the setup page controller.
+ */
 import { jest, expect, test } from '@jest/globals';
 import { HttpStatus } from '@nestjs/common';
 import request from 'supertest';
@@ -44,6 +47,7 @@ describe('setup.controller test', () => {
     await testModule.afterAll();
   });
 
+  // eslint-disable-next-line sonarjs/assertions-in-tests -- the supertest .expect() chain is the assertion
   test('that the setup page renders correctly', async () => {
     const jwtService = testModule.app.get(JwtService);
     railcrossServiceMock.listSchedules.mockResolvedValue([] as never);

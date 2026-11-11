@@ -1,3 +1,6 @@
+/**
+ * @file Nest module that provides Octokit clients for the GitHub App and signed-in users.
+ */
 import { FetchImpl } from '@mridang/nestjs-defaults';
 import { ConfigService, ConfigModule } from '@nestjs/config';
 import { createAppAuth } from '@octokit/auth-app';

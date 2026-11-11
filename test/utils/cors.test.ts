@@ -1,3 +1,6 @@
+/**
+ * @file Tests for the CORS policy.
+ */
 import { expect } from '@jest/globals';
 import { CloudflareAdapter } from '@mridang/nestjs-platform-cloudflare';
 import { corsOptions } from '../../src/utils/cors.js';

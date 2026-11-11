@@ -1,4 +1,8 @@
 /**
+ * @file Shared stub for the cloudflare:workers runtime module used by the test suite.
+ */
+
+/**
  * Shared stub factory for the `cloudflare:workers` runtime module, which only
  * exists inside the Workers runtime. Each test file still calls
  * `jest.unstable_mockModule('cloudflare:workers', cloudflareWorkersStub)`
@@ -51,6 +55,11 @@ const env: Record<string, unknown> = { SCHEDULES, SCHEDULE_ALARMS };
 
 /**
  * Factory passed to `jest.unstable_mockModule('cloudflare:workers', ...)`.
+ * @returns The mocked module with the in-memory KV store, alarms and a stub DurableObject base class.
+ * @example
+ * ```ts
+ * jest.unstable_mockModule('cloudflare:workers', cloudflareWorkersStub);
+ * ```
  */
 export const cloudflareWorkersStub = (): {
   env: Record<string, unknown>;

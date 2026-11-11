@@ -1,3 +1,6 @@
+/**
+ * @file Tests for the observability context helpers.
+ */
 import { beforeEach, describe, expect, it, jest } from '@jest/globals';
 
 import { installFakeTracing } from './fake-tracing.js';
@@ -33,6 +36,7 @@ describe('setErrorContext', () => {
 
   it('drops undefined values and anything that is not a plain value', async () => {
     await setErrorContext({
+      // eslint-disable-next-line sonarjs/no-undefined-assignment -- the test checks that undefined values are dropped
       gone: undefined,
       nan: Number.NaN,
       object: { a: 1 } as never,

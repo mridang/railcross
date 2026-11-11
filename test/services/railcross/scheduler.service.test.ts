@@ -1,3 +1,6 @@
+/**
+ * @file Tests for the schedule storage service.
+ */
 import { expect, describe, test, beforeEach } from '@jest/globals';
 import type {
   KVNamespace,
@@ -117,7 +120,10 @@ describe('SchedulerService (KV + Durable Object alarms)', () => {
     expect(kv.store.has('1.2.locker')).toBe(false);
     expect(kv.store.has('1.2.unlocker')).toBe(false);
     expect(kv.store.has('1.3.locker')).toBe(true);
-    expect(disarmed.sort()).toEqual(['1.2.locker', '1.2.unlocker']);
+    expect(disarmed.toSorted((x, y) => x.localeCompare(y))).toEqual([
+      '1.2.locker',
+      '1.2.unlocker',
+    ]);
   });
 
   test('deleting non-existent schedules is a no-op', async () => {
@@ -132,10 +138,9 @@ describe('SchedulerService (KV + Durable Object alarms)', () => {
 
     await service.reRegisterAll();
 
-    expect(armed.map((a) => a.name).sort()).toEqual([
-      '1.2.locker',
-      '1.3.unlocker',
-    ]);
+    expect(
+      armed.map((a) => a.name).toSorted((x, y) => x.localeCompare(y)),
+    ).toEqual(['1.2.locker', '1.3.unlocker']);
   });
 
   test('reRegisterAll names the job on the span', async () => {

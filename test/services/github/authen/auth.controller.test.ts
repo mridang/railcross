@@ -1,3 +1,6 @@
+/**
+ * @file Tests for the GitHub authentication controller routes.
+ */
 import { jest } from '@jest/globals';
 import nock from 'nock';
 import request from 'supertest';
@@ -21,6 +24,7 @@ const testModule = new End2EndModule({
   ],
 });
 
+// eslint-disable-next-line sonarjs/max-lines-per-function -- one describe block holds the whole suite and shares one fixture
 describe('auth.controller tests', () => {
   beforeAll(async () => {
     await testModule.beforeAll((testModule) => {
@@ -41,6 +45,7 @@ describe('auth.controller tests', () => {
     await testModule.afterAll();
   });
 
+  // eslint-disable-next-line sonarjs/max-lines-per-function -- one describe block holds the whole suite and shares one fixture
   beforeEach(() => {
     nock('https://api.github.com')
       .persist()
@@ -338,6 +343,7 @@ describe('auth.controller tests', () => {
       .expect(HttpStatus.BAD_REQUEST);
   });
 
+  // eslint-disable-next-line sonarjs/assertions-in-tests -- the supertest .expect() chain is the assertion
   test('handles GitHub OAuth callback successfully', () => {
     return request(testModule.app.getHttpServer())
       .get('/auth?code=foofoofoofoofoofoofoo&state=barbarbarbarbarbarbar')
@@ -345,7 +351,7 @@ describe('auth.controller tests', () => {
       .expect(HttpStatus.FOUND)
       .expect(
         'Set-Cookie',
-        /^nonce=; Path=\/; Expires=.* GMT,jwt=.*\..*\..*; Max-Age=3600; Path=\/; Expires=.* GMT; HttpOnly; Secure; SameSite=Strict$/,
+        /^nonce=; Path=\/; Expires=[^;]* GMT,jwt=[^.;]+\.[^.;]+\.[^.;]+; Max-Age=3600; Path=\/; Expires=[^;]* GMT; HttpOnly; Secure; SameSite=Strict$/,
       );
   });
 

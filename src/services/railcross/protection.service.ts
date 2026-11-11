@@ -1,3 +1,6 @@
+/**
+ * @file Service that locks and unlocks repository branches on schedule through the GitHub API.
+ */
 import { Octokit } from '@octokit/rest';
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ensure } from '../../utils/ensure.js';

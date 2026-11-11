@@ -1,4 +1,8 @@
 /**
+ * @file Schedule configuration type and helpers that compute when a schedule next fires.
+ */
+
+/**
  * The persisted configuration for a single lock or unlock schedule.
  *
  * One of these is stored in KV per `${installationId}.${repoId}.${taskName}`
@@ -20,7 +24,11 @@ export interface ScheduleConfig {
  * Extract the wall-clock parts of an instant as observed in a timezone.
  * @param timeZone - The IANA timezone to read the instant in.
  * @param epochMs - The instant, in milliseconds since the Unix epoch.
- * @returns The year, month (1–12), day, hour (0–23), minute and second.
+ * @returns The year, month (1–12), day and hour (0–23) seen in the time zone.
+ * @example
+ * ```ts
+ * wallClockParts('Europe/London', Date.UTC(2026, 10, 11, 12)); // { year: 2026, month: 11, day: 11, hour: 12 }
+ * ```
  */
 function wallClockParts(
   timeZone: string,
@@ -62,6 +70,10 @@ function wallClockParts(
  * @param day - The day of the month.
  * @param hour - The hour of day, 0–23 (minute and second are taken as zero).
  * @returns The corresponding instant in milliseconds since the Unix epoch.
+ * @example
+ * ```ts
+ * epochForWallClock('Europe/London', 2026, 11, 11, 7); // the epoch for 07:00 London time
+ * ```
  */
 function epochForWallClock(
   timeZone: string,
@@ -94,6 +106,11 @@ function epochForWallClock(
  * @param timeZone - The IANA timezone the hour is expressed in.
  * @param nowMs - The current instant in milliseconds since the Unix epoch.
  * @returns The next firing instant in milliseconds since the Unix epoch.
+ * @throws {Error} When no occurrence is found within the next few days.
+ * @example
+ * ```ts
+ * const fireAt = nextOccurrence(7, 'Europe/London', Date.now());
+ * ```
  */
 export function nextOccurrence(
   hour: number,

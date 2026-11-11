@@ -1,3 +1,6 @@
+/**
+ * @file Tests for the home page controller.
+ */
 import { expect } from '@jest/globals';
 import { HomeController } from '../../src/home/home.controller.js';
 

@@ -1,3 +1,6 @@
+/**
+ * @file Lists and updates the lock and unlock schedules for the repositories a user can reach.
+ */
 import { Injectable, Logger } from '@nestjs/common';
 import { Octokit } from '@octokit/rest';
 import SchedulerService from './scheduler.service.js';
@@ -96,7 +99,7 @@ export default class RailcrossService {
             ),
             toArray(),
             map((results) =>
-              results.sort(
+              results.toSorted(
                 (a, b) =>
                   (b.updatedAt ? new Date(b.updatedAt).getTime() : -Infinity) -
                   (a.updatedAt ? new Date(a.updatedAt).getTime() : -Infinity),

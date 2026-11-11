@@ -1,3 +1,6 @@
+/**
+ * @file Tests for the GitHub authentication guard.
+ */
 import { expect } from '@jest/globals';
 import { AuthGuard } from '../../../../src/services/github/authen/auth.guard.js';
 import { JwtService } from '@nestjs/jwt';
@@ -133,7 +136,7 @@ describe('auth.guard tests', () => {
     expect(authGuard.canActivate(fakeContext)).toBe(false);
   });
 
-  test('should disallow access with a valid JWT token but incorrect aud', () => {
+  test('should disallow access with a valid JWT token and a mismatched aud', () => {
     const fakeContext: ExecutionContext = new MockExecutionContext({
       cookies: {
         jwt: jwtService.sign(

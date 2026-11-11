@@ -1,3 +1,6 @@
+/**
+ * @file HTTP routes that serve the marketing home page and its Open Graph image.
+ */
 import { Controller, Get, Header } from '@nestjs/common';
 import { HOME_HTML } from './home.html.js';
 import { OG_PNG_BASE64 } from './og-image.js';
@@ -10,6 +13,10 @@ export class HomeController {
   /**
    * Return the home page as a complete HTML document.
    * @returns The rendered HTML for `GET /`.
+   * @example
+   * ```ts
+   * const html = controller.getHome();
+   * ```
    */
   @Get()
   @Header('Content-Type', 'text/html; charset=utf-8')
@@ -21,6 +28,10 @@ export class HomeController {
   /**
    * Return the Open Graph / social-share card as a PNG.
    * @returns The 1200×630 share image for `GET /og.png`.
+   * @example
+   * ```ts
+   * const image = controller.getOgImage();
+   * ```
    */
   @Get('og.png')
   @Header('Content-Type', 'image/png')
