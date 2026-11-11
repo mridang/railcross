@@ -1,7 +1,7 @@
 /**
  * @file Tests for the Railcross module wiring.
  */
-import { jest, expect } from '@jest/globals';
+import { afterAll, beforeAll, jest, expect } from '@jest/globals';
 import { cloudflareWorkersStub } from '../../helpers/cloudflare-workers-stub.js';
 
 jest.unstable_mockModule('cloudflare:workers', cloudflareWorkersStub, {

@@ -1,7 +1,7 @@
 /**
  * @file Tests for the GitHub authentication controller routes.
  */
-import { expect, jest } from '@jest/globals';
+import { afterAll, beforeAll, expect, jest } from '@jest/globals';
 import nock from 'nock';
 import request from 'supertest';
 import { HttpStatus } from '@nestjs/common';

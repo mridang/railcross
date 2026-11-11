@@ -1,7 +1,7 @@
 /**
  * @file Tests for the GitHub webhook controller.
  */
-import { expect } from '@jest/globals';
+import { afterAll, beforeAll, expect } from '@jest/globals';
 import request from 'supertest';
 import { HttpStatus } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';

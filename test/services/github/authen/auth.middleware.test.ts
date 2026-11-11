@@ -7,18 +7,22 @@ import { AuthMiddleware } from '../../../../src/services/github/authen/auth.midd
 import { UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 
+function createMockResponse(): Partial<Response> {
+  return {
+    redirect: jest.fn<(statusOrUrl: number | string, url?: string) => void>(),
+    status: jest.fn<Response['status']>().mockReturnThis(), // For chaining .send()
+    send: jest.fn<Response['send']>(),
+    cookie: jest.fn<Response['cookie']>(),
+  };
+}
+
 describe('auth.middleware tests', () => {
   const jwtService = new JwtService({ secret: 'test' });
   const middleware = new AuthMiddleware(jwtService);
 
   test('should redirect if no JWT cookie found', () => {
     const nextFunction: NextFunction = jest.fn();
-    const mockResponse: Partial<Response> = {
-      redirect: jest.fn(),
-      status: jest.fn().mockReturnThis(), // For chaining .send()
-      send: jest.fn(),
-      cookie: jest.fn(),
-    };
+    const mockResponse = createMockResponse();
     const mockRequest: Partial<Request> = {
       cookies: {
         //
@@ -35,12 +39,7 @@ describe('auth.middleware tests', () => {
 
   test('should call next if valid JWT token is provided', () => {
     const nextFunction: NextFunction = jest.fn();
-    const mockResponse: Partial<Response> = {
-      redirect: jest.fn(),
-      status: jest.fn().mockReturnThis(), // For chaining .send()
-      send: jest.fn(),
-      cookie: jest.fn(),
-    };
+    const mockResponse = createMockResponse();
     const mockRequest: Partial<Request> = {
       cookies: {
         jwt: jwtService.sign({ id: 'user123' }),
@@ -57,12 +56,7 @@ describe('auth.middleware tests', () => {
 
   test('should return 401 if invalid JWT token is provided', () => {
     const nextFunction: NextFunction = jest.fn();
-    const mockResponse: Partial<Response> = {
-      redirect: jest.fn(),
-      status: jest.fn().mockReturnThis(), // For chaining .send()
-      send: jest.fn(),
-      cookie: jest.fn(),
-    };
+    const mockResponse = createMockResponse();
     const mockRequest: Partial<Request> = {
       cookies: {
         jwt: 'invalidToken',
