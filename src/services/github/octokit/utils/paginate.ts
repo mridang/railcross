@@ -25,8 +25,7 @@ export function doPaginate<T>(
 ): Observable<T> {
   return new Observable<T>((subscriber) => {
     // The subscriber reports every outcome, so the promise needs no caller.
-    // eslint-disable-next-line @typescript-eslint/no-floating-promises -- outcomes go to the subscriber
-    (async () => {
+    void (async () => {
       try {
         const firstPage = await fetchPage(1);
         const totalPages = Math.ceil(
