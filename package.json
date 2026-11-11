@@ -66,7 +66,7 @@
     "@emnapi/runtime": "^1.11.3",
     "@eslint/compat": "^2.1.1",
     "@jest/globals": "^30.4.1",
-    "@mridang/eslint-defaults": "file:../../../../../../../../private/tmp/claude-501/-Users-mridang-Code-mridang-eslint-defaults--claude-worktrees-jolly-nobel-b54514/5d85ee26-5030-436a-b806-a5058404a92f/scratchpad/pack/mridang-eslint-defaults-2.0.1.tgz",
+    "@mridang/eslint-defaults": "^2.1.0",
     "@nestjs/schematics": "^11.1.0",
     "@nestjs/testing": "^11.1.26",
     "@tailwindcss/postcss": "^4.3.3",
