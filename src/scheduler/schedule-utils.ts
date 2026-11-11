@@ -18,9 +18,8 @@ export interface ScheduleConfig {
 
 /**
  * Extract the wall-clock parts of an instant as observed in a timezone.
- *
- * @param timeZone The IANA timezone to read the instant in.
- * @param epochMs The instant, in milliseconds since the Unix epoch.
+ * @param timeZone - The IANA timezone to read the instant in.
+ * @param epochMs - The instant, in milliseconds since the Unix epoch.
  * @returns The year, month (1–12), day, hour (0–23), minute and second.
  */
 function wallClockParts(
@@ -57,12 +56,11 @@ function wallClockParts(
  * wall clock were UTC, measures how far the timezone is from UTC at that guess,
  * and corrects for it — which is DST-safe because the offset is read at the
  * candidate instant itself.
- *
- * @param timeZone The IANA timezone the wall clock is expressed in.
- * @param year The four-digit year.
- * @param month The month, 1–12.
- * @param day The day of the month.
- * @param hour The hour of day, 0–23 (minute and second are taken as zero).
+ * @param timeZone - The IANA timezone the wall clock is expressed in.
+ * @param year - The four-digit year.
+ * @param month - The month, 1–12.
+ * @param day - The day of the month.
+ * @param hour - The hour of day, 0–23 (minute and second are taken as zero).
  * @returns The corresponding instant in milliseconds since the Unix epoch.
  */
 function epochForWallClock(
@@ -92,10 +90,9 @@ function epochForWallClock(
  * Finds the soonest future moment when the local time in `timeZone` is
  * `hour:00`, scanning today and the following days so it always returns an
  * instant strictly after `nowMs`.
- *
- * @param hour The local hour-of-day (0–23) the schedule fires at.
- * @param timeZone The IANA timezone the hour is expressed in.
- * @param nowMs The current instant in milliseconds since the Unix epoch.
+ * @param hour - The local hour-of-day (0–23) the schedule fires at.
+ * @param timeZone - The IANA timezone the hour is expressed in.
+ * @param nowMs - The current instant in milliseconds since the Unix epoch.
  * @returns The next firing instant in milliseconds since the Unix epoch.
  */
 export function nextOccurrence(

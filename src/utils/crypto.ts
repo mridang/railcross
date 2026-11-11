@@ -1,4 +1,4 @@
-import crypto from 'crypto';
+import crypto from 'node:crypto';
 
 /**
  * Computes HMAC SHA256 signature of a given input using a secret key.

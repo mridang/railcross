@@ -3,20 +3,20 @@
   "version": "0.0.1",
   "type": "module",
   "scripts": {
-    "build:css": "vite build",
     "build": "npm run build:css && tsc -p tsconfig.worker.json",
+    "build:css": "vite build",
+    "cypress:open": "cypress open",
+    "cypress:run": "cypress run --browser chrome",
     "deploy": "npm run build && wrangler deploy",
     "dev": "wrangler dev",
-    "start": "wrangler dev",
-    "test": "jest --verbose --config=jest.config.mjs",
-    "test:watch": "npm run test -- --watch",
-    "test:debug": "jest --verbose --config=jest.config.mjs --detectOpenHandles",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "lint": "npx eslint .",
     "lint:fix": "npx eslint . --fix",
-    "cypress:open": "cypress open",
-    "cypress:run": "cypress run --browser chrome"
+    "start": "wrangler dev",
+    "test": "jest --verbose --config=jest.config.mjs",
+    "test:debug": "jest --verbose --config=jest.config.mjs --detectOpenHandles",
+    "test:watch": "npm run test -- --watch"
   },
   "dependencies": {
     "@mridang/nestjs-defaults": "^3.2.0",
@@ -80,10 +80,10 @@
     "wrangler": "^4.156.0"
   },
   "overrides": {
+    "@eslint/core": "1.2.1",
     "multer": "2.5.0",
     "wrangler": {
       "@cloudflare/workers-types": "$@cloudflare/workers-types"
-    },
-    "@eslint/core": "1.2.1"
+    }
   }
 }

@@ -15,7 +15,7 @@ const ExpiredPage: FunctionalComponent = () => {
       </head>
       <body>
         <div className="h-screen w-screen bg-gray-400">
-          {/* eslint-disable-next-line tailwindcss/no-custom-classname */}
+          {}
           <div className="h-modal fixed inset-0 z-50 grid size-full place-items-center justify-center backdrop-blur-sm">
             <div className="relative container m-auto px-6">
               <div className="m-auto md:w-7/12">

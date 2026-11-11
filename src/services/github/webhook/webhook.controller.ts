@@ -28,15 +28,11 @@ export class WebhookController {
 
   private static getPayload(request: Request): Promise<string> | null {
     if ('body' in request) {
-      if (
-        typeof request.body === 'object' &&
+      return typeof request.body === 'object' &&
         'rawBody' in request &&
         request.rawBody instanceof Buffer
-      ) {
-        return Promise.resolve(request.rawBody.toString('utf8'));
-      } else {
-        return Promise.resolve(request.body);
-      }
+        ? Promise.resolve(request.rawBody.toString('utf8'))
+        : Promise.resolve(request.body);
     } else {
       return null;
     }

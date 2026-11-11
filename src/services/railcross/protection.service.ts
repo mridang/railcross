@@ -19,8 +19,8 @@ export default class ProtectionService {
     installationId: number,
     lockState: boolean,
   ) {
-    const owner = repositoryName.split('/')[0];
-    const repo = repositoryName.split('/')[1];
+    const owner = repositoryName.split('/', 1)[0];
+    const repo = repositoryName.split('/', 2)[1];
     const octokit = this.octokitFn(installationId);
     const { data: repository } = await octokit.repos.get({
       owner: owner,

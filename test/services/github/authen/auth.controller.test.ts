@@ -161,7 +161,7 @@ describe('auth.controller tests', () => {
       .get('/user/repos?per_page=100')
       .reply(HttpStatus.OK, [
         {
-          id: 1296269,
+          id: 1_296_269,
           node_id: 'MDEwOlJlcG9zaXRvcnkxMjk2MjY5',
           name: 'hello-world',
           full_name: 'octocat/hello-world',

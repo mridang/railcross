@@ -9,7 +9,6 @@ import { OG_PNG_BASE64 } from './og-image.js';
 export class HomeController {
   /**
    * Return the home page as a complete HTML document.
-   *
    * @returns The rendered HTML for `GET /`.
    */
   @Get()
@@ -21,7 +20,6 @@ export class HomeController {
 
   /**
    * Return the Open Graph / social-share card as a PNG.
-   *
    * @returns The 1200×630 share image for `GET /og.png`.
    */
   @Get('og.png')

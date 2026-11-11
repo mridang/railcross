@@ -289,7 +289,7 @@ describe('webhook.controller tests', () => {
             site_admin: false,
           },
           repo: {
-            id: 1296269,
+            id: 1_296_269,
             name: 'Hello-World',
             full_name: 'octocat/Hello-World',
             owner: {
@@ -347,7 +347,7 @@ describe('webhook.controller tests', () => {
             site_admin: false,
           },
           repo: {
-            id: 1296269,
+            id: 1_296_269,
             name: 'Hello-World',
             full_name: 'octocat/Hello-World',
             html_url: 'https://github.com/octocat/Hello-World',
@@ -370,7 +370,7 @@ describe('webhook.controller tests', () => {
         changed_files: 1,
       },
       repository: {
-        id: 1296269,
+        id: 1_296_269,
         node_id: 'MDEwOlJlcG9zaXRvcnkxMjk2MjY5',
         name: 'Hello-World',
         full_name: 'octocat/Hello-World',
@@ -415,10 +415,10 @@ describe('webhook.controller tests', () => {
     const payload = {
       action: 'created',
       installation: {
-        id: 47071570,
+        id: 47_071_570,
         account: {
           login: 'mridang',
-          id: 327432,
+          id: 327_432,
           node_id: 'MDQ6VXNlcjMyNzQzMg==',
           avatar_url: 'https://avatars.githubusercontent.com/u/327432?v=4',
           gravatar_id: '',
@@ -445,9 +445,9 @@ describe('webhook.controller tests', () => {
           'https://api.github.com/app/installations/47071570/access_tokens',
         repositories_url: 'https://api.github.com/installation/repositories',
         html_url: 'https://github.com/settings/installations/47071570',
-        app_id: 712568,
+        app_id: 712_568,
         app_slug: 'marshallapp',
-        target_id: 327432,
+        target_id: 327_432,
         target_type: 'User',
         permissions: {
           checks: 'read',
@@ -468,7 +468,7 @@ describe('webhook.controller tests', () => {
       },
       repositories: [
         {
-          id: 1216277,
+          id: 1_216_277,
           node_id: 'MDEwOlJlcG9zaXRvcnkxMjE2Mjc3',
           name: 'JIMDB',
           full_name: 'mridang/JIMDB',
@@ -478,7 +478,7 @@ describe('webhook.controller tests', () => {
       requester: null,
       sender: {
         login: 'mridang',
-        id: 327432,
+        id: 327_432,
         node_id: 'MDQ6VXNlcjMyNzQzMg==',
         avatar_url: 'https://avatars.githubusercontent.com/u/327432?v=4',
         gravatar_id: '',
@@ -522,10 +522,10 @@ describe('webhook.controller tests', () => {
     const payload = {
       action: 'added',
       installation: {
-        id: 47071570,
+        id: 47_071_570,
         account: {
           login: 'mridang',
-          id: 327432,
+          id: 327_432,
           node_id: 'MDQ6VXNlcjMyNzQzMg==',
           avatar_url: 'https://avatars.githubusercontent.com/u/327432?v=4',
           gravatar_id: '',
@@ -552,9 +552,9 @@ describe('webhook.controller tests', () => {
           'https://api.github.com/app/installations/47071570/access_tokens',
         repositories_url: 'https://api.github.com/installation/repositories',
         html_url: 'https://github.com/settings/installations/47071570',
-        app_id: 712568,
+        app_id: 712_568,
         app_slug: 'marshallapp',
-        target_id: 327432,
+        target_id: 327_432,
         target_type: 'User',
         permissions: {
           checks: 'read',
@@ -576,7 +576,7 @@ describe('webhook.controller tests', () => {
       repository_selection: 'selected',
       repositories_added: [
         {
-          id: 214675095,
+          id: 214_675_095,
           node_id: 'MDEwOlJlcG9zaXRvcnkyMTQ2NzUwOTU=',
           name: 'action-intellij',
           full_name: 'mridang/action-intellij',
@@ -587,7 +587,7 @@ describe('webhook.controller tests', () => {
       requester: null,
       sender: {
         login: 'mridang',
-        id: 327432,
+        id: 327_432,
         node_id: 'MDQ6VXNlcjMyNzQzMg==',
         avatar_url: 'https://avatars.githubusercontent.com/u/327432?v=4',
         gravatar_id: '',
@@ -631,10 +631,10 @@ describe('webhook.controller tests', () => {
     const payload = {
       action: 'removed',
       installation: {
-        id: 47071570,
+        id: 47_071_570,
         account: {
           login: 'mridang',
-          id: 327432,
+          id: 327_432,
           node_id: 'MDQ6VXNlcjMyNzQzMg==',
           avatar_url: 'https://avatars.githubusercontent.com/u/327432?v=4',
           gravatar_id: '',
@@ -661,9 +661,9 @@ describe('webhook.controller tests', () => {
           'https://api.github.com/app/installations/47071570/access_tokens',
         repositories_url: 'https://api.github.com/installation/repositories',
         html_url: 'https://github.com/settings/installations/47071570',
-        app_id: 712568,
+        app_id: 712_568,
         app_slug: 'marshallapp',
-        target_id: 327432,
+        target_id: 327_432,
         target_type: 'User',
         permissions: {
           checks: 'read',
@@ -686,7 +686,7 @@ describe('webhook.controller tests', () => {
       repositories_added: [],
       repositories_removed: [
         {
-          id: 1216277,
+          id: 1_216_277,
           node_id: 'MDEwOlJlcG9zaXRvcnkxMjE2Mjc3',
           name: 'JIMDB',
           full_name: 'mridang/JIMDB',
@@ -696,7 +696,7 @@ describe('webhook.controller tests', () => {
       requester: null,
       sender: {
         login: 'mridang',
-        id: 327432,
+        id: 327_432,
         node_id: 'MDQ6VXNlcjMyNzQzMg==',
         avatar_url: 'https://avatars.githubusercontent.com/u/327432?v=4',
         gravatar_id: '',

@@ -39,10 +39,9 @@ export default class SchedulerService {
 
   /**
    * Build the canonical key for a schedule.
-   *
-   * @param installationId The GitHub App installation id.
-   * @param repoId The repository id.
-   * @param taskName Either `locker` or `unlocker`.
+   * @param installationId - The GitHub App installation id.
+   * @param repoId - The repository id.
+   * @param taskName - Either `locker` or `unlocker`.
    * @returns The `${installationId}.${repoId}.${taskName}` key.
    */
   private keyFor(
@@ -55,10 +54,9 @@ export default class SchedulerService {
 
   /**
    * Look up a single schedule.
-   *
-   * @param installationId The GitHub App installation id.
-   * @param repoId The repository id.
-   * @param taskName Either `locker` or `unlocker`.
+   * @param installationId - The GitHub App installation id.
+   * @param repoId - The repository id.
+   * @param taskName - Either `locker` or `unlocker`.
    * @returns The schedule summary, or `null` when none is configured.
    */
   async getSchedule(
@@ -81,13 +79,12 @@ export default class SchedulerService {
 
   /**
    * Persist a schedule and arm its Durable Object alarm.
-   *
-   * @param installationId The GitHub App installation id.
-   * @param repoId The repository id.
-   * @param repoName The repository's full name (`owner/repo`).
-   * @param hour The local hour-of-day (0–23) the task fires at.
-   * @param timeZone The IANA timezone the hour is expressed in.
-   * @param taskName Either `locker` or `unlocker`.
+   * @param installationId - The GitHub App installation id.
+   * @param repoId - The repository id.
+   * @param repoName - The repository's full name (`owner/repo`).
+   * @param hour - The local hour-of-day (0–23) the task fires at.
+   * @param timeZone - The IANA timezone the hour is expressed in.
+   * @param taskName - Either `locker` or `unlocker`.
    */
   async createSchedule(
     installationId: number,
@@ -112,9 +109,8 @@ export default class SchedulerService {
 
   /**
    * Delete every schedule under an installation, optionally scoped to a repo.
-   *
-   * @param installationId The GitHub App installation id.
-   * @param repoId When given, only that repository's schedules are removed.
+   * @param installationId - The GitHub App installation id.
+   * @param repoId - When given, only that repository's schedules are removed.
    */
   async deleteSchedules(
     installationId: number,
@@ -159,9 +155,8 @@ export default class SchedulerService {
 
   /**
    * Arm the Durable Object alarm for a schedule at its next occurrence.
-   *
-   * @param key The schedule key, used as the Durable Object name.
-   * @param config The schedule to act on.
+   * @param key - The schedule key, used as the Durable Object name.
+   * @param config - The schedule to act on.
    */
   private async arm(key: string, config: ScheduleConfig): Promise<void> {
     const fireAt = nextOccurrence(config.hour, config.timeZone, Date.now());
@@ -171,8 +166,7 @@ export default class SchedulerService {
 
   /**
    * Cancel the Durable Object alarm for a schedule.
-   *
-   * @param key The schedule key, used as the Durable Object name.
+   * @param key - The schedule key, used as the Durable Object name.
    */
   private async disarm(key: string): Promise<void> {
     const stub = this.alarms.get(this.alarms.idFromName(key));

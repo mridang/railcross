@@ -83,13 +83,13 @@ export class SetupController {
   @Get()
   @Header('Content-Type', 'text/html; charset=utf-8')
   async showSetup(@Req() request: Request & { user: { accessToken: string } }) {
-    if (!request.user.accessToken) {
-      throw new UnauthorizedException('Unable to deduce allowed installations');
-    } else {
+    if (request.user.accessToken) {
       const octokit = this.octokitFn(request.user.accessToken);
       const repoSchedules = await this.railcrossService.listSchedules(octokit);
 
       return setupView(repoSchedules);
+    } else {
+      throw new UnauthorizedException('Unable to deduce allowed installations');
     }
   }
 
@@ -102,9 +102,7 @@ export class SetupController {
       user: { accessToken: string };
     },
   ) {
-    if (!request.user.accessToken) {
-      throw new UnauthorizedException('Unable to deduce allowed installations');
-    } else {
+    if (request.user.accessToken) {
       const octokit = this.octokitFn(request.user.accessToken);
 
       await this.railcrossService.updateSchedules(
@@ -114,18 +112,20 @@ export class SetupController {
         scheduleDto.unlockTime,
         scheduleDto.timezone,
       );
+    } else {
+      throw new UnauthorizedException('Unable to deduce allowed installations');
     }
   }
 
   @Post('reset')
   @Redirect('/app', HttpStatus.FOUND)
   async reset(@Req() request: Request & { user: { accessToken: string } }) {
-    if (!request.user.accessToken) {
-      throw new UnauthorizedException('Unable to deduce allowed installations');
-    } else {
+    if (request.user.accessToken) {
       const octokit = this.octokitFn(request.user.accessToken);
 
       await this.railcrossService.resetSchedules(octokit);
+    } else {
+      throw new UnauthorizedException('Unable to deduce allowed installations');
     }
   }
 }

@@ -25,10 +25,7 @@ export class AuthMiddleware implements NestMiddleware<
   ) {
     const token = request.cookies ? request.cookies['jwt'] : undefined;
 
-    if (!token) {
-      this.logger.log(`No JWT cookie found.`);
-      return response.redirect('/auth/reauthenticate');
-    } else {
+    if (token) {
       try {
         request.user = this.jwtService.verify(token);
         next();
@@ -36,6 +33,9 @@ export class AuthMiddleware implements NestMiddleware<
         this.logger.error(`Tampered JWT with value ${token} found`);
         throw new UnauthorizedException('Invalid token.');
       }
+    } else {
+      this.logger.log(`No JWT cookie found.`);
+      return response.redirect('/auth/reauthenticate');
     }
   }
 }

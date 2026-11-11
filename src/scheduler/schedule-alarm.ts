@@ -16,9 +16,8 @@ import { ScheduleConfig, nextOccurrence } from './schedule-utils.js';
 export class ScheduleAlarm extends DurableObject {
   /**
    * Arm the alarm to fire at a given instant for a given schedule.
-   *
-   * @param fireAtMs The instant to fire at, in epoch milliseconds.
-   * @param config The schedule this object should act on when it fires.
+   * @param fireAtMs - The instant to fire at, in epoch milliseconds.
+   * @param config - The schedule this object should act on when it fires.
    */
   async arm(fireAtMs: number, config: ScheduleConfig): Promise<void> {
     await this.ctx.storage.put('config', config);

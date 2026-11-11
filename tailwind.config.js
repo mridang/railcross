@@ -1,4 +1,5 @@
-/** @type {import('tailwindcss').Config} */
+/** @import * as tailwindcss from 'tailwindcss'; */
+/** @type {tailwindcss.Config} */
 export default {
   content: ['./src/**/*.{ts,tsx,html}'],
   theme: {

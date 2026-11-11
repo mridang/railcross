@@ -22,10 +22,7 @@ export class AuthGuard implements CanActivate {
     const request = context.switchToHttp().getRequest();
     const token = request.cookies ? request.cookies['jwt'] : undefined;
 
-    if (!token) {
-      this.logger.log(`No JWT cookie found.`);
-      return false;
-    } else {
+    if (token) {
       const orgName = request.params.orgName;
       const repoName = request.params.repoName;
       if (!orgName || !repoName) {
@@ -45,6 +42,9 @@ export class AuthGuard implements CanActivate {
           return false; // Token verification failed
         }
       }
+    } else {
+      this.logger.log(`No JWT cookie found.`);
+      return false;
     }
   }
 }

@@ -194,7 +194,7 @@ export default class RailcrossService {
             };
           }).pipe(
             filter((repository) => {
-              return !repoIds.length || repoIds.includes(repository.id);
+              return repoIds.length === 0 || repoIds.includes(repository.id);
             }),
             tap((repository) => {
               this.logger.log(`Fetching schedules for ${repository.full_name}`);
