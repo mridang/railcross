@@ -51,9 +51,9 @@
     "@cloudflare/workers-types": "^4",
     "@emnapi/core": "^1.11.3",
     "@emnapi/runtime": "^1.11.3",
-    "@eslint/compat": "^2.1.0",
+    "@eslint/compat": "^2.1.1",
     "@jest/globals": "^30.4.1",
-    "@mridang/eslint-defaults": "^1.6.3",
+    "@mridang/eslint-defaults": "file:../../../../../../../../private/tmp/claude-501/-Users-mridang-Code-mridang-eslint-defaults--claude-worktrees-jolly-nobel-b54514/5d85ee26-5030-436a-b806-a5058404a92f/scratchpad/pack/mridang-eslint-defaults-2.0.1.tgz",
     "@nestjs/schematics": "^11.1.0",
     "@nestjs/testing": "^11.1.26",
     "@tailwindcss/postcss": "^4.3.3",
@@ -65,17 +65,17 @@
     "autoprefixer": "^10.5.2",
     "cypress": "^16.2.0",
     "dotenv": "^16.6.1",
-    "eslint": "^9.39.4",
+    "eslint": "^9.39.5",
     "jest": "^30.4.2",
     "jest-junit": "^17.0.0",
     "knip": "^6.17.1",
     "nock": "^14.0.15",
     "postcss": "^8.5.31",
-    "prettier": "^3.8.4",
+    "prettier": "^3.9.10",
     "supertest": "^7.2.2",
     "tailwindcss": "^4.3.3",
     "ts-jest": "^29.4.11",
-    "typescript": "^6.0.3",
+    "typescript": "~6.0.3",
     "vite": "^8.1.6",
     "wrangler": "^4.156.0"
   },
@@ -83,6 +83,7 @@
     "multer": "2.5.0",
     "wrangler": {
       "@cloudflare/workers-types": "$@cloudflare/workers-types"
-    }
+    },
+    "@eslint/core": "1.2.1"
   }
 }
