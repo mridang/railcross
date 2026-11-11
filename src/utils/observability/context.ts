@@ -31,6 +31,22 @@ interface ContextTracing {
   getActiveSpan(): ContextSpan | undefined;
 }
 
+/**
+ * Picks the tracing API out of a loaded `cloudflare:workers` module.
+ * @param workers - The loaded module.
+ * @returns The tracing API, or `undefined` when the module has none.
+ */
+function tracingOf(workers: object): ContextTracing | undefined {
+  const tracing: unknown = Reflect.get(workers, 'tracing');
+  if (typeof tracing !== 'object' || tracing === null) {
+    return undefined;
+  }
+  return 'getActiveSpan' in tracing &&
+    typeof tracing.getActiveSpan === 'function'
+    ? (tracing as ContextTracing)
+    : undefined;
+}
+
 /** Longest text kept in one attribute; the rest is cut off. */
 const MAX_TEXT = 256;
 
@@ -55,10 +71,7 @@ let loaded: ContextTracing | null | undefined;
  */
 function load(): Promise<ContextTracing | null | undefined> {
   return import('cloudflare:workers')
-    .then(
-      (workers) =>
-        (loaded = (workers as unknown as { tracing?: ContextTracing }).tracing),
-    )
+    .then((workers) => (loaded = tracingOf(workers)))
     .catch(() => (loaded = null));
 }
 
