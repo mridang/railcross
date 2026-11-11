@@ -1,16 +1,12 @@
 /**
- * @packageDocumentation
- *
- * Locale-aware text helpers built on the standard `Intl` APIs, so ordering,
- * counts, dates and lists are right for real-world text ("Éclair" sorts with E,
- * "1 recipe" vs "2 recipes", "3 days ago") instead of relying on code-unit
- * comparisons and hand-rolled plural checks.
+ * @file Locale-aware text, number, date and list formatting built on the standard Intl APIs.
  *
  * Everything here uses one fixed locale, English. The interface text around
  * these values is English, so mixing in the visitor's locale would produce
  * half-translated sentences, and a fixed locale keeps server and browser output
  * identical (no hydration mismatches, stable API messages). Changing
  * {@link LOCALE} is the single switch if the app is ever translated.
+ * @packageDocumentation
  */
 
 /** The locale used for all formatting. */
@@ -24,23 +20,41 @@ const collator = new Intl.Collator(LOCALE, {
 });
 
 /**
- * Compare two strings the way a person would alphabetise them: accents and case
- * are ignored, and runs of digits compare as numbers. Returns 0 for strings
- * that differ only by accent or case, so callers should break ties themselves.
+ * Compares two strings the way a person would alphabetise them.
+ *
+ * Accents and case are ignored, and runs of digits compare as numbers. Returns 0
+ * for strings that differ only by accent or case, so callers should break ties
+ * themselves.
+ * @param a - The first string to compare.
+ * @param b - The second string to compare.
+ * @returns A negative number when `a` sorts first, a positive one when `b` does, otherwise 0.
+ * @example
+ * ```ts
+ * ['Recipe 10', 'Éclair', 'Recipe 2'].sort(compareText);
+ * // ['Éclair', 'Recipe 2', 'Recipe 10']
+ * ```
  */
 export function compareText(a: string, b: string): number {
   return collator.compare(a, b);
 }
 
 /**
- * Fold text for searching: lower case with accents removed, so "creme" finds
- * "Crème brûlée". (`Intl` can compare whole strings but has no substring
- * search, so matching uses this folded form with `includes`.)
+ * Folds text for searching: lower case with accents removed.
+ *
+ * Intl can compare whole strings but has no substring search, so matching uses
+ * this folded form with `includes`.
+ * @param text - The text to fold.
+ * @returns The lower-cased text with combining marks removed.
+ * @example
+ * ```ts
+ * foldText('Crème brûlée').includes(foldText('creme'));
+ * // true
+ * ```
  */
 export function foldText(text: string): string {
   return text
     .normalize('NFD')
-    .replace(/\p{M}+/gu, '')
+    .replaceAll(/\p{M}+/gu, '')
     .toLowerCase();
 }
 
@@ -48,15 +62,31 @@ const plurals = new Intl.PluralRules(LOCALE);
 const counts = new Intl.NumberFormat(LOCALE);
 
 /**
- * A count with its noun in the right plural form: `countOf(1, 'recipe')` is
- * "1 recipe", `countOf(2, 'recipe')` is "2 recipes". Pass `many` for nouns that
- * don't just add an "s".
+ * Formats a count with its noun in the right plural form.
+ * @param n - The number of items being counted.
+ * @param one - The singular noun, used when `n` is one.
+ * @param many - The plural noun, used for every other count. Defaults to `one` with an "s".
+ * @returns The count and the noun, such as "2 recipes".
+ * @example
+ * ```ts
+ * countOf(1, 'recipe'); // '1 recipe'
+ * countOf(2, 'recipe'); // '2 recipes'
+ * countOf(2, 'child', 'children'); // '2 children'
+ * ```
  */
 export function countOf(n: number, one: string, many = `${one}s`): string {
   return `${counts.format(n)} ${plurals.select(n) === 'one' ? one : many}`;
 }
 
-/** A formatter that keeps at most `maxFractionDigits` decimal places. */
+/**
+ * Builds a number formatter that keeps at most the given decimal places.
+ * @param maxFractionDigits - The most decimal places the formatter may print.
+ * @returns A formatter with no thousands separators.
+ * @example
+ * ```ts
+ * decimalFormat(1).format(1.25); // '1.3'
+ * ```
+ */
 const decimalFormat = (maxFractionDigits: number): Intl.NumberFormat =>
   new Intl.NumberFormat(LOCALE, {
     maximumFractionDigits: maxFractionDigits,
@@ -69,8 +99,19 @@ const COMMON_DECIMALS = Array.from({ length: 7 }, (_, places) =>
 );
 
 /**
- * A plain decimal for a quantity: at most `maxFractionDigits` places, no
- * trailing zeros and no thousands separators ("0.5", "250", "1.25").
+ * Formats a plain decimal for a quantity.
+ *
+ * The result has at most `maxFractionDigits` places, no trailing zeros and no
+ * thousands separators.
+ * @param value - The number to format.
+ * @param maxFractionDigits - The most decimal places to print. Defaults to 2.
+ * @returns The formatted number, such as "0.5", "250" or "1.25".
+ * @example
+ * ```ts
+ * formatQuantityNumber(0.5); // '0.5'
+ * formatQuantityNumber(1234.5); // '1234.5'
+ * formatQuantityNumber(1.256, 1); // '1.3'
+ * ```
  */
 export function formatQuantityNumber(
   value: number,
@@ -95,8 +136,17 @@ const UNITS: readonly (readonly [Intl.RelativeTimeFormatUnit, number])[] = [
 ];
 
 /**
- * How long ago (or from now) a moment is, in words: "yesterday", "3 days ago",
- * "in 2 hours". Anything within a minute is "now".
+ * Describes how long ago, or how far from now, a moment is, in words.
+ *
+ * Anything within a minute is "now".
+ * @param when - The moment to describe, as a `Date` or a parseable date string.
+ * @param now - The reference moment to measure from. Defaults to the current time.
+ * @returns A phrase such as "yesterday", "3 days ago" or "in 2 hours".
+ * @example
+ * ```ts
+ * relativeTime('2026-11-10T12:00:00Z', new Date('2026-11-11T12:00:00Z'));
+ * // 'yesterday'
+ * ```
  */
 export function relativeTime(
   when: Date | string,
@@ -123,12 +173,28 @@ const orList = new Intl.ListFormat(LOCALE, {
   type: 'disjunction',
 });
 
-/** "a, b and c". */
+/**
+ * Joins items into a list with "and" before the last one.
+ * @param items - The items to join, in display order.
+ * @returns The joined text, such as "a, b and c".
+ * @example
+ * ```ts
+ * listAnd(['eggs', 'milk', 'flour']); // 'eggs, milk and flour'
+ * ```
+ */
 export function listAnd(items: readonly string[]): string {
   return andList.format(items);
 }
 
-/** "a, b or c". */
+/**
+ * Joins items into a list with "or" before the last one.
+ * @param items - The items to join, in display order.
+ * @returns The joined text, such as "a, b or c".
+ * @example
+ * ```ts
+ * listOr(['tea', 'coffee']); // 'tea or coffee'
+ * ```
+ */
 export function listOr(items: readonly string[]): string {
   return orList.format(items);
 }
@@ -161,24 +227,57 @@ const percents = new Intl.NumberFormat(LOCALE, {
   maximumFractionDigits: 0,
 });
 
-/** A rating or score with exactly one decimal place: "8.0". */
+/**
+ * Formats a rating or score with exactly one decimal place.
+ * @param value - The rating to format.
+ * @returns The rating with one decimal place, such as "8.0".
+ * @example
+ * ```ts
+ * formatRating(8); // '8.0'
+ * ```
+ */
 export function formatRating(value: number): string {
   return ratings.format(value);
 }
 
-/** A size in gigabytes, to one decimal place at most: "1.5 GB". */
+/**
+ * Formats a size in gigabytes, with one decimal place at most.
+ * @param gigabyteCount - The size in gigabytes.
+ * @returns The size with its unit, such as "1.5 GB".
+ * @example
+ * ```ts
+ * formatGigabytes(1.54); // '1.5 GB'
+ * ```
+ */
 export function formatGigabytes(gigabyteCount: number): string {
   return gigabytes.format(gigabyteCount);
 }
 
-/** A file size in bytes, in gigabytes from 1 GB up and megabytes below: "640 MB". */
+/**
+ * Formats a file size in bytes, in gigabytes from 1 GB up and megabytes below.
+ * @param bytes - The file size as a raw count of bytes.
+ * @returns The size with its unit, such as "640 MB".
+ * @example
+ * ```ts
+ * formatSize(640_000_000); // '640 MB'
+ * formatSize(2_500_000_000); // '2.5 GB'
+ * ```
+ */
 export function formatSize(bytes: number): string {
   return bytes >= 1_000_000_000
     ? gigabytes.format(bytes / 1_000_000_000)
     : megabytes.format(bytes / 1_000_000);
 }
 
-/** A fraction as a whole-number percentage: `formatPercent(0.256)` is "26%". */
+/**
+ * Formats a fraction as a whole-number percentage.
+ * @param fraction - The fraction to format, where 1 is the whole.
+ * @returns The percentage with a percent sign.
+ * @example
+ * ```ts
+ * formatPercent(0.256); // '26%'
+ * ```
+ */
 export function formatPercent(fraction: number): string {
   return percents.format(fraction);
 }
@@ -191,7 +290,15 @@ const hours = new Intl.DateTimeFormat(LOCALE, {
   timeZone: 'UTC',
 });
 
-/** An hour of the day (0 to 23) as a 24-hour clock time: `formatHour(7)` is "07:00". */
+/**
+ * Formats an hour of the day as a 24-hour clock time.
+ * @param hour - The hour of the day, from 0 to 23.
+ * @returns The clock time in UTC, such as "07:00".
+ * @example
+ * ```ts
+ * formatHour(7); // '07:00'
+ * ```
+ */
 export function formatHour(hour: number): string {
   return hours.format(Date.UTC(1970, 0, 1, hour));
 }
@@ -217,9 +324,13 @@ const timestamp = new Intl.DateTimeFormat(DATE_LOCALE, {
 });
 
 /**
- * A day written out in full, in UTC so it reads the same in every time zone:
- * `formatDay('2026-11-01')` is "1 November 2026". Takes an ISO date, an ISO
- * timestamp, a number of milliseconds or a `Date`.
+ * Formats a day written out in full, in UTC so it reads the same in every time zone.
+ * @param when - An ISO date, an ISO timestamp, a number of milliseconds or a `Date`.
+ * @returns The day in words, such as "1 November 2026".
+ * @example
+ * ```ts
+ * formatDay('2026-11-01'); // '1 November 2026'
+ * ```
  */
 export function formatDay(when: Date | string | number): string {
   const date =
@@ -227,14 +338,30 @@ export function formatDay(when: Date | string | number): string {
   return day.format(new Date(date));
 }
 
-/** A moment as a short date and time in UTC: "1 Nov 2026, 10:00". */
+/**
+ * Formats a moment as a short date and time in UTC.
+ * @param when - An ISO timestamp, a number of milliseconds or a `Date`.
+ * @returns The date and time, such as "1 Nov 2026, 10:00".
+ * @example
+ * ```ts
+ * formatTimestamp('2026-11-01T10:00:00Z'); // '1 Nov 2026, 10:00'
+ * ```
+ */
 export function formatTimestamp(when: Date | string | number): string {
   return timestamp.format(new Date(when));
 }
 
 const durations = new Intl.DurationFormat(LOCALE, { style: 'narrow' });
 
-/** A length of time in prose, from its parts: `formatDuration({ hours: 1, minutes: 30 })` is "1h 30m". */
+/**
+ * Formats a length of time in prose, from its parts.
+ * @param parts - The duration broken into named units, such as `{ hours: 1, minutes: 30 }`.
+ * @returns The duration as text, such as "1h 30m".
+ * @example
+ * ```ts
+ * formatDuration({ hours: 1, minutes: 30 }); // '1h 30m'
+ * ```
+ */
 export function formatDuration(
   parts: Partial<Record<Intl.DurationFormatUnit, number>>,
 ): string {
@@ -244,8 +371,15 @@ export function formatDuration(
 const languages = new Intl.DisplayNames(LOCALE, { type: 'language' });
 
 /**
- * The name of a language from its code: `languageName('ja')` is "Japanese". A
- * code that is not a language tag (such as "?") comes back unchanged.
+ * Looks up the name of a language from its code.
+ *
+ * A code that is not a language tag (such as "?") comes back unchanged.
+ * @param code - The language code, such as "ja".
+ * @returns The English name of the language, such as "Japanese".
+ * @example
+ * ```ts
+ * languageName('ja'); // 'Japanese'
+ * ```
  */
 export function languageName(code: string): string {
   try {
@@ -258,15 +392,34 @@ export function languageName(code: string): string {
 const words = new Intl.Segmenter(LOCALE, { granularity: 'word' });
 const graphemes = new Intl.Segmenter(LOCALE, { granularity: 'grapheme' });
 
-/** How many characters a person sees in `text`: "👨‍👩‍👧" is one, where `length` says eight. */
+/**
+ * Counts the characters a person sees in a text.
+ *
+ * An emoji made of several code points counts as one character, where `length`
+ * would count each code point.
+ * @param text - The text to measure.
+ * @returns The number of visible characters.
+ * @example
+ * ```ts
+ * characterCount('👨‍👩‍👧'); // 1
+ * ```
+ */
 export function characterCount(text: string): number {
   return [...graphemes.segment(text)].length;
 }
 
 /**
- * Cut `text` to at most `limit` visible characters, ending on a whole word, and
- * add an ellipsis if anything was left off. Counts what a person sees, so an
- * emoji or an accented letter is never cut in half.
+ * Cuts a text to at most a number of visible characters, ending on a whole word.
+ *
+ * An ellipsis is added if anything was left off. Counts what a person sees, so
+ * an emoji or an accented letter is never cut in half.
+ * @param text - The text to shorten.
+ * @param limit - The most visible characters to keep before the ellipsis.
+ * @returns The original text if it fits, otherwise the shortened text with an ellipsis.
+ * @example
+ * ```ts
+ * truncate('Slow-roasted tomatoes with basil', 20); // 'Slow-roasted…'
+ * ```
  */
 export function truncate(text: string, limit: number): string {
   if (characterCount(text) <= limit) {

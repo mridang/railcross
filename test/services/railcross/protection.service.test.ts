@@ -1,22 +1,28 @@
+/**
+ * @file Tests for the repository protection service.
+ */
+import { expect } from '@jest/globals';
 import { Octokit } from '@octokit/rest';
 import ProtectionService from '../../../src/services/railcross/protection.service.js';
 import nock from 'nock';
 import { HttpStatus } from '@nestjs/common';
 
+// eslint-disable-next-line sonarjs/max-lines-per-function -- one describe block holds the whole suite and shares one fixture
 describe('protection.service test', () => {
+  // eslint-disable-next-line sonarjs/max-lines-per-function -- one describe block holds the whole suite and shares one fixture
   beforeEach(() => {
     nock('https://api.github.com')
       .persist()
       .get('/repos/mridang/testing')
       .reply(HttpStatus.OK, {
-        id: 748500999,
+        id: 748_500_999,
         node_id: 'R_kgDOLJ04Bw',
         name: 'testing',
         full_name: 'mridang/testing',
         private: false,
         owner: {
           login: 'mridang',
-          id: 327432,
+          id: 327_432,
           node_id: 'MDQ6VXNlcjMyNzQzMg==',
           avatar_url: 'https://avatars.githubusercontent.com/u/327432?v=4',
           gravatar_id: '',
@@ -174,14 +180,14 @@ describe('protection.service test', () => {
       .reply(HttpStatus.OK, {})
       .get('/repos/mridang/foobar')
       .reply(HttpStatus.OK, {
-        id: 748500999,
+        id: 748_500_999,
         node_id: 'R_kgDOLJ04Bw',
         name: 'foobar',
         full_name: 'mridang/foobar',
         private: false,
         owner: {
           login: 'mridang',
-          id: 327432,
+          id: 327_432,
           node_id: 'MDQ6VXNlcjMyNzQzMg==',
           avatar_url: 'https://avatars.githubusercontent.com/u/327432?v=4',
           gravatar_id: '',
@@ -337,7 +343,7 @@ describe('protection.service test', () => {
           checks: [
             {
               context: 'run-canary',
-              app_id: 15368,
+              app_id: 15_368,
             },
           ],
         },
@@ -415,7 +421,9 @@ describe('protection.service test', () => {
       });
     });
 
-    await protectionService.toggleProtection('mridang/testing', 0, true);
+    expect(
+      await protectionService.toggleProtection('mridang/testing', 0, true),
+    ).toBeUndefined();
   });
 
   test('that branches with existing rules get protected"', async () => {
@@ -428,6 +436,8 @@ describe('protection.service test', () => {
       });
     });
 
-    await protectionService.toggleProtection('mridang/foobar', 0, false);
+    expect(
+      await protectionService.toggleProtection('mridang/foobar', 0, false),
+    ).toBeUndefined();
   });
 });

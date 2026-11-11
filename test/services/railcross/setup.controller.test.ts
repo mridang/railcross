@@ -1,3 +1,6 @@
+/**
+ * @file Tests for the setup page controller.
+ */
 import { afterAll, beforeAll, jest, expect, test } from '@jest/globals';
 import { HttpStatus } from '@nestjs/common';
 import request from 'supertest';
@@ -48,7 +51,7 @@ describe('setup.controller test', () => {
     const jwtService = testModule.app.get(JwtService);
     railcrossServiceMock.listSchedules.mockResolvedValue([] as never);
 
-    await request(testModule.app.getHttpServer())
+    const response = await request(testModule.app.getHttpServer())
       .get('/app')
       .set(
         'Cookie',
@@ -65,6 +68,7 @@ describe('setup.controller test', () => {
         )}`,
       )
       .expect(HttpStatus.OK);
+    expect(response.status).toBe(HttpStatus.OK);
   });
 
   test('/POST setup should create schedule and invoke updateSchedules', async () => {

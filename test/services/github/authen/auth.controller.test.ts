@@ -1,4 +1,7 @@
-import { afterAll, beforeAll, jest } from '@jest/globals';
+/**
+ * @file Tests for the GitHub authentication controller routes.
+ */
+import { afterAll, beforeAll, expect, jest } from '@jest/globals';
 import nock from 'nock';
 import request from 'supertest';
 import { HttpStatus } from '@nestjs/common';
@@ -21,6 +24,7 @@ const testModule = new End2EndModule({
   ],
 });
 
+// eslint-disable-next-line sonarjs/max-lines-per-function -- one describe block holds the whole suite and shares one fixture
 describe('auth.controller tests', () => {
   beforeAll(async () => {
     await testModule.beforeAll((testModule) => {
@@ -41,6 +45,7 @@ describe('auth.controller tests', () => {
     await testModule.afterAll();
   });
 
+  // eslint-disable-next-line sonarjs/max-lines-per-function -- one describe block holds the whole suite and shares one fixture
   beforeEach(() => {
     nock('https://api.github.com')
       .persist()
@@ -161,7 +166,7 @@ describe('auth.controller tests', () => {
       .get('/user/repos?per_page=100')
       .reply(HttpStatus.OK, [
         {
-          id: 1296269,
+          id: 1_296_269,
           node_id: 'MDEwOlJlcG9zaXRvcnkxMjk2MjY5',
           name: 'hello-world',
           full_name: 'octocat/hello-world',
@@ -338,15 +343,16 @@ describe('auth.controller tests', () => {
       .expect(HttpStatus.BAD_REQUEST);
   });
 
-  test('handles GitHub OAuth callback successfully', () => {
-    return request(testModule.app.getHttpServer())
+  test('handles GitHub OAuth callback successfully', async () => {
+    const response = await request(testModule.app.getHttpServer())
       .get('/auth?code=foofoofoofoofoofoofoo&state=barbarbarbarbarbarbar')
       .set('Cookie', 'nonce=barbarbarbarbarbarbar')
       .expect(HttpStatus.FOUND)
       .expect(
         'Set-Cookie',
-        /^nonce=; Path=\/; Expires=.* GMT,jwt=.*\..*\..*; Max-Age=3600; Path=\/; Expires=.* GMT; HttpOnly; Secure; SameSite=Strict$/,
+        /^nonce=; Path=\/; Expires=[^;]* GMT,jwt=[^.;]+\.[^.;]+\.[^.;]+; Max-Age=3600; Path=\/; Expires=[^;]* GMT; HttpOnly; Secure; SameSite=Strict$/,
       );
+    expect(response.status).toBe(HttpStatus.FOUND);
   });
 
   test('clears jwt cookie and redirects on logout', () => {

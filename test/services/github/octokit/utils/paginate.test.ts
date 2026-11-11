@@ -1,3 +1,6 @@
+/**
+ * @file Tests for the paginated GitHub fetch helper.
+ */
 import { expect } from '@jest/globals';
 import { toArray } from 'rxjs/operators';
 import { doPaginate } from '../../../../../src/services/github/octokit/utils/paginate.js';

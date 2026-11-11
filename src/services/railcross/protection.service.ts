@@ -1,3 +1,6 @@
+/**
+ * @file Service that locks and unlocks repository branches on schedule through the GitHub API.
+ */
 import { Octokit } from '@octokit/rest';
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ensure } from '../../utils/ensure.js';
@@ -19,8 +22,8 @@ export default class ProtectionService {
     installationId: number,
     lockState: boolean,
   ) {
-    const owner = repositoryName.split('/')[0];
-    const repo = repositoryName.split('/')[1];
+    const owner = repositoryName.split('/', 1)[0];
+    const repo = repositoryName.split('/', 2)[1];
     const octokit = this.octokitFn(installationId);
     const { data: repository } = await octokit.repos.get({
       owner: owner,

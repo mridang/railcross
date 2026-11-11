@@ -1,3 +1,6 @@
+/**
+ * @file HTTP routes for the schedule setup page and its update and reset forms.
+ */
 import {
   Body,
   Controller,
@@ -20,9 +23,19 @@ import { Expose, Transform, Type } from 'class-transformer';
 import setupView from './setup.view.js';
 
 /**
- * The hour of day a time field names: the form's clock time on the hour
- * ("22:00") or a plain hour ("22"). Anything else, a time with minutes
- * included, comes through as NaN and fails the integer check.
+ * Reads the hour of day that a time field names.
+ *
+ * The form's clock time on the hour ("22:00") or a plain hour ("22") is accepted.
+ * Anything else, a time with minutes included, comes through as NaN and fails the
+ * integer check.
+ * @param value - The raw form value of the time field.
+ * @returns The hour as a number, NaN for an empty or unsupported value, or the value unchanged when it is not a string.
+ * @example
+ * ```ts
+ * hourOf('22:00'); // 22
+ * hourOf('7'); // 7
+ * hourOf('07:30'); // NaN
+ * ```
  */
 export function hourOf(value: unknown): unknown {
   if (typeof value !== 'string') {
@@ -35,9 +48,13 @@ export function hourOf(value: unknown): unknown {
   return clock ? Number(clock[1]) : Number(value);
 }
 
+/**
+ * The form fields that set the lock, unlock, time zone and repository choices.
+ *
+ * The time fields are read from the raw body: by the time `value` arrives,
+ * implicit conversion to a number has already turned "22:00" into NaN.
+ */
 class ScheduleDto {
-  // Read from the raw body: by the time `value` arrives, implicit conversion to
-  // a number has already turned "22:00" into NaN.
   @Transform(({ obj }: { obj: Record<string, unknown> }) =>
     hourOf(obj['lock_time']),
   )
@@ -83,13 +100,13 @@ export class SetupController {
   @Get()
   @Header('Content-Type', 'text/html; charset=utf-8')
   async showSetup(@Req() request: Request & { user: { accessToken: string } }) {
-    if (!request.user.accessToken) {
-      throw new UnauthorizedException('Unable to deduce allowed installations');
-    } else {
+    if (request.user.accessToken) {
       const octokit = this.octokitFn(request.user.accessToken);
       const repoSchedules = await this.railcrossService.listSchedules(octokit);
 
       return setupView(repoSchedules);
+    } else {
+      throw new UnauthorizedException('Unable to deduce allowed installations');
     }
   }
 
@@ -102,9 +119,7 @@ export class SetupController {
       user: { accessToken: string };
     },
   ) {
-    if (!request.user.accessToken) {
-      throw new UnauthorizedException('Unable to deduce allowed installations');
-    } else {
+    if (request.user.accessToken) {
       const octokit = this.octokitFn(request.user.accessToken);
 
       await this.railcrossService.updateSchedules(
@@ -114,18 +129,20 @@ export class SetupController {
         scheduleDto.unlockTime,
         scheduleDto.timezone,
       );
+    } else {
+      throw new UnauthorizedException('Unable to deduce allowed installations');
     }
   }
 
   @Post('reset')
   @Redirect('/app', HttpStatus.FOUND)
   async reset(@Req() request: Request & { user: { accessToken: string } }) {
-    if (!request.user.accessToken) {
-      throw new UnauthorizedException('Unable to deduce allowed installations');
-    } else {
+    if (request.user.accessToken) {
       const octokit = this.octokitFn(request.user.accessToken);
 
       await this.railcrossService.resetSchedules(octokit);
+    } else {
+      throw new UnauthorizedException('Unable to deduce allowed installations');
     }
   }
 }

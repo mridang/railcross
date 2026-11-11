@@ -1,3 +1,6 @@
+/**
+ * @file Tests for the Railcross module wiring.
+ */
 import { afterAll, beforeAll, jest, expect } from '@jest/globals';
 import { cloudflareWorkersStub } from '../../helpers/cloudflare-workers-stub.js';
 

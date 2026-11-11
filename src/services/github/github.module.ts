@@ -1,3 +1,6 @@
+/**
+ * @file Nest module that groups the GitHub authentication, Octokit and webhook modules.
+ */
 import { Module } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { AuthModule } from './authen/auth.module.js';

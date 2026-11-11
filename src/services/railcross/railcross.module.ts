@@ -1,3 +1,6 @@
+/**
+ * @file Nest module that provides the Railcross services and the Workers bindings they use.
+ */
 import { Module } from '@nestjs/common';
 import { env } from 'cloudflare:workers';
 import ProtectionService from './protection.service.js';

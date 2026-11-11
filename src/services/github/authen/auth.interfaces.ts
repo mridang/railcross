@@ -1,14 +1,17 @@
+/**
+ * @file Configuration types and injection tokens for the GitHub authentication module.
+ */
 import { InjectionToken, ModuleMetadata } from '@nestjs/common';
 
-export const AuthConfig = Symbol('AuthConfig');
-// eslint-disable-next-line no-redeclare
+const AuthConfigToken = Symbol('AuthConfig');
+export { AuthConfigToken as AuthConfig };
 export interface AuthConfig {
   clientSecret: string;
   clientId: string;
 }
 
-export const AuthModuleOptions = Symbol('AuthModuleOptions');
-// eslint-disable-next-line no-redeclare
+const AuthModuleOptionsToken = Symbol('AuthModuleOptions');
+export { AuthModuleOptionsToken as AuthModuleOptions };
 export interface AuthModuleOptions {
   authConfig: AuthConfig;
   authTTL: number;

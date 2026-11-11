@@ -1,3 +1,6 @@
+/**
+ * @file Webhook handler that reacts to GitHub events by updating repository schedules.
+ */
 import { WebhookHandler } from '../github/webhook/webhook.interfaces.js';
 import SchedulerService from './scheduler.service.js';
 import { Inject, Injectable, Logger } from '@nestjs/common';

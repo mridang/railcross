@@ -1,10 +1,13 @@
-import { readFileSync } from 'node:fs';
-import { join } from 'node:path';
+/**
+ * @file Tests that the compiled stylesheet ships with the app.
+ */
+import { readFile } from 'node:fs/promises';
+import path from 'node:path';
 
 import { describe, expect, it } from '@jest/globals';
 
-const css = readFileSync(
-  join(process.cwd(), 'src', 'styles', 'app.css'),
+const css = await readFile(
+  path.join(process.cwd(), 'src', 'styles', 'app.css'),
   'utf8',
 );
 

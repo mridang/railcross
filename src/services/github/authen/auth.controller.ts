@@ -1,3 +1,6 @@
+/**
+ * @file HTTP routes for GitHub sign-in, the OAuth callback and re-authentication.
+ */
 import {
   Controller,
   Get,
@@ -112,10 +115,10 @@ export class AuthController {
     @Res({ passthrough: true }) response: Response,
     @Query() dto: CallbackDto,
   ) {
-    if (request.cookies[this.cookieName] !== dto.state) {
-      throw new UnauthorizedException('Invalid state parameter or nonce.');
-    } else {
+    if (request.cookies[this.cookieName] === dto.state) {
       response.clearCookie(this.cookieName);
+    } else {
+      throw new UnauthorizedException('Invalid state parameter or nonce.');
     }
 
     const results = ensure(

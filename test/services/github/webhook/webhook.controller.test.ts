@@ -1,3 +1,6 @@
+/**
+ * @file Tests for the GitHub webhook controller.
+ */
 import { afterAll, beforeAll, expect } from '@jest/globals';
 import request from 'supertest';
 import { HttpStatus } from '@nestjs/common';
@@ -20,6 +23,7 @@ const testModule = new End2EndModule({
   ],
 });
 
+// eslint-disable-next-line sonarjs/max-lines-per-function -- one describe block holds the whole suite and shares one fixture
 describe('webhook.controller tests', () => {
   beforeAll(async () => {
     await testModule.beforeAll();
@@ -159,7 +163,7 @@ describe('webhook.controller tests', () => {
     };
     const signature = hmacSha256(webhookSecret, JSON.stringify(payload));
 
-    return request(testModule.app.getHttpServer())
+    const response = await request(testModule.app.getHttpServer())
       .post('/hook')
       .set({
         'x-github-event': 'installation',
@@ -168,6 +172,7 @@ describe('webhook.controller tests', () => {
       })
       .send(JSON.stringify(payload))
       .expect(HttpStatus.BAD_REQUEST);
+    expect(response.status).toBe(HttpStatus.BAD_REQUEST);
   });
 
   test('should return 400 without x-github-event header', async () => {
@@ -186,7 +191,7 @@ describe('webhook.controller tests', () => {
     };
     const signature = hmacSha256(webhookSecret, JSON.stringify(payload));
 
-    return request(testModule.app.getHttpServer())
+    const response = await request(testModule.app.getHttpServer())
       .post('/hook')
       .set({
         'x-github-delivery': '72d3162e-cc78-11e3-81ab-4c9367dc0958',
@@ -195,6 +200,7 @@ describe('webhook.controller tests', () => {
       })
       .send(JSON.stringify(payload))
       .expect(HttpStatus.BAD_REQUEST);
+    expect(response.status).toBe(HttpStatus.BAD_REQUEST);
   });
 
   test('should return 400 without x-hub-signature-256 header', async () => {
@@ -213,7 +219,7 @@ describe('webhook.controller tests', () => {
     };
     const signature = hmacSha256(webhookSecret, JSON.stringify(payload));
 
-    return request(testModule.app.getHttpServer())
+    const response = await request(testModule.app.getHttpServer())
       .post('/hook')
       .set({
         'x-github-delivery': '72d3162e-cc78-11e3-81ab-4c9367dc0958',
@@ -223,6 +229,7 @@ describe('webhook.controller tests', () => {
       })
       .send(JSON.stringify(payload))
       .expect(HttpStatus.BAD_REQUEST);
+    expect(response.status).toBe(HttpStatus.BAD_REQUEST);
   });
 
   test('that pull_request.closed event are handled', async () => {
@@ -289,7 +296,7 @@ describe('webhook.controller tests', () => {
             site_admin: false,
           },
           repo: {
-            id: 1296269,
+            id: 1_296_269,
             name: 'Hello-World',
             full_name: 'octocat/Hello-World',
             owner: {
@@ -347,7 +354,7 @@ describe('webhook.controller tests', () => {
             site_admin: false,
           },
           repo: {
-            id: 1296269,
+            id: 1_296_269,
             name: 'Hello-World',
             full_name: 'octocat/Hello-World',
             html_url: 'https://github.com/octocat/Hello-World',
@@ -370,7 +377,7 @@ describe('webhook.controller tests', () => {
         changed_files: 1,
       },
       repository: {
-        id: 1296269,
+        id: 1_296_269,
         node_id: 'MDEwOlJlcG9zaXRvcnkxMjk2MjY5',
         name: 'Hello-World',
         full_name: 'octocat/Hello-World',
@@ -395,7 +402,7 @@ describe('webhook.controller tests', () => {
     };
     const signature = hmacSha256(webhookSecret, JSON.stringify(payload));
 
-    await request(testModule.app.getHttpServer())
+    const response = await request(testModule.app.getHttpServer())
       .post('/hook')
       .set({
         'x-github-delivery': '72d3162e-cc78-11e3-81ab-4c9367dc0958',
@@ -406,6 +413,7 @@ describe('webhook.controller tests', () => {
       .send(payload)
       .expect(HttpStatus.CREATED)
       .expect('');
+    expect(response.status).toBe(HttpStatus.CREATED);
   });
 
   test('that installation.created events are handled', async () => {
@@ -415,10 +423,10 @@ describe('webhook.controller tests', () => {
     const payload = {
       action: 'created',
       installation: {
-        id: 47071570,
+        id: 47_071_570,
         account: {
           login: 'mridang',
-          id: 327432,
+          id: 327_432,
           node_id: 'MDQ6VXNlcjMyNzQzMg==',
           avatar_url: 'https://avatars.githubusercontent.com/u/327432?v=4',
           gravatar_id: '',
@@ -445,9 +453,9 @@ describe('webhook.controller tests', () => {
           'https://api.github.com/app/installations/47071570/access_tokens',
         repositories_url: 'https://api.github.com/installation/repositories',
         html_url: 'https://github.com/settings/installations/47071570',
-        app_id: 712568,
+        app_id: 712_568,
         app_slug: 'marshallapp',
-        target_id: 327432,
+        target_id: 327_432,
         target_type: 'User',
         permissions: {
           checks: 'read',
@@ -468,7 +476,7 @@ describe('webhook.controller tests', () => {
       },
       repositories: [
         {
-          id: 1216277,
+          id: 1_216_277,
           node_id: 'MDEwOlJlcG9zaXRvcnkxMjE2Mjc3',
           name: 'JIMDB',
           full_name: 'mridang/JIMDB',
@@ -478,7 +486,7 @@ describe('webhook.controller tests', () => {
       requester: null,
       sender: {
         login: 'mridang',
-        id: 327432,
+        id: 327_432,
         node_id: 'MDQ6VXNlcjMyNzQzMg==',
         avatar_url: 'https://avatars.githubusercontent.com/u/327432?v=4',
         gravatar_id: '',
@@ -502,7 +510,7 @@ describe('webhook.controller tests', () => {
     };
     const signature = hmacSha256(webhookSecret, JSON.stringify(payload));
 
-    await request(testModule.app.getHttpServer())
+    const response = await request(testModule.app.getHttpServer())
       .post('/hook')
       .set({
         'x-github-delivery': '72d3162e-cc78-11e3-81ab-4c9367dc0958',
@@ -513,6 +521,7 @@ describe('webhook.controller tests', () => {
       .send(payload)
       .expect(HttpStatus.CREATED)
       .expect('');
+    expect(response.status).toBe(HttpStatus.CREATED);
   });
 
   test('that installation_repositories.added event are handled', async () => {
@@ -522,10 +531,10 @@ describe('webhook.controller tests', () => {
     const payload = {
       action: 'added',
       installation: {
-        id: 47071570,
+        id: 47_071_570,
         account: {
           login: 'mridang',
-          id: 327432,
+          id: 327_432,
           node_id: 'MDQ6VXNlcjMyNzQzMg==',
           avatar_url: 'https://avatars.githubusercontent.com/u/327432?v=4',
           gravatar_id: '',
@@ -552,9 +561,9 @@ describe('webhook.controller tests', () => {
           'https://api.github.com/app/installations/47071570/access_tokens',
         repositories_url: 'https://api.github.com/installation/repositories',
         html_url: 'https://github.com/settings/installations/47071570',
-        app_id: 712568,
+        app_id: 712_568,
         app_slug: 'marshallapp',
-        target_id: 327432,
+        target_id: 327_432,
         target_type: 'User',
         permissions: {
           checks: 'read',
@@ -576,7 +585,7 @@ describe('webhook.controller tests', () => {
       repository_selection: 'selected',
       repositories_added: [
         {
-          id: 214675095,
+          id: 214_675_095,
           node_id: 'MDEwOlJlcG9zaXRvcnkyMTQ2NzUwOTU=',
           name: 'action-intellij',
           full_name: 'mridang/action-intellij',
@@ -587,7 +596,7 @@ describe('webhook.controller tests', () => {
       requester: null,
       sender: {
         login: 'mridang',
-        id: 327432,
+        id: 327_432,
         node_id: 'MDQ6VXNlcjMyNzQzMg==',
         avatar_url: 'https://avatars.githubusercontent.com/u/327432?v=4',
         gravatar_id: '',
@@ -611,7 +620,7 @@ describe('webhook.controller tests', () => {
     };
     const signature = hmacSha256(webhookSecret, JSON.stringify(payload));
 
-    await request(testModule.app.getHttpServer())
+    const response = await request(testModule.app.getHttpServer())
       .post('/hook')
       .set({
         'x-github-delivery': '72d3162e-cc78-11e3-81ab-4c9367dc0958',
@@ -622,6 +631,7 @@ describe('webhook.controller tests', () => {
       .send(payload)
       .expect(HttpStatus.CREATED)
       .expect('');
+    expect(response.status).toBe(HttpStatus.CREATED);
   });
 
   test('that installation_repositories.removed event are handled', async () => {
@@ -631,10 +641,10 @@ describe('webhook.controller tests', () => {
     const payload = {
       action: 'removed',
       installation: {
-        id: 47071570,
+        id: 47_071_570,
         account: {
           login: 'mridang',
-          id: 327432,
+          id: 327_432,
           node_id: 'MDQ6VXNlcjMyNzQzMg==',
           avatar_url: 'https://avatars.githubusercontent.com/u/327432?v=4',
           gravatar_id: '',
@@ -661,9 +671,9 @@ describe('webhook.controller tests', () => {
           'https://api.github.com/app/installations/47071570/access_tokens',
         repositories_url: 'https://api.github.com/installation/repositories',
         html_url: 'https://github.com/settings/installations/47071570',
-        app_id: 712568,
+        app_id: 712_568,
         app_slug: 'marshallapp',
-        target_id: 327432,
+        target_id: 327_432,
         target_type: 'User',
         permissions: {
           checks: 'read',
@@ -686,7 +696,7 @@ describe('webhook.controller tests', () => {
       repositories_added: [],
       repositories_removed: [
         {
-          id: 1216277,
+          id: 1_216_277,
           node_id: 'MDEwOlJlcG9zaXRvcnkxMjE2Mjc3',
           name: 'JIMDB',
           full_name: 'mridang/JIMDB',
@@ -696,7 +706,7 @@ describe('webhook.controller tests', () => {
       requester: null,
       sender: {
         login: 'mridang',
-        id: 327432,
+        id: 327_432,
         node_id: 'MDQ6VXNlcjMyNzQzMg==',
         avatar_url: 'https://avatars.githubusercontent.com/u/327432?v=4',
         gravatar_id: '',
@@ -720,7 +730,7 @@ describe('webhook.controller tests', () => {
     };
     const signature = hmacSha256(webhookSecret, JSON.stringify(payload));
 
-    await request(testModule.app.getHttpServer())
+    const response = await request(testModule.app.getHttpServer())
       .post('/hook')
       .set({
         'x-github-delivery': '72d3162e-cc78-11e3-81ab-4c9367dc0958',
@@ -731,5 +741,6 @@ describe('webhook.controller tests', () => {
       .send(payload)
       .expect(HttpStatus.CREATED)
       .expect('');
+    expect(response.status).toBe(HttpStatus.CREATED);
   });
 });

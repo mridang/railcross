@@ -1,3 +1,6 @@
+/**
+ * @file Test module that builds the full application for end-to-end style tests.
+ */
 import { configure } from '@mridang/nestjs-defaults';
 import {
   type DynamicModule,
@@ -10,18 +13,17 @@ import {
 import { type NestExpressApplication } from '@nestjs/platform-express';
 import { Test, TestingModuleBuilder } from '@nestjs/testing';
 
+type ModuleImport =
+  Type | DynamicModule | Promise<DynamicModule> | ForwardReference;
+
 export class End2EndModule {
   app!: INestApplication;
-  private readonly imports: Array<
-    Type | DynamicModule | Promise<DynamicModule> | ForwardReference
-  >;
+  private readonly imports: ModuleImport[];
   private readonly controllers: Type[];
   private readonly providers: Provider[];
 
   constructor(options: {
-    imports?: Array<
-      Type | DynamicModule | Promise<DynamicModule> | ForwardReference
-    >;
+    imports?: ModuleImport[];
     providers?: Provider[];
     controllers?: Type[];
   }) {

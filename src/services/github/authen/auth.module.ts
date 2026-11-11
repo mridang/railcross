@@ -1,3 +1,6 @@
+/**
+ * @file Nest module that registers GitHub authentication, its guard and its middleware.
+ */
 import { Module, DynamicModule, MiddlewareConsumer } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { AuthController } from './auth.controller.js';

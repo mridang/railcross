@@ -1,3 +1,6 @@
+/**
+ * @file Jest setup file that prepares environment variables and keys before the suite runs.
+ */
 import { config } from 'dotenv';
 import { generateKeyPairSync } from 'node:crypto';
 
@@ -7,6 +10,7 @@ config();
 // Hermetic defaults so the app boots in tests (and in CI, which has no .env)
 // without real credentials. The private key is generated at runtime, so no key
 // material is committed to the repository.
+
 const { privateKey } = generateKeyPairSync('rsa', {
   modulusLength: 2048,
   publicKeyEncoding: { type: 'spki', format: 'pem' },
@@ -27,8 +31,17 @@ process.env.DOMAIN_NAME ||= 'railcross.example.com';
 // DSN forces the no-op reporter.
 process.env.SENTRY_DSN = '';
 
-// noinspection JSUnusedGlobalSymbols
+/**
+ * Runs once before the whole suite.
+ *
+ * No external services are required, because configuration is read from the
+ * environment and the tests run entirely in-process.
+ * @returns A promise that resolves once setup is complete.
+ * @example
+ * ```ts
+ * // Registered in the Jest configuration as globalSetup.
+ * ```
+ */
 export default async function setup(): Promise<void> {
-  // No external services are required; configuration is read from the
-  // environment, so the tests run entirely in-process.
+  // Nothing to start.
 }

@@ -1,3 +1,6 @@
+/**
+ * @file Tests for the schedule alarm Durable Object.
+ */
 import { expect, describe, test } from '@jest/globals';
 import { cloudflareWorkersStub } from '../helpers/cloudflare-workers-stub.js';
 import { installFakeTracing } from '../utils/observability/fake-tracing.js';
