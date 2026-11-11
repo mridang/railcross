@@ -147,7 +147,6 @@ describe('webhook.controller tests', () => {
       });
   });
 
-  // eslint-disable-next-line sonarjs/assertions-in-tests -- the supertest .expect() chain is the assertion
   test('should return 400 without x-github-delivery header', async () => {
     const webhookSecret = await testModule.app
       .get(ConfigService)
@@ -164,7 +163,7 @@ describe('webhook.controller tests', () => {
     };
     const signature = hmacSha256(webhookSecret, JSON.stringify(payload));
 
-    return request(testModule.app.getHttpServer())
+    const response = await request(testModule.app.getHttpServer())
       .post('/hook')
       .set({
         'x-github-event': 'installation',
@@ -173,9 +172,9 @@ describe('webhook.controller tests', () => {
       })
       .send(JSON.stringify(payload))
       .expect(HttpStatus.BAD_REQUEST);
+    expect(response.status).toBe(HttpStatus.BAD_REQUEST);
   });
 
-  // eslint-disable-next-line sonarjs/assertions-in-tests -- the supertest .expect() chain is the assertion
   test('should return 400 without x-github-event header', async () => {
     const webhookSecret = await testModule.app
       .get(ConfigService)
@@ -192,7 +191,7 @@ describe('webhook.controller tests', () => {
     };
     const signature = hmacSha256(webhookSecret, JSON.stringify(payload));
 
-    return request(testModule.app.getHttpServer())
+    const response = await request(testModule.app.getHttpServer())
       .post('/hook')
       .set({
         'x-github-delivery': '72d3162e-cc78-11e3-81ab-4c9367dc0958',
@@ -201,9 +200,9 @@ describe('webhook.controller tests', () => {
       })
       .send(JSON.stringify(payload))
       .expect(HttpStatus.BAD_REQUEST);
+    expect(response.status).toBe(HttpStatus.BAD_REQUEST);
   });
 
-  // eslint-disable-next-line sonarjs/assertions-in-tests -- the supertest .expect() chain is the assertion
   test('should return 400 without x-hub-signature-256 header', async () => {
     const webhookSecret = await testModule.app
       .get(ConfigService)
@@ -220,7 +219,7 @@ describe('webhook.controller tests', () => {
     };
     const signature = hmacSha256(webhookSecret, JSON.stringify(payload));
 
-    return request(testModule.app.getHttpServer())
+    const response = await request(testModule.app.getHttpServer())
       .post('/hook')
       .set({
         'x-github-delivery': '72d3162e-cc78-11e3-81ab-4c9367dc0958',
@@ -230,9 +229,9 @@ describe('webhook.controller tests', () => {
       })
       .send(JSON.stringify(payload))
       .expect(HttpStatus.BAD_REQUEST);
+    expect(response.status).toBe(HttpStatus.BAD_REQUEST);
   });
 
-  // eslint-disable-next-line sonarjs/assertions-in-tests -- the supertest .expect() chain is the assertion
   test('that pull_request.closed event are handled', async () => {
     const webhookSecret = await testModule.app
       .get(ConfigService)
@@ -403,7 +402,7 @@ describe('webhook.controller tests', () => {
     };
     const signature = hmacSha256(webhookSecret, JSON.stringify(payload));
 
-    await request(testModule.app.getHttpServer())
+    const response = await request(testModule.app.getHttpServer())
       .post('/hook')
       .set({
         'x-github-delivery': '72d3162e-cc78-11e3-81ab-4c9367dc0958',
@@ -414,9 +413,9 @@ describe('webhook.controller tests', () => {
       .send(payload)
       .expect(HttpStatus.CREATED)
       .expect('');
+    expect(response.status).toBe(HttpStatus.CREATED);
   });
 
-  // eslint-disable-next-line sonarjs/assertions-in-tests -- the supertest .expect() chain is the assertion
   test('that installation.created events are handled', async () => {
     const webhookSecret = await testModule.app
       .get(ConfigService)
@@ -511,7 +510,7 @@ describe('webhook.controller tests', () => {
     };
     const signature = hmacSha256(webhookSecret, JSON.stringify(payload));
 
-    await request(testModule.app.getHttpServer())
+    const response = await request(testModule.app.getHttpServer())
       .post('/hook')
       .set({
         'x-github-delivery': '72d3162e-cc78-11e3-81ab-4c9367dc0958',
@@ -522,9 +521,9 @@ describe('webhook.controller tests', () => {
       .send(payload)
       .expect(HttpStatus.CREATED)
       .expect('');
+    expect(response.status).toBe(HttpStatus.CREATED);
   });
 
-  // eslint-disable-next-line sonarjs/assertions-in-tests -- the supertest .expect() chain is the assertion
   test('that installation_repositories.added event are handled', async () => {
     const webhookSecret = await testModule.app
       .get(ConfigService)
@@ -621,7 +620,7 @@ describe('webhook.controller tests', () => {
     };
     const signature = hmacSha256(webhookSecret, JSON.stringify(payload));
 
-    await request(testModule.app.getHttpServer())
+    const response = await request(testModule.app.getHttpServer())
       .post('/hook')
       .set({
         'x-github-delivery': '72d3162e-cc78-11e3-81ab-4c9367dc0958',
@@ -632,9 +631,9 @@ describe('webhook.controller tests', () => {
       .send(payload)
       .expect(HttpStatus.CREATED)
       .expect('');
+    expect(response.status).toBe(HttpStatus.CREATED);
   });
 
-  // eslint-disable-next-line sonarjs/assertions-in-tests -- the supertest .expect() chain is the assertion
   test('that installation_repositories.removed event are handled', async () => {
     const webhookSecret = await testModule.app
       .get(ConfigService)
@@ -731,7 +730,7 @@ describe('webhook.controller tests', () => {
     };
     const signature = hmacSha256(webhookSecret, JSON.stringify(payload));
 
-    await request(testModule.app.getHttpServer())
+    const response = await request(testModule.app.getHttpServer())
       .post('/hook')
       .set({
         'x-github-delivery': '72d3162e-cc78-11e3-81ab-4c9367dc0958',
@@ -742,5 +741,6 @@ describe('webhook.controller tests', () => {
       .send(payload)
       .expect(HttpStatus.CREATED)
       .expect('');
+    expect(response.status).toBe(HttpStatus.CREATED);
   });
 });

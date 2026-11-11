@@ -3,15 +3,15 @@
  */
 import { InjectionToken, ModuleMetadata } from '@nestjs/common';
 
-export const AuthConfig = Symbol('AuthConfig');
-// eslint-disable-next-line no-redeclare -- the injection token and the interface share one name by design
+const AuthConfigToken = Symbol('AuthConfig');
+export { AuthConfigToken as AuthConfig };
 export interface AuthConfig {
   clientSecret: string;
   clientId: string;
 }
 
-export const AuthModuleOptions = Symbol('AuthModuleOptions');
-// eslint-disable-next-line no-redeclare -- the injection token and the interface share one name by design
+const AuthModuleOptionsToken = Symbol('AuthModuleOptions');
+export { AuthModuleOptionsToken as AuthModuleOptions };
 export interface AuthModuleOptions {
   authConfig: AuthConfig;
   authTTL: number;

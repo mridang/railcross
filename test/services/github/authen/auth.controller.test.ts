@@ -1,7 +1,7 @@
 /**
  * @file Tests for the GitHub authentication controller routes.
  */
-import { jest } from '@jest/globals';
+import { expect, jest } from '@jest/globals';
 import nock from 'nock';
 import request from 'supertest';
 import { HttpStatus } from '@nestjs/common';
@@ -343,9 +343,8 @@ describe('auth.controller tests', () => {
       .expect(HttpStatus.BAD_REQUEST);
   });
 
-  // eslint-disable-next-line sonarjs/assertions-in-tests -- the supertest .expect() chain is the assertion
-  test('handles GitHub OAuth callback successfully', () => {
-    return request(testModule.app.getHttpServer())
+  test('handles GitHub OAuth callback successfully', async () => {
+    const response = await request(testModule.app.getHttpServer())
       .get('/auth?code=foofoofoofoofoofoofoo&state=barbarbarbarbarbarbar')
       .set('Cookie', 'nonce=barbarbarbarbarbarbar')
       .expect(HttpStatus.FOUND)
@@ -353,6 +352,7 @@ describe('auth.controller tests', () => {
         'Set-Cookie',
         /^nonce=; Path=\/; Expires=[^;]* GMT,jwt=[^.;]+\.[^.;]+\.[^.;]+; Max-Age=3600; Path=\/; Expires=[^;]* GMT; HttpOnly; Secure; SameSite=Strict$/,
       );
+    expect(response.status).toBe(HttpStatus.FOUND);
   });
 
   test('clears jwt cookie and redirects on logout', () => {

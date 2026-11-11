@@ -22,8 +22,7 @@ import {
  * }
  * ```
  */
-// eslint-disable-next-line sonarjs/function-name -- mirrors the PascalCase class-validator decorator style
-export function IsSupportedTimeZone(validationOptions?: ValidationOptions) {
+function isSupportedTimeZone(validationOptions?: ValidationOptions) {
   return function (object: object, propertyName: string) {
     registerDecorator({
       name: 'IsSupportedTimeZone',
@@ -42,3 +41,5 @@ export function IsSupportedTimeZone(validationOptions?: ValidationOptions) {
     });
   };
 }
+
+export { isSupportedTimeZone as IsSupportedTimeZone };

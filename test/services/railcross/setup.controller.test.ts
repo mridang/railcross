@@ -47,12 +47,11 @@ describe('setup.controller test', () => {
     await testModule.afterAll();
   });
 
-  // eslint-disable-next-line sonarjs/assertions-in-tests -- the supertest .expect() chain is the assertion
   test('that the setup page renders correctly', async () => {
     const jwtService = testModule.app.get(JwtService);
     railcrossServiceMock.listSchedules.mockResolvedValue([] as never);
 
-    await request(testModule.app.getHttpServer())
+    const response = await request(testModule.app.getHttpServer())
       .get('/app')
       .set(
         'Cookie',
@@ -69,6 +68,7 @@ describe('setup.controller test', () => {
         )}`,
       )
       .expect(HttpStatus.OK);
+    expect(response.status).toBe(HttpStatus.OK);
   });
 
   test('/POST setup should create schedule and invoke updateSchedules', async () => {
