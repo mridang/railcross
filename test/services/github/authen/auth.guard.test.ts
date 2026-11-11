@@ -1,15 +1,8 @@
 import { expect } from '@jest/globals';
 import { AuthGuard } from '../../../../src/services/github/authen/auth.guard.js';
 import { JwtService } from '@nestjs/jwt';
-import { ExecutionContext } from '@nestjs/common/interfaces/features/execution-context.interface';
 import murmurhash from 'murmurhash';
-import {
-  ContextType,
-  HttpArgumentsHost,
-  RpcArgumentsHost,
-  Type,
-  WsArgumentsHost,
-} from '@nestjs/common/interfaces';
+import { ContextType, ExecutionContext, Type } from '@nestjs/common';
 import type { Request } from '@mridang/nestjs-defaults';
 
 describe('auth.guard tests', () => {
@@ -34,11 +27,11 @@ describe('auth.guard tests', () => {
       throw new Error('Method not implemented.');
     }
 
-    switchToRpc(): RpcArgumentsHost {
+    switchToRpc(): ReturnType<ExecutionContext['switchToRpc']> {
       throw new Error('Method not implemented.');
     }
 
-    switchToWs(): WsArgumentsHost {
+    switchToWs(): ReturnType<ExecutionContext['switchToWs']> {
       throw new Error('Method not implemented.');
     }
 
@@ -46,7 +39,7 @@ describe('auth.guard tests', () => {
       throw new Error('Method not implemented.');
     }
 
-    switchToHttp(): HttpArgumentsHost {
+    switchToHttp(): ReturnType<ExecutionContext['switchToHttp']> {
       const request = this.reqVal;
       return {
         getRequest<T = Request>(): T {
