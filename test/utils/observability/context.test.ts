@@ -31,12 +31,12 @@ describe('setErrorContext', () => {
   it('sets the attributes before it returns once the runtime has loaded', async () => {
     await setErrorContext({ warm: true });
     void setErrorContext({ at: 'once' });
-    expect(fake.attributes['at']).toBe('once');
+    expect(fake.attributes.at).toBe('once');
   });
 
   it('drops undefined values and anything that is not a plain value', async () => {
     await setErrorContext(
-      Object.fromEntries([
+      Object.fromEntries<string | number | undefined>([
         ['gone', undefined],
         ['nan', Number.NaN],
         ['object', { a: 1 } as never],
@@ -48,7 +48,7 @@ describe('setErrorContext', () => {
 
   it('cuts long text', async () => {
     await setErrorContext({ long: 'x'.repeat(1000) });
-    expect(String(fake.attributes['long'])).toHaveLength(256);
+    expect(String(fake.attributes.long)).toHaveLength(256);
   });
 
   it('does nothing where there is no active span', async () => {

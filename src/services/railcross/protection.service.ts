@@ -69,7 +69,7 @@ export default class ProtectionService {
               ? {
                   users:
                     required_pull_request_reviews?.dismissal_restrictions?.users?.map(
-                      (user) => user.name as string,
+                      (user) => user.name!,
                     ) || [],
                   teams:
                     required_pull_request_reviews?.dismissal_restrictions?.teams?.map(
@@ -92,7 +92,7 @@ export default class ProtectionService {
               ? {
                   users:
                     required_pull_request_reviews?.bypass_pull_request_allowances?.users?.map(
-                      (user) => user.name as string,
+                      (user) => user.name!,
                     ) || [],
                   teams:
                     required_pull_request_reviews?.bypass_pull_request_allowances?.teams?.map(
@@ -114,9 +114,9 @@ export default class ProtectionService {
           : null,
         restrictions: restrictions
           ? {
-              users: restrictions?.users.map((u) => u.login as string) || [],
-              teams: restrictions?.teams.map((u) => u.name as string) || [],
-              apps: restrictions?.apps.map((u) => u.name as string) || [],
+              users: restrictions?.users.map((u) => u.login!) || [],
+              teams: restrictions?.teams.map((u) => u.name) || [],
+              apps: restrictions?.apps.map((u) => u.name!) || [],
             }
           : null,
         owner: owner,

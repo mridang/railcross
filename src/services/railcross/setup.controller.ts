@@ -59,7 +59,7 @@ export function hourOf(value: unknown): unknown {
  */
 class ScheduleDto {
   @Transform(({ obj }: { obj: Record<string, unknown> }) =>
-    hourOf(obj['lock_time']),
+    hourOf(obj.lock_time),
   )
   @IsInt()
   @Min(0)
@@ -68,7 +68,7 @@ class ScheduleDto {
   lockTime!: number;
 
   @Transform(({ obj }: { obj: Record<string, unknown> }) =>
-    hourOf(obj['unlock_time']),
+    hourOf(obj.unlock_time),
   )
   @IsInt()
   @Min(0)

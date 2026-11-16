@@ -32,9 +32,9 @@ import { OctokitImpl } from './types.js';
               : {
                   authStrategy: createAppAuth,
                   auth: {
-                    appId: configService.getOrThrow('GITHUB_APP_ID'),
+                    appId: configService.getOrThrow<string>('GITHUB_APP_ID'),
                     privateKey: configService
-                      .getOrThrow('GITHUB_PRIVATE_KEY')
+                      .getOrThrow<string>('GITHUB_PRIVATE_KEY')
                       .replaceAll('&', '\n'),
                     installationId: accessTokenOrInstallationId,
                   },

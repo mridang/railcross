@@ -105,7 +105,7 @@ export class WebhookController {
         'repository',
       ),
     });
-    this.logger.log(`Received a webhook for event ${name}`);
+    this.logger.log(`Received a webhook for event ${String(name)}`);
     await this.webhookHandler.webhooks.verifyAndReceive({
       id: Array.isArray(id) ? id.join('|') : id,
       signature: signature,

@@ -20,7 +20,6 @@ import { Octokit } from '@octokit/rest';
 import { IsString, Length } from 'class-validator';
 import murmurhash from 'murmurhash';
 import { ensure } from '../../../utils/ensure.js';
-import { type Fetch } from '@octokit/types';
 import { AuthConfig } from './auth.interfaces.js';
 import { from, forkJoin, map, switchMap, lastValueFrom, toArray } from 'rxjs';
 import { AuthService } from './auth.service.js';
@@ -55,13 +54,13 @@ export class AuthController {
     private readonly configService: ConfigService,
     @Optional()
     @Inject(FetchImpl)
-    private readonly fetchImpl: Fetch = fetch,
+    private readonly fetchImpl: typeof fetch = fetch,
     @Optional()
     @Inject(CryptoImpl)
     private readonly cryptoFn: Omit<typeof crypto, 'subtle'> = crypto,
     @Inject()
     @Optional()
-    private readonly cookieName: string = 'nonce',
+    private readonly cookieName = 'nonce',
   ) {
     this.redirectFn = () => {
       const state = this.cryptoFn.randomUUID();
@@ -115,7 +114,11 @@ export class AuthController {
     @Res({ passthrough: true }) response: Response,
     @Query() dto: CallbackDto,
   ) {
-    if (request.cookies[this.cookieName] === dto.state) {
+    if (
+      (request.cookies as Record<string, string | undefined>)[
+        this.cookieName
+      ] === dto.state
+    ) {
       response.clearCookie(this.cookieName);
     } else {
       throw new UnauthorizedException('Invalid state parameter or nonce.');

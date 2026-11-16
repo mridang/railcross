@@ -36,8 +36,11 @@ export class AuthGuard implements CanActivate {
   canActivate(
     context: ExecutionContext,
   ): boolean | Promise<boolean> | Observable<boolean> {
-    const request = context.switchToHttp().getRequest();
-    const token = request.cookies ? request.cookies['jwt'] : undefined;
+    const request = context.switchToHttp().getRequest<{
+      cookies?: Record<string, string | undefined>;
+      params: Record<string, string | undefined>;
+    }>();
+    const token = request.cookies ? request.cookies.jwt : undefined;
 
     if (!token) {
       this.logger.log(`No JWT cookie found.`);
@@ -49,7 +52,7 @@ export class AuthGuard implements CanActivate {
       return false;
     }
     try {
-      const decoded = this.jwtService.verify(token) as { aud: string[] };
+      const decoded = this.jwtService.verify<{ aud: string[] }>(token);
       const fullName = `${orgName}/${repoName}`;
       if (decoded.aud.includes(`${murmurhash.v3(fullName)}`)) {
         return true;

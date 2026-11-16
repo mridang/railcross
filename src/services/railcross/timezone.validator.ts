@@ -1,11 +1,8 @@
 /**
  * @file Class-validator decorator that accepts only IANA time zone names known to the runtime.
  */
-import {
-  registerDecorator,
-  ValidationArguments,
-  ValidationOptions,
-} from 'class-validator';
+import type { ValidationArguments, ValidationOptions } from 'class-validator';
+import { registerDecorator } from 'class-validator';
 
 /**
  * Creates a property decorator that requires the value to be a supported IANA time zone.

@@ -26,10 +26,7 @@ export class DefaultWebhookHandler implements WebhookHandler {
    * });
    * ```
    */
-  on<E extends EmitterWebhookEventName>(
-    event: E,
-    handler: HandlerFunction<E, unknown>,
-  ) {
+  on<E extends EmitterWebhookEventName>(event: E, handler: HandlerFunction<E>) {
     this.logger.log(`Registered handler for ${event}`);
     this.webhooks.on(event, handler);
   }

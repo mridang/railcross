@@ -1,16 +1,16 @@
 /**
  * @file Injection tokens, configuration types and the handler contract for GitHub webhooks.
  */
-import { InjectionToken, ModuleMetadata } from '@nestjs/common';
-import { EmitterWebhookEventName } from '@octokit/webhooks';
-import { HandlerFunction } from '@octokit/webhooks/types';
+import type { InjectionToken, ModuleMetadata } from '@nestjs/common';
+import type { EmitterWebhookEventName } from '@octokit/webhooks';
+import type { HandlerFunction } from '@octokit/webhooks/types';
 
 const WebhookHandlerToken = Symbol('WebhookHandler');
 export { WebhookHandlerToken as WebhookHandler };
 export interface WebhookHandler {
   on<E extends EmitterWebhookEventName>(
     event: E,
-    handler: HandlerFunction<E, unknown>,
+    handler: HandlerFunction<E>,
   ): void;
 }
 

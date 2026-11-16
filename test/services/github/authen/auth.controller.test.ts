@@ -39,7 +39,7 @@ describe('auth.controller tests', () => {
         .overrideProvider(CryptoImpl)
         .useValue({
           randomUUID: () => '00000000-0000-0000-0000-000000000000',
-          getRandomValues: crypto.getRandomValues,
+          getRandomValues: crypto.getRandomValues.bind(crypto),
         })
         .overrideProvider(FetchImpl)
         .useValue(globalThis.fetch);
@@ -339,19 +339,19 @@ describe('auth.controller tests', () => {
   });
 
   test('responds with 400 Bad Request when `code` query parameter is missing', () => {
-    return request(testModule.app.getHttpServer())
+    return request(testModule.server)
       .get('/auth')
       .expect(HttpStatus.BAD_REQUEST);
   });
 
   test('responds with 400 Bad Request when `code` query parameter is invalid', () => {
-    return request(testModule.app.getHttpServer())
+    return request(testModule.server)
       .get('/auth?code=invalidCode')
       .expect(HttpStatus.BAD_REQUEST);
   });
 
   test('handles GitHub OAuth callback successfully', async () => {
-    const response = await request(testModule.app.getHttpServer())
+    const response = await request(testModule.server)
       .get('/auth?code=foofoofoofoofoofoofoo&state=barbarbarbarbarbarbar')
       .set('Cookie', 'nonce=barbarbarbarbarbarbar')
       .expect(HttpStatus.FOUND)
@@ -360,7 +360,7 @@ describe('auth.controller tests', () => {
   });
 
   test('clears jwt cookie and redirects on logout', () => {
-    return request(testModule.app.getHttpServer())
+    return request(testModule.server)
       .get('/auth/logout')
       .expect(HttpStatus.FOUND)
       .expect('Set-Cookie', CLEARED_JWT_PATTERN);

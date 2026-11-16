@@ -2,7 +2,6 @@
  * @file Service that exchanges GitHub OAuth codes for tokens and reads the signed-in user.
  */
 import { Inject, Injectable, Logger } from '@nestjs/common';
-import { type Fetch } from '@octokit/types';
 import { AuthConfig } from './auth.interfaces.js';
 import { FetchImpl } from '@mridang/nestjs-defaults';
 
@@ -10,7 +9,7 @@ import { FetchImpl } from '@mridang/nestjs-defaults';
 export class AuthService {
   private readonly logger = new Logger(AuthService.name);
 
-  constructor(@Inject(FetchImpl) private readonly fetchImpl: Fetch) {
+  constructor(@Inject(FetchImpl) private readonly fetchImpl: typeof fetch) {
     //
   }
 
@@ -35,7 +34,7 @@ export class AuthService {
     );
 
     if (response.ok) {
-      const tokenData = await response.json();
+      const tokenData = await response.json<{ access_token?: string }>();
 
       if (tokenData.access_token) {
         return tokenData.access_token;
