@@ -1,6 +1,7 @@
 /**
  * @file Middleware that sends a Permissions-Policy header switching off every browser feature.
  */
+// eslint-disable-next-line e18e/ban-dependencies -- type-only import of Express request types, erased at build time, so nothing ships
 import type { NextFunction, Request, Response } from 'express';
 
 /**

@@ -6,7 +6,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from '../app.module.js';
 import ProtectionService from '../services/railcross/protection.service.js';
 import { setErrorContext } from '../utils/observability/context.js';
-import { ScheduleConfig, nextOccurrence } from './schedule-utils.js';
+import { ScheduleConfig, nextOccurrence } from './schedule-utilities.js';
 
 /**
  * A Durable Object that fires a single lock or unlock task at a precise time.

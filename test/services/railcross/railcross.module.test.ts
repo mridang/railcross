@@ -10,7 +10,7 @@ jest.unstable_mockModule('cloudflare:workers', cloudflareWorkersStub, {
 
 const { default: ProbotHandler } =
   await import('../../../src/services/railcross/probot.handler.js');
-const { End2EndModule } = await import('../../e2e.module.js');
+const { End2EndModule } = await import('../../end-to-end.module.js');
 const { AppModule } = await import('../../../src/app.module.js');
 
 const testModule = new End2EndModule({

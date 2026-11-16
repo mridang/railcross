@@ -12,7 +12,7 @@ jest.unstable_mockModule('cloudflare:workers', cloudflareWorkersStub, {
   virtual: true,
 });
 
-const { End2EndModule } = await import('../../../e2e.module.js');
+const { End2EndModule } = await import('../../../end-to-end.module.js');
 const { AppModule } = await import('../../../../src/app.module.js');
 
 const testModule = new End2EndModule({
@@ -23,6 +23,13 @@ const testModule = new End2EndModule({
     },
   ],
 });
+
+/** The Set-Cookie header the auth callback sends with the session and nonce cookies. */
+const SESSION_COOKIE_PATTERN =
+  /^nonce=; Path=\/; Expires=[^;]* GMT,jwt=[^.;]+\.[^.;]+\.[^.;]+; Max-Age=3600; Path=\/; Expires=[^;]* GMT; HttpOnly; Secure; SameSite=Strict$/;
+
+/** The Set-Cookie header that clears the jwt cookie on logout. */
+const CLEARED_JWT_PATTERN = /jwt=;/;
 
 // eslint-disable-next-line sonarjs/max-lines-per-function -- one describe block holds the whole suite and shares one fixture
 describe('auth.controller tests', () => {
@@ -348,10 +355,7 @@ describe('auth.controller tests', () => {
       .get('/auth?code=foofoofoofoofoofoofoo&state=barbarbarbarbarbarbar')
       .set('Cookie', 'nonce=barbarbarbarbarbarbar')
       .expect(HttpStatus.FOUND)
-      .expect(
-        'Set-Cookie',
-        /^nonce=; Path=\/; Expires=[^;]* GMT,jwt=[^.;]+\.[^.;]+\.[^.;]+; Max-Age=3600; Path=\/; Expires=[^;]* GMT; HttpOnly; Secure; SameSite=Strict$/,
-      );
+      .expect('Set-Cookie', SESSION_COOKIE_PATTERN);
     expect(response.status).toBe(HttpStatus.FOUND);
   });
 
@@ -359,6 +363,6 @@ describe('auth.controller tests', () => {
     return request(testModule.app.getHttpServer())
       .get('/auth/logout')
       .expect(HttpStatus.FOUND)
-      .expect('Set-Cookie', /jwt=;/);
+      .expect('Set-Cookie', CLEARED_JWT_PATTERN);
   });
 });
