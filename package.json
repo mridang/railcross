@@ -67,7 +67,7 @@
     "@emnapi/runtime": "^1.11.3",
     "@eslint/compat": "^2.1.1",
     "@jest/globals": "^30.4.1",
-    "@mridang/eslint-defaults": "^2.1.0",
+    "@mridang/eslint-defaults": "^2.3.0",
     "@nestjs/schematics": "^11.1.0",
     "@nestjs/testing": "^11.1.26",
     "@tailwindcss/postcss": "^4.3.3",
