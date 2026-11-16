@@ -31,7 +31,6 @@
     "@octokit/core": "^7.0.6",
     "@octokit/plugin-retry": "^8.1.0",
     "@octokit/rest": "^22.0.1",
-    "@octokit/types": "^14.1.0",
     "@octokit/webhooks": "^14.2.0",
     "@octokit/webhooks-types": "^7.6.1",
     "@sentry/cloudflare": "^10.57.0",
