@@ -1,7 +1,7 @@
 /**
  * @file Configuration types and injection tokens for the GitHub authentication module.
  */
-import { InjectionToken, ModuleMetadata } from '@nestjs/common';
+import type { InjectionToken, ModuleMetadata } from '@nestjs/common';
 
 const AuthConfigToken = Symbol('AuthConfig');
 export { AuthConfigToken as AuthConfig };

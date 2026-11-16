@@ -5,7 +5,7 @@ import { expect } from '@jest/globals';
 import { AuthGuard } from '../../../../src/services/github/authen/auth.guard.js';
 import { JwtService } from '@nestjs/jwt';
 import murmurhash from 'murmurhash';
-import { ContextType, ExecutionContext, Type } from '@nestjs/common';
+import type { ContextType, ExecutionContext, Type } from '@nestjs/common';
 import type { Request } from '@mridang/nestjs-defaults';
 
 describe('auth.guard tests', () => {

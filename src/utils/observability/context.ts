@@ -69,7 +69,7 @@ let loaded: ContextTracing | null | undefined;
  * tracing?.getActiveSpan();
  * ```
  */
-function load(): Promise<ContextTracing | null | undefined> {
+async function load(): Promise<ContextTracing | null | undefined> {
   return import('cloudflare:workers')
     .then((workers) => (loaded = tracingOf(workers)))
     .catch(() => (loaded = null));
@@ -88,7 +88,9 @@ function load(): Promise<ContextTracing | null | undefined> {
  * await withActiveSpan((span) => span.setAttribute('job.name', 'schedule.reregister'));
  * ```
  */
-function withActiveSpan(apply: (span: ContextSpan) => void): Promise<void> {
+async function withActiveSpan(
+  apply: (span: ContextSpan) => void,
+): Promise<void> {
   const run = (tracing: ContextTracing | null | undefined): void => {
     try {
       const span = tracing?.getActiveSpan();
@@ -101,9 +103,9 @@ function withActiveSpan(apply: (span: ContextSpan) => void): Promise<void> {
   };
   if (loaded !== undefined) {
     run(loaded);
-    return Promise.resolve();
+    return;
   }
-  return load()
+  await load()
     .then(run)
     .catch(() => undefined);
 }
@@ -151,19 +153,21 @@ function accepted(attributes: ContextAttributes): [string, ContextValue][] {
  * await setErrorContext({ 'webhook.event': 'push', 'github.installation_id': 42 });
  * ```
  */
-export function setErrorContext(attributes: ContextAttributes): Promise<void> {
+export async function setErrorContext(
+  attributes: ContextAttributes,
+): Promise<void> {
   try {
     const kept = accepted(attributes);
     if (kept.length === 0) {
-      return Promise.resolve();
+      return;
     }
-    return withActiveSpan((span) => {
+    await withActiveSpan((span) => {
       for (const [key, value] of kept) {
         span.setAttribute(key, value);
       }
     });
   } catch {
-    return Promise.resolve();
+    // Context is a convenience: it must never fail a request.
   }
 }
 
@@ -180,7 +184,7 @@ export function setErrorContext(attributes: ContextAttributes): Promise<void> {
  * await recordErrorOnSpan('ScheduleError', 'Alarm could not be armed');
  * ```
  */
-export function recordErrorOnSpan(
+export async function recordErrorOnSpan(
   name: string,
   message: string,
 ): Promise<void> {

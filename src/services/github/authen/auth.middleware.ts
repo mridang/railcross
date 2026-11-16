@@ -41,7 +41,9 @@ export class AuthMiddleware implements NestMiddleware<
     response: Response,
     next: NextFunction,
   ) {
-    const token = request.cookies ? request.cookies['jwt'] : undefined;
+    const token = (
+      request.cookies as Record<string, string | undefined> | undefined
+    )?.jwt;
 
     if (token) {
       try {

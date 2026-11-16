@@ -33,7 +33,7 @@ export default class RailcrossService {
       unlockTime?: string;
     }[]
   > {
-    return await lastValueFrom(
+    return lastValueFrom(
       doPaginate(async (page: number) => {
         const response =
           await userOctokit.rest.apps.listInstallationsForAuthenticatedUser({
@@ -112,52 +112,56 @@ export default class RailcrossService {
   }
 
   async resetSchedules(userOctokit: Octokit): Promise<void> {
-    return await doPaginate(async (page: number) => {
-      const response =
-        await userOctokit.rest.apps.listInstallationsForAuthenticatedUser({
-          per_page: 100,
-          page,
-        });
-      return {
-        totalRows: response.data.total_count,
-        resultItems: response.data.installations,
-      };
-    })
-      .pipe(
-        tap((installation) => {
-          this.logger.log(`Listing repositories for ${installation.id}`);
-        }),
-        mergeMap((installation) =>
-          doPaginate(async (page: number) => {
-            const response =
-              await userOctokit.rest.apps.listInstallationReposForAuthenticatedUser(
-                {
-                  installation_id: installation.id,
-                  per_page: 100,
-                  page,
-                },
-              );
-            return {
-              totalRows: response.data.total_count,
-              resultItems: response.data.repositories,
-            };
-          }).pipe(
-            tap((repository) => {
-              this.logger.log(`Fetching schedules for ${repository.full_name}`);
-            }),
-            mergeMap((repository) =>
-              from(
-                this.schedulerService.deleteSchedules(
-                  installation.id,
-                  repository.id,
+    return (
+      doPaginate(async (page: number) => {
+        const response =
+          await userOctokit.rest.apps.listInstallationsForAuthenticatedUser({
+            per_page: 100,
+            page,
+          });
+        return {
+          totalRows: response.data.total_count,
+          resultItems: response.data.installations,
+        };
+      })
+        .pipe(
+          tap((installation) => {
+            this.logger.log(`Listing repositories for ${installation.id}`);
+          }),
+          mergeMap((installation) =>
+            doPaginate(async (page: number) => {
+              const response =
+                await userOctokit.rest.apps.listInstallationReposForAuthenticatedUser(
+                  {
+                    installation_id: installation.id,
+                    per_page: 100,
+                    page,
+                  },
+                );
+              return {
+                totalRows: response.data.total_count,
+                resultItems: response.data.repositories,
+              };
+            }).pipe(
+              tap((repository) => {
+                this.logger.log(
+                  `Fetching schedules for ${repository.full_name}`,
+                );
+              }),
+              mergeMap((repository) =>
+                from(
+                  this.schedulerService.deleteSchedules(
+                    installation.id,
+                    repository.id,
+                  ),
                 ),
               ),
             ),
           ),
-        ),
-      )
-      // eslint-disable-next-line unicorn/no-array-for-each -- this is RxJS Observable.forEach, which the rule cannot tell from Array.prototype.forEach
-      .forEach(() => {});
+        )
+        // eslint-disable-next-line unicorn/no-array-for-each -- this is RxJS Observable.forEach, which the rule cannot tell from Array.prototype.forEach
+        .forEach(() => {})
+    );
   }
 
   async updateSchedules(
@@ -167,80 +171,84 @@ export default class RailcrossService {
     unlockTime: number,
     timeZone: string,
   ): Promise<void> {
-    return await doPaginate(async (page: number) => {
-      const response =
-        await userOctokit.rest.apps.listInstallationsForAuthenticatedUser({
-          per_page: 100,
-          page,
-        });
-      return {
-        totalRows: response.data.total_count,
-        resultItems: response.data.installations,
-      };
-    })
-      .pipe(
-        tap((installation) => {
-          this.logger.log(`Listing repositories for ${installation.id}`);
-        }),
-        mergeMap((installation) =>
-          doPaginate(async (page: number) => {
-            const response =
-              await userOctokit.rest.apps.listInstallationReposForAuthenticatedUser(
-                {
-                  installation_id: installation.id,
-                  per_page: 100,
-                  page,
-                },
-              );
-            return {
-              totalRows: response.data.total_count,
-              resultItems: response.data.repositories,
-            };
-          }).pipe(
-            filter((repository) => {
-              return repoIds.length === 0 || repoIds.includes(repository.id);
-            }),
-            tap((repository) => {
-              this.logger.log(`Fetching schedules for ${repository.full_name}`);
-            }),
-            mergeMap((repository) =>
-              from(
-                this.schedulerService.deleteSchedules(
-                  installation.id,
-                  repository.id,
-                ),
-              ).pipe(
-                mergeMap(() =>
-                  forkJoin({
-                    lock: from(
-                      this.schedulerService.createSchedule(
-                        installation.id,
-                        repository.id,
-                        repository.full_name,
-                        lockTime,
-                        timeZone,
-                        'locker',
+    return (
+      doPaginate(async (page: number) => {
+        const response =
+          await userOctokit.rest.apps.listInstallationsForAuthenticatedUser({
+            per_page: 100,
+            page,
+          });
+        return {
+          totalRows: response.data.total_count,
+          resultItems: response.data.installations,
+        };
+      })
+        .pipe(
+          tap((installation) => {
+            this.logger.log(`Listing repositories for ${installation.id}`);
+          }),
+          mergeMap((installation) =>
+            doPaginate(async (page: number) => {
+              const response =
+                await userOctokit.rest.apps.listInstallationReposForAuthenticatedUser(
+                  {
+                    installation_id: installation.id,
+                    per_page: 100,
+                    page,
+                  },
+                );
+              return {
+                totalRows: response.data.total_count,
+                resultItems: response.data.repositories,
+              };
+            }).pipe(
+              filter((repository) => {
+                return repoIds.length === 0 || repoIds.includes(repository.id);
+              }),
+              tap((repository) => {
+                this.logger.log(
+                  `Fetching schedules for ${repository.full_name}`,
+                );
+              }),
+              mergeMap((repository) =>
+                from(
+                  this.schedulerService.deleteSchedules(
+                    installation.id,
+                    repository.id,
+                  ),
+                ).pipe(
+                  mergeMap(() =>
+                    forkJoin({
+                      lock: from(
+                        this.schedulerService.createSchedule(
+                          installation.id,
+                          repository.id,
+                          repository.full_name,
+                          lockTime,
+                          timeZone,
+                          'locker',
+                        ),
                       ),
-                    ),
-                    unlock: from(
-                      this.schedulerService.createSchedule(
-                        installation.id,
-                        repository.id,
-                        repository.full_name,
-                        unlockTime,
-                        timeZone,
-                        'unlocker',
+                      unlock: from(
+                        this.schedulerService.createSchedule(
+                          installation.id,
+                          repository.id,
+                          repository.full_name,
+                          unlockTime,
+                          timeZone,
+                          'unlocker',
+                        ),
                       ),
-                    ),
-                  }),
+                    }),
+                  ),
                 ),
               ),
+              toArray(),
             ),
-            toArray(),
           ),
-        ),
-      )
-      // eslint-disable-next-line unicorn/no-array-for-each -- this is RxJS Observable.forEach, which the rule cannot tell from Array.prototype.forEach
-      .forEach(() => {});
+        )
+        // eslint-disable-next-line unicorn/no-array-for-each -- this is RxJS Observable.forEach, which the rule cannot tell from Array.prototype.forEach
+        .forEach(() => {})
+    );
   }
 }

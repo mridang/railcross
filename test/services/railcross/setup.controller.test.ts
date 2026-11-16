@@ -51,7 +51,7 @@ describe('setup.controller test', () => {
     const jwtService = testModule.app.get(JwtService);
     railcrossServiceMock.listSchedules.mockResolvedValue([] as never);
 
-    const response = await request(testModule.app.getHttpServer())
+    const response = await request(testModule.server)
       .get('/app')
       .set(
         'Cookie',
@@ -80,7 +80,7 @@ describe('setup.controller test', () => {
     };
     railcrossServiceMock.updateSchedules.mockResolvedValue(null as never); // Assuming updateSchedules doesn't return anything
 
-    await request(testModule.app.getHttpServer())
+    await request(testModule.server)
       .post('/app/setup')
       .set(
         'Cookie',
@@ -114,7 +114,7 @@ describe('setup.controller test', () => {
     const jwtService = testModule.app.get(JwtService);
     railcrossServiceMock.updateSchedules.mockResolvedValue(null as never);
 
-    await request(testModule.app.getHttpServer())
+    await request(testModule.server)
       .post('/app/setup')
       .set(
         'Cookie',
@@ -143,7 +143,7 @@ describe('setup.controller test', () => {
     const jwtService = testModule.app.get(JwtService);
     railcrossServiceMock.updateSchedules.mockClear();
 
-    await request(testModule.app.getHttpServer())
+    await request(testModule.server)
       .post('/app/setup')
       .set(
         'Cookie',
@@ -170,7 +170,7 @@ describe('setup.controller test', () => {
       timezone: 'X',
     };
 
-    await request(testModule.app.getHttpServer())
+    await request(testModule.server)
       .post('/app/setup')
       .set(
         'Cookie',

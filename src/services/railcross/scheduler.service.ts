@@ -140,7 +140,7 @@ export default class SchedulerService {
     const prefix = `${installationId}.${repoPart}`;
     let cursor: string | undefined;
     do {
-      const page: KVNamespaceListResult<unknown, string> = await this.kv.list({
+      const page: KVNamespaceListResult<unknown> = await this.kv.list({
         prefix,
         cursor,
       });
@@ -166,7 +166,7 @@ export default class SchedulerService {
     await setErrorContext({ 'job.name': 'schedule.reregister' });
     let cursor: string | undefined;
     do {
-      const page: KVNamespaceListResult<unknown, string> = await this.kv.list({
+      const page: KVNamespaceListResult<unknown> = await this.kv.list({
         cursor,
       });
       for (const entry of page.keys) {
