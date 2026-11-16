@@ -12,7 +12,7 @@ jest.unstable_mockModule('cloudflare:workers', cloudflareWorkersStub, {
   virtual: true,
 });
 
-const { End2EndModule } = await import('../../e2e.module.js');
+const { End2EndModule } = await import('../../end-to-end.module.js');
 const { AppModule } = await import('../../../src/app.module.js');
 const { default: RailcrossService } =
   await import('../../../src/services/railcross/railcross.service.js');

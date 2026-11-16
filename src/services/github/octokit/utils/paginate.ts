@@ -32,11 +32,11 @@ export function doPaginate<T>(
           firstPage.totalRows / firstPage.resultItems.length,
         );
 
-        firstPage.resultItems.forEach((item) => subscriber.next(item));
+        for (const item of firstPage.resultItems) subscriber.next(item);
 
-        for (let pageNum = 2; pageNum <= totalPages; pageNum++) {
-          const { resultItems } = await fetchPage(pageNum);
-          resultItems.forEach((item) => subscriber.next(item));
+        for (let pageNumber = 2; pageNumber <= totalPages; pageNumber++) {
+          const { resultItems } = await fetchPage(pageNumber);
+          for (const item of resultItems) subscriber.next(item);
         }
 
         subscriber.complete();

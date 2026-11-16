@@ -24,6 +24,9 @@ import {
   truncate,
 } from '../../src/utils/intl.js';
 
+/** A two-letter word, a space and a family emoji, cut to a single ellipsis. */
+const TRUNCATED_EMOJI_PATTERN = /^ab( 👨‍👩‍👧)?…$/;
+
 describe('compareText', () => {
   it('alphabetises accented letters with their base letter', () => {
     expect(
@@ -195,7 +198,7 @@ describe('truncate', () => {
   });
 
   it('never cuts an emoji in half', () => {
-    expect(truncate('ab 👨‍👩‍👧👨‍👩‍👧 cd', 4)).toMatch(/^ab( 👨‍👩‍👧)?…$/);
+    expect(truncate('ab 👨‍👩‍👧👨‍👩‍👧 cd', 4)).toMatch(TRUNCATED_EMOJI_PATTERN);
     expect(characterCount('👨‍👩‍👧')).toBe(1);
   });
 });

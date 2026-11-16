@@ -10,7 +10,7 @@ import type { Request } from '@mridang/nestjs-defaults';
 
 describe('auth.guard tests', () => {
   class MockExecutionContext implements ExecutionContext {
-    constructor(private readonly reqVal: Partial<Request>) {
+    constructor(private readonly reqValue: Partial<Request>) {
       //
     }
 
@@ -43,7 +43,7 @@ describe('auth.guard tests', () => {
     }
 
     switchToHttp(): ReturnType<ExecutionContext['switchToHttp']> {
-      const request = this.reqVal;
+      const request = this.reqValue;
       return {
         getRequest<T = Request>(): T {
           return request as T;

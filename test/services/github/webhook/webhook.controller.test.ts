@@ -10,7 +10,7 @@ import { cloudflareWorkersStub } from '../../../helpers/cloudflare-workers-stub.
 
 const fake = installFakeTracing(cloudflareWorkersStub);
 
-const { End2EndModule } = await import('../../../e2e.module.js');
+const { End2EndModule } = await import('../../../end-to-end.module.js');
 const { AppModule } = await import('../../../../src/app.module.js');
 const { hmacSha256 } = await import('../../../../src/utils/crypto.js');
 

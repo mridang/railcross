@@ -22,6 +22,9 @@ import { OctokitImpl } from '../github/octokit/types.js';
 import { Expose, Transform, Type } from 'class-transformer';
 import setupView from './setup.view.js';
 
+/** Matches a clock time such as `9`, `9:00` or `09:00:00`. */
+const CLOCK_PATTERN = /^(\d{1,2}):00(?::00)?$/;
+
 /**
  * Reads the hour of day that a time field names.
  *
@@ -44,7 +47,7 @@ export function hourOf(value: unknown): unknown {
   if (value.trim() === '') {
     return Number.NaN;
   }
-  const clock = /^(\d{1,2}):00(?::00)?$/.exec(value);
+  const clock = CLOCK_PATTERN.exec(value);
   return clock ? Number(clock[1]) : Number(value);
 }
 

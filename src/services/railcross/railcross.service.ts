@@ -156,6 +156,7 @@ export default class RailcrossService {
           ),
         ),
       )
+      // eslint-disable-next-line unicorn/no-array-for-each -- this is RxJS Observable.forEach, which the rule cannot tell from Array.prototype.forEach
       .forEach(() => {});
   }
 
@@ -239,6 +240,7 @@ export default class RailcrossService {
           ),
         ),
       )
+      // eslint-disable-next-line unicorn/no-array-for-each -- this is RxJS Observable.forEach, which the rule cannot tell from Array.prototype.forEach
       .forEach(() => {});
   }
 }

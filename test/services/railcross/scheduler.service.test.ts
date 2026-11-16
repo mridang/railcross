@@ -42,6 +42,9 @@ class FakeKv {
   }
 }
 
+/** Orders schedule names the way localeCompare does by default. */
+const collator = new Intl.Collator();
+
 describe('SchedulerService (KV + Durable Object alarms)', () => {
   let kv: FakeKv;
   let armed: { name: string; fireAt: number; config: { hour: number } }[];
@@ -120,7 +123,7 @@ describe('SchedulerService (KV + Durable Object alarms)', () => {
     expect(kv.store.has('1.2.locker')).toBe(false);
     expect(kv.store.has('1.2.unlocker')).toBe(false);
     expect(kv.store.has('1.3.locker')).toBe(true);
-    expect(disarmed.toSorted((x, y) => x.localeCompare(y))).toEqual([
+    expect(disarmed.toSorted((x, y) => collator.compare(x, y))).toEqual([
       '1.2.locker',
       '1.2.unlocker',
     ]);
@@ -139,7 +142,7 @@ describe('SchedulerService (KV + Durable Object alarms)', () => {
     await service.reRegisterAll();
 
     expect(
-      armed.map((a) => a.name).toSorted((x, y) => x.localeCompare(y)),
+      armed.map((a) => a.name).toSorted((x, y) => collator.compare(x, y)),
     ).toEqual(['1.2.locker', '1.3.unlocker']);
   });
 

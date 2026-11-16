@@ -16,6 +16,7 @@ describe('ensure function tests', () => {
   });
 
   test('should throw an error for undefined input', () => {
+    // eslint-disable-next-line unicorn/no-useless-undefined -- ensure's parameter is required, so the call must pass undefined explicitly
     expect(() => ensure(undefined)).toThrow('Value is null or undefined');
   });
 });

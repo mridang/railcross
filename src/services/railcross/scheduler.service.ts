@@ -7,8 +7,8 @@ import type {
   KVNamespaceListResult,
   DurableObjectNamespace,
 } from '@cloudflare/workers-types';
-import { nextOccurrence } from '../../scheduler/schedule-utils.js';
-import type { ScheduleConfig } from '../../scheduler/schedule-utils.js';
+import { nextOccurrence } from '../../scheduler/schedule-utilities.js';
+import type { ScheduleConfig } from '../../scheduler/schedule-utilities.js';
 import { setErrorContext } from '../../utils/observability/context.js';
 import type { ScheduleAlarm } from '../../scheduler/schedule-alarm.js';
 
