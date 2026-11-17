@@ -114,11 +114,14 @@ export class AuthController {
     @Res({ passthrough: true }) response: Response,
     @Query() dto: CallbackDto,
   ) {
-    if (
-      (request.cookies as Record<string, string | undefined>)[
-        this.cookieName
-      ] === dto.state
-    ) {
+    const cookies: unknown = request.cookies;
+    const stored: unknown =
+      typeof cookies === 'object' && cookies !== null
+        ? Object.entries(cookies).find(
+            ([name]) => name === this.cookieName,
+          )?.[1]
+        : undefined;
+    if (stored === dto.state) {
       response.clearCookie(this.cookieName);
     } else {
       throw new UnauthorizedException('Invalid state parameter or nonce.');
@@ -140,7 +143,7 @@ export class AuthController {
 
             return forkJoin({
               user: from(octokit.rest.users.getAuthenticated()).pipe(
-                map((response) => response.data),
+                map((authenticated) => authenticated.data),
               ),
               repositories: from(
                 octokit.paginate(octokit.rest.repos.listForAuthenticatedUser, {
@@ -148,7 +151,7 @@ export class AuthController {
                 }),
               ),
               current: doPaginate(async (page: number) => {
-                const response =
+                const installations =
                   await octokit.rest.apps.listInstallationsForAuthenticatedUser(
                     {
                       per_page: 100,
@@ -156,8 +159,8 @@ export class AuthController {
                     },
                   );
                 return {
-                  totalRows: response.data.total_count,
-                  resultItems: response.data.installations,
+                  totalRows: installations.data.total_count,
+                  resultItems: installations.data.installations,
                 };
               }).pipe(toArray()),
             }).pipe(
@@ -176,12 +179,12 @@ export class AuthController {
     const sessionToken = this.jwtService.sign(
       {
         accessToken: results.accessToken,
-        installationIds: results?.current.map((item) => item.id),
+        installationIds: results.current.map((item) => item.id),
       },
       {
-        subject: results?.user.login,
+        subject: results.user.login,
         issuer: ensure(process.env.SERVICE_NAME),
-        audience: results?.repositories
+        audience: results.repositories
           .filter((repo) => !repo.archived)
           .map((repo) => murmurhash.v3(repo.full_name).toString()),
       },

@@ -19,8 +19,9 @@ const { default: RailcrossService } =
   await import('../../../src/services/railcross/railcross.service.js');
 
 const railcrossServiceMock = {
-  updateSchedules: jest.fn(),
-  listSchedules: jest.fn(),
+  updateSchedules: jest.fn<(...args: unknown[]) => Promise<void>>(),
+  listSchedules:
+    jest.fn<InstanceType<typeof RailcrossService>['listSchedules']>(),
 };
 
 const testModule = new End2EndModule({
@@ -37,8 +38,8 @@ describe('setup.controller test', () => {
   });
 
   beforeAll(async () => {
-    await testModule.beforeAll((testModule) =>
-      testModule
+    await testModule.beforeAll((moduleBuilder) =>
+      moduleBuilder
         .overrideProvider(RailcrossService)
         .useValue(railcrossServiceMock),
     );
@@ -50,7 +51,7 @@ describe('setup.controller test', () => {
 
   test('that the setup page renders correctly', async () => {
     const jwtService = testModule.app.get(JwtService);
-    railcrossServiceMock.listSchedules.mockResolvedValue([] as never);
+    railcrossServiceMock.listSchedules.mockResolvedValue([]);
 
     const response = await request(testModule.server)
       .get('/app')
@@ -79,7 +80,8 @@ describe('setup.controller test', () => {
       unlock_time: 2,
       timezone: 'Asia/Bangkok',
     };
-    railcrossServiceMock.updateSchedules.mockResolvedValue(null as never); // Assuming updateSchedules doesn't return anything
+    // eslint-disable-next-line unicorn/no-useless-undefined -- the mock of a void promise needs an explicit resolved value
+    railcrossServiceMock.updateSchedules.mockResolvedValue(undefined);
 
     await request(testModule.server)
       .post('/app/setup')
@@ -113,7 +115,8 @@ describe('setup.controller test', () => {
 
   test("/POST setup reads the form's clock times as hours of the day", async () => {
     const jwtService = testModule.app.get(JwtService);
-    railcrossServiceMock.updateSchedules.mockResolvedValue(null as never);
+    // eslint-disable-next-line unicorn/no-useless-undefined -- the mock of a void promise needs an explicit resolved value
+    railcrossServiceMock.updateSchedules.mockResolvedValue(undefined);
 
     const response = await request(testModule.server)
       .post('/app/setup')

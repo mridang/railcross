@@ -422,9 +422,9 @@ describe('protection.service test', () => {
         }),
     );
 
-    expect(
-      await protectionService.toggleProtection('mridang/testing', 0, true),
-    ).toBeUndefined();
+    await expect(
+      protectionService.toggleProtection('mridang/testing', 0, true),
+    ).resolves.toBeUndefined();
   });
 
   test('that branches with existing rules get protected"', async () => {
@@ -438,8 +438,8 @@ describe('protection.service test', () => {
         }),
     );
 
-    expect(
-      await protectionService.toggleProtection('mridang/foobar', 0, false),
-    ).toBeUndefined();
+    await expect(
+      protectionService.toggleProtection('mridang/foobar', 0, false),
+    ).resolves.toBeUndefined();
   });
 });

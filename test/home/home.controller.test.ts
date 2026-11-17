@@ -34,11 +34,11 @@ describe('HomeController og.png', () => {
   });
 
   test('lets other sites embed the share card', () => {
-    const headers = Reflect.getMetadata(
+    const headers: unknown = Reflect.getMetadata(
       '__headers__',
-      Object.getOwnPropertyDescriptor(HomeController.prototype, 'getOgImage')
-        ?.value as object,
-    ) as Array<{ name: string; value: string }>;
+      // eslint-disable-next-line @typescript-eslint/unbound-method -- the method is only a key for reading its route metadata and is never called
+      HomeController.prototype.getOgImage,
+    );
     expect(headers).toContainEqual({
       name: 'Cross-Origin-Resource-Policy',
       value: 'cross-origin',

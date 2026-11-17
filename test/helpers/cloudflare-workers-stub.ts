@@ -12,17 +12,16 @@
 const kvStore = new Map<string, string>();
 
 const SCHEDULES = {
-  async get(
-    key: string,
-    type?: string,
-  ): Promise<string | Record<string, unknown> | null> {
+  async get(key: string, type?: string): Promise<string | object | null> {
     const value = kvStore.get(key);
     if (value === undefined) {
       return null;
     }
-    return type === 'json'
-      ? (JSON.parse(value) as Record<string, unknown>)
-      : value;
+    if (type !== 'json') {
+      return value;
+    }
+    const parsed: unknown = JSON.parse(value);
+    return typeof parsed === 'object' ? parsed : null;
   },
   async put(key: string, value: string): Promise<void> {
     kvStore.set(key, value);

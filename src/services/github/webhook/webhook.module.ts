@@ -24,7 +24,7 @@ export class WebhookModule {
         {
           provide: WebhookModuleOptions,
           useFactory: options.useFactory,
-          inject: options.inject || [],
+          inject: options.inject ?? [],
         },
         DefaultWebhookHandler,
         {

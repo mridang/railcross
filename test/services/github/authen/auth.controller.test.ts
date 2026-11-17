@@ -35,8 +35,8 @@ const CLEARED_JWT_PATTERN = /jwt=;/u;
 // eslint-disable-next-line sonarjs/max-lines-per-function -- one describe block holds the whole suite and shares one fixture
 describe('auth.controller tests', () => {
   beforeAll(async () => {
-    await testModule.beforeAll((testModule) => {
-      testModule
+    await testModule.beforeAll((moduleBuilder) => {
+      moduleBuilder
         .overrideProvider(CryptoImpl)
         .useValue({
           randomUUID: () => '00000000-0000-0000-0000-000000000000',
@@ -45,7 +45,7 @@ describe('auth.controller tests', () => {
         .overrideProvider(FetchImpl)
         .useValue(globalThis.fetch);
 
-      return testModule;
+      return moduleBuilder;
     });
   });
 

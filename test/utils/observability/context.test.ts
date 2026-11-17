@@ -39,6 +39,7 @@ describe('setErrorContext', () => {
       Object.fromEntries<string | number | undefined>([
         ['gone', undefined],
         ['nan', Number.NaN],
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion -- the case checks what happens at runtime to an object a JavaScript caller passes where the type allows only plain values, so it must get past the type
         ['object', { a: 1 } as never],
         ['kept', 'yes'],
       ]),

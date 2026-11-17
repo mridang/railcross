@@ -35,7 +35,7 @@ export class AuthModule {
         {
           provide: AuthModuleOptions,
           useFactory: options.useFactory,
-          inject: options.inject || [],
+          inject: options.inject ?? [],
         },
         {
           provide: AuthConfig,
