@@ -4,8 +4,8 @@
 export default {
   ignore: ['empty.cjs', 'src/styles/*.css'],
   ignoreDependencies: [
-    /^@semantic-release\//,
-    /^@emnapi\//,
+    /^@semantic-release\//u,
+    /^@emnapi\//u,
     'cloudflare',
     '@nestjs/platform-express',
   ],

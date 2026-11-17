@@ -12,12 +12,17 @@
 const kvStore = new Map<string, string>();
 
 const SCHEDULES = {
-  async get(key: string, type?: string): Promise<unknown> {
+  async get(
+    key: string,
+    type?: string,
+  ): Promise<string | Record<string, unknown> | null> {
     const value = kvStore.get(key);
     if (value === undefined) {
       return null;
     }
-    return type === 'json' ? JSON.parse(value) : value;
+    return type === 'json'
+      ? (JSON.parse(value) as Record<string, unknown>)
+      : value;
   },
   async put(key: string, value: string): Promise<void> {
     kvStore.set(key, value);
@@ -29,9 +34,9 @@ const SCHEDULES = {
     keys: { name: string }[];
     list_complete: true;
   }> {
-    const keys = [...kvStore.keys()]
-      .filter((key) => !prefix || key.startsWith(prefix))
-      .map((name) => ({ name }));
+    const keys = [...kvStore.keys()].flatMap((name) =>
+      !prefix || name.startsWith(prefix) ? [{ name }] : [],
+    );
     return { keys, list_complete: true };
   },
 };
@@ -51,7 +56,7 @@ class DurableObject {
   ) {}
 }
 
-const env: Record<string, unknown> = { SCHEDULES, SCHEDULE_ALARMS };
+const env = { SCHEDULES, SCHEDULE_ALARMS };
 
 /**
  * Factory passed to `jest.unstable_mockModule('cloudflare:workers', ...)`.
@@ -61,7 +66,4 @@ const env: Record<string, unknown> = { SCHEDULES, SCHEDULE_ALARMS };
  * jest.unstable_mockModule('cloudflare:workers', cloudflareWorkersStub);
  * ```
  */
-export const cloudflareWorkersStub = (): {
-  env: Record<string, unknown>;
-  DurableObject: typeof DurableObject;
-} => ({ env, DurableObject });
+export const cloudflareWorkersStub = () => ({ env, DurableObject });

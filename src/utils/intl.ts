@@ -154,12 +154,10 @@ export function relativeTime(
 ): string {
   const seconds = (new Date(when).getTime() - now.getTime()) / 1000;
   const magnitude = Math.abs(seconds);
-  for (const [unit, size] of UNITS) {
-    if (magnitude >= size) {
-      return relative.format(Math.round(seconds / size), unit);
-    }
-  }
-  return relative.format(0, 'second');
+  const match = UNITS.find(([, size]) => magnitude >= size);
+  return match
+    ? relative.format(Math.round(seconds / match[1]), match[0])
+    : relative.format(0, 'second');
 }
 
 /** Joins items with "and". */
@@ -425,14 +423,12 @@ export function truncate(text: string, limit: number): string {
   if (characterCount(text) <= limit) {
     return text;
   }
-  let kept = '';
-  let used = 0;
-  for (const { segment } of words.segment(text)) {
-    used += characterCount(segment);
-    if (used > limit) {
-      break;
-    }
-    kept += segment;
-  }
+  const segments = Array.from(words.segment(text), ({ segment }) => segment);
+  const sizes = segments.map((segment) => characterCount(segment));
+  const end = sizes.findIndex(
+    (_, index) =>
+      sizes.slice(0, index + 1).reduce((sum, size) => sum + size, 0) > limit,
+  );
+  const kept = (end === -1 ? segments : segments.slice(0, end)).join('');
   return `${kept.trimEnd()}…`;
 }

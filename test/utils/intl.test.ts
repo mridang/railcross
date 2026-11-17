@@ -25,7 +25,7 @@ import {
 } from '../../src/utils/intl.js';
 
 /** A two-letter word, a space and a family emoji, cut to a single ellipsis. */
-const TRUNCATED_EMOJI_PATTERN = /^ab( 👨‍👩‍👧)?…$/;
+const TRUNCATED_EMOJI_PATTERN = /^ab( 👨‍👩‍👧)?…$/u;
 
 describe('compareText', () => {
   it('alphabetises accented letters with their base letter', () => {

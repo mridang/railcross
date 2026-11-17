@@ -1,9 +1,10 @@
 /**
  * @file Jest setup file that prepares environment variables and keys before the suite runs.
  */
+
+import { generateKeyPairSync } from 'node:crypto';
 // eslint-disable-next-line e18e/ban-dependencies -- dotenv skips a missing .env silently, process.loadEnvFile would throw
 import { config } from 'dotenv';
-import { generateKeyPairSync } from 'node:crypto';
 
 // Load any local .env first so real values take precedence over the defaults.
 config();

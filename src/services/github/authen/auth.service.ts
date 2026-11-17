@@ -2,8 +2,8 @@
  * @file Service that exchanges GitHub OAuth codes for tokens and reads the signed-in user.
  */
 import { Inject, Injectable, Logger } from '@nestjs/common';
-import { AuthConfig } from './auth.interfaces.js';
 import { FetchImpl } from '@mridang/nestjs-defaults';
+import { AuthConfig } from './auth.interfaces.js';
 
 @Injectable()
 export class AuthService {
@@ -28,7 +28,7 @@ export class AuthService {
         body: JSON.stringify({
           client_id: authConfig.clientId,
           client_secret: authConfig.clientSecret,
-          code: code,
+          code,
         }),
       },
     );
@@ -38,11 +38,10 @@ export class AuthService {
 
       if (tokenData.access_token) {
         return tokenData.access_token;
-      } else {
-        throw new Error(
-          'Response received, but access token is missing or invalid.',
-        );
       }
+      throw new Error(
+        'Response received, but access token is missing or invalid.',
+      );
     } else {
       const errorText = await response.text();
       throw new Error(

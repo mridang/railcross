@@ -26,8 +26,8 @@ export default class ProtectionService {
     const repo = repositoryName.split('/', 2)[1];
     const octokit = this.octokitFn(installationId);
     const { data: repository } = await octokit.repos.get({
-      owner: owner,
-      repo: repo,
+      owner,
+      repo,
     });
 
     this.logger.log(`Updating branch-protection for ${repositoryName}`);
@@ -119,7 +119,7 @@ export default class ProtectionService {
               apps: restrictions?.apps.map((u) => u.name!) || [],
             }
           : null,
-        owner: owner,
+        owner,
         repo: repository.name,
         branch: repository.default_branch,
         lock_branch: lockState,
@@ -132,7 +132,7 @@ export default class ProtectionService {
         required_pull_request_reviews: null,
         required_status_checks: null,
         restrictions: null,
-        owner: owner,
+        owner,
         repo: repository.name,
         branch: repository.default_branch,
         lock_branch: lockState,

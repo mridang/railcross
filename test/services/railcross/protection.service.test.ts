@@ -3,9 +3,9 @@
  */
 import { expect } from '@jest/globals';
 import { Octokit } from '@octokit/rest';
-import ProtectionService from '../../../src/services/railcross/protection.service.js';
 import nock from 'nock';
 import { HttpStatus } from '@nestjs/common';
+import ProtectionService from '../../../src/services/railcross/protection.service.js';
 
 // eslint-disable-next-line sonarjs/max-lines-per-function -- one describe block holds the whole suite and shares one fixture
 describe('protection.service test', () => {
@@ -412,14 +412,15 @@ describe('protection.service test', () => {
   });
 
   test('that branches without existing rules get protected"', async () => {
-    const protectionService = new ProtectionService(() => {
-      return new Octokit({
-        auth: 'no',
-        request: {
-          fetch: globalThis.fetch,
-        },
-      });
-    });
+    const protectionService = new ProtectionService(
+      () =>
+        new Octokit({
+          auth: 'no',
+          request: {
+            fetch: globalThis.fetch,
+          },
+        }),
+    );
 
     expect(
       await protectionService.toggleProtection('mridang/testing', 0, true),
@@ -427,14 +428,15 @@ describe('protection.service test', () => {
   });
 
   test('that branches with existing rules get protected"', async () => {
-    const protectionService = new ProtectionService(() => {
-      return new Octokit({
-        auth: 'no',
-        request: {
-          fetch: globalThis.fetch,
-        },
-      });
-    });
+    const protectionService = new ProtectionService(
+      () =>
+        new Octokit({
+          auth: 'no',
+          request: {
+            fetch: globalThis.fetch,
+          },
+        }),
+    );
 
     expect(
       await protectionService.toggleProtection('mridang/foobar', 0, false),

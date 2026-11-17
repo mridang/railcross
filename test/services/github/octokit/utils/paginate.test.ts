@@ -3,29 +3,25 @@
  */
 import { expect } from '@jest/globals';
 import { toArray } from 'rxjs/operators';
-import { doPaginate } from '../../../../../src/services/github/octokit/utils/paginate.js';
 import { lastValueFrom } from 'rxjs';
+import { doPaginate } from '../../../../../src/services/github/octokit/utils/paginate.js';
 
 describe('doPaginate', () => {
   test('that the paginator should handle no results', async () => {
-    const fetchPage = async () => {
-      return {
-        totalRows: 0,
-        resultItems: [],
-      };
-    };
+    const fetchPage = async () => ({
+      totalRows: 0,
+      resultItems: [],
+    });
 
     const results = await lastValueFrom(doPaginate(fetchPage).pipe(toArray()));
     expect(results).toEqual([]);
   });
 
   test('that the paginator should handle a single page of results', async () => {
-    const fetchPage = async () => {
-      return {
-        totalRows: 3,
-        resultItems: [{ id: 1 }, { id: 2 }, { id: 3 }],
-      };
-    };
+    const fetchPage = async () => ({
+      totalRows: 3,
+      resultItems: [{ id: 1 }, { id: 2 }, { id: 3 }],
+    });
 
     const results = await lastValueFrom(doPaginate(fetchPage).pipe(toArray()));
     expect(results).toEqual([{ id: 1 }, { id: 2 }, { id: 3 }]);

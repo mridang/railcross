@@ -36,7 +36,8 @@ describe('HomeController og.png', () => {
   test('lets other sites embed the share card', () => {
     const headers = Reflect.getMetadata(
       '__headers__',
-      Reflect.get(HomeController.prototype, 'getOgImage'),
+      Object.getOwnPropertyDescriptor(HomeController.prototype, 'getOgImage')
+        ?.value as object,
     ) as Array<{ name: string; value: string }>;
     expect(headers).toContainEqual({
       name: 'Cross-Origin-Resource-Policy',

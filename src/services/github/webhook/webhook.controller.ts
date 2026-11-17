@@ -9,12 +9,12 @@ import {
   Post,
   Req,
 } from '@nestjs/common';
-import type { RawBodyRequest } from '@nestjs/common';
-import type { Request } from '@mridang/nestjs-defaults';
 import { WebhookEventName } from '@octokit/webhooks-types';
-import { WebhookConfig, WebhookHandler } from './webhook.interfaces.js';
 import { Webhooks } from '@octokit/webhooks';
 import { setErrorContext } from '../../../utils/observability/context.js';
+import { WebhookConfig, WebhookHandler } from './webhook.interfaces.js';
+import type { Request } from '@mridang/nestjs-defaults';
+import type { RawBodyRequest } from '@nestjs/common';
 
 @Controller('hook')
 export class WebhookController {
@@ -36,9 +36,8 @@ export class WebhookController {
         request.rawBody instanceof Buffer
         ? Promise.resolve(request.rawBody.toString('utf8'))
         : Promise.resolve(request.body);
-    } else {
-      return null;
     }
+    return null;
   }
 
   /**
@@ -66,11 +65,11 @@ export class WebhookController {
   @Post()
   async handleWebhook(@Req() request: RawBodyRequest<Request>) {
     const id = request.headers['x-github-delivery'];
-    if (id == null) {
+    if (id === undefined) {
       throw new BadRequestException('Missing x-github-delivery header');
     }
     const name = request.headers['x-github-event'];
-    if (name == null) {
+    if (name === undefined) {
       throw new BadRequestException('Missing x-github-event header');
     }
     await setErrorContext({
@@ -89,7 +88,8 @@ export class WebhookController {
       throw new BadRequestException('Missing x-hub-signature-256 header');
     }
     const payload = await WebhookController.getPayload(request);
-    if (payload == null) {
+    // eslint-disable-next-line sonarjs/different-types-comparison -- the body can be undefined at runtime although its type says string
+    if (payload === null || payload === undefined) {
       throw new BadRequestException('Missing webhook request body');
     }
     if (!(await this.webhookHandler.webhooks.verify(payload, signature))) {
@@ -108,7 +108,7 @@ export class WebhookController {
     this.logger.log(`Received a webhook for event ${String(name)}`);
     await this.webhookHandler.webhooks.verifyAndReceive({
       id: Array.isArray(id) ? id.join('|') : id,
-      signature: signature,
+      signature,
       payload,
       name: name as WebhookEventName,
     });

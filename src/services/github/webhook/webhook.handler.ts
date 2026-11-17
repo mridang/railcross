@@ -2,9 +2,9 @@
  * @file Default webhook handler that verifies signatures with the app secret and registers event callbacks.
  */
 import { EmitterWebhookEventName, Webhooks } from '@octokit/webhooks';
-import { WebhookConfig, WebhookHandler } from './webhook.interfaces.js';
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { HandlerFunction } from '@octokit/webhooks/types';
+import { WebhookConfig, WebhookHandler } from './webhook.interfaces.js';
 
 @Injectable()
 export class DefaultWebhookHandler implements WebhookHandler {

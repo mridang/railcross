@@ -14,16 +14,16 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { IsArray, IsInt, IsOptional, Max, Min } from 'class-validator';
+import { Octokit } from '@octokit/rest';
+import { Expose, Transform, Type } from 'class-transformer';
+import { OctokitImpl } from '../github/octokit/types.js';
 import { IsSupportedTimeZone } from './timezone.validator.js';
 import RailcrossService from './railcross.service.js';
-import type { Request } from '@mridang/nestjs-defaults';
-import { Octokit } from '@octokit/rest';
-import { OctokitImpl } from '../github/octokit/types.js';
-import { Expose, Transform, Type } from 'class-transformer';
 import setupView from './setup.view.js';
+import type { Request } from '@mridang/nestjs-defaults';
 
 /** Matches a clock time such as `9`, `9:00` or `09:00:00`. */
-const CLOCK_PATTERN = /^(\d{1,2}):00(?::00)?$/;
+const CLOCK_PATTERN = /^(\d{1,2}):00(?::00)?$/u;
 
 /**
  * Reads the hour of day that a time field names.
@@ -40,6 +40,7 @@ const CLOCK_PATTERN = /^(\d{1,2}):00(?::00)?$/;
  * hourOf('07:30'); // NaN
  * ```
  */
+// eslint-disable-next-line tslop/no-unknown-returns -- a value that is not a string passes through unchanged so that the IsInt check rejects it
 export function hourOf(value: unknown): unknown {
   if (typeof value !== 'string') {
     return value;
@@ -108,9 +109,8 @@ export class SetupController {
       const repoSchedules = await this.railcrossService.listSchedules(octokit);
 
       return setupView(repoSchedules);
-    } else {
-      throw new UnauthorizedException('Unable to deduce allowed installations');
     }
+    throw new UnauthorizedException('Unable to deduce allowed installations');
   }
 
   @Post('setup')

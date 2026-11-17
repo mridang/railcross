@@ -2,14 +2,14 @@
  * @file Stores lock and unlock schedules in Workers KV and arms a Durable Object alarm for each.
  */
 import { Inject, Injectable, Logger } from '@nestjs/common';
+import { nextOccurrence } from '../../scheduler/schedule-utilities.js';
+import { setErrorContext } from '../../utils/observability/context.js';
 import type {
   KVNamespace,
   KVNamespaceListResult,
   DurableObjectNamespace,
 } from '@cloudflare/workers-types';
-import { nextOccurrence } from '../../scheduler/schedule-utilities.js';
 import type { ScheduleConfig } from '../../scheduler/schedule-utilities.js';
-import { setErrorContext } from '../../utils/observability/context.js';
 import type { ScheduleAlarm } from '../../scheduler/schedule-alarm.js';
 
 /**
@@ -138,12 +138,15 @@ export default class SchedulerService {
   ): Promise<void> {
     const repoPart = repoId === undefined ? '' : `${repoId}.`;
     const prefix = `${installationId}.${repoPart}`;
+    // eslint-disable-next-line functional/no-let -- the cursor of each page comes from the page before it
     let cursor: string | undefined;
+    // eslint-disable-next-line functional/no-loop-statements -- pages are listed one after the other, each needs the cursor of the last
     do {
       const page: KVNamespaceListResult<unknown> = await this.kv.list({
         prefix,
         cursor,
       });
+      // eslint-disable-next-line functional/no-loop-statements -- entries are handled one after the other, in order
       for (const entry of page.keys) {
         this.logger.log(`Deleting schedule "${entry.name}"`);
         await this.kv.delete(entry.name);
@@ -164,11 +167,14 @@ export default class SchedulerService {
    */
   async reRegisterAll(): Promise<void> {
     await setErrorContext({ 'job.name': 'schedule.reregister' });
+    // eslint-disable-next-line functional/no-let -- the cursor of each page comes from the page before it
     let cursor: string | undefined;
+    // eslint-disable-next-line functional/no-loop-statements -- pages are listed one after the other, each needs the cursor of the last
     do {
       const page: KVNamespaceListResult<unknown> = await this.kv.list({
         cursor,
       });
+      // eslint-disable-next-line functional/no-loop-statements -- entries are handled one after the other, in order
       for (const entry of page.keys) {
         const config = await this.kv.get<ScheduleConfig>(entry.name, 'json');
         if (config) {

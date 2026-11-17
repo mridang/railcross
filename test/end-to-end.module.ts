@@ -1,19 +1,19 @@
 /**
  * @file Test module that builds the full application for end-to-end style tests.
  */
-import type { Server } from 'node:http';
 import { configure } from '@mridang/nestjs-defaults';
-import {
-  type DynamicModule,
-  type ForwardReference,
-  type INestApplication,
-  Logger,
-  type Provider,
-  type Type,
+import { Logger } from '@nestjs/common';
+import { Test } from '@nestjs/testing';
+import type { Server } from 'node:http';
+import type {
+  DynamicModule,
+  ForwardReference,
+  INestApplication,
+  Provider,
+  Type,
 } from '@nestjs/common';
 import type { NestExpressApplication } from '@nestjs/platform-express';
 import type { TestingModuleBuilder } from '@nestjs/testing';
-import { Test } from '@nestjs/testing';
 
 type ModuleImport =
   Type | DynamicModule | Promise<DynamicModule> | ForwardReference;

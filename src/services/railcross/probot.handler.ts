@@ -1,9 +1,9 @@
 /**
  * @file Webhook handler that reacts to GitHub events by updating repository schedules.
  */
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import { WebhookHandler } from '../github/webhook/webhook.interfaces.js';
 import SchedulerService from './scheduler.service.js';
-import { Inject, Injectable, Logger } from '@nestjs/common';
 
 @Injectable()
 export default class ProbotHandler {
@@ -24,6 +24,7 @@ export default class ProbotHandler {
             : (account?.slug ?? 'unknown');
         logger.log(`Some repositories removed on @${owner}`);
 
+        // eslint-disable-next-line functional/no-loop-statements -- schedules are deleted one after the other
         for (const repo of context.payload?.repositories_removed || []) {
           logger.log(`Removing schedules and rules for ${repo.full_name}`);
           await schedulerService.deleteSchedules(installationId, repo.id);

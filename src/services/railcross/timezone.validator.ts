@@ -1,8 +1,8 @@
 /**
  * @file Class-validator decorator that accepts only IANA time zone names known to the runtime.
  */
-import type { ValidationArguments, ValidationOptions } from 'class-validator';
 import { registerDecorator } from 'class-validator';
+import type { ValidationArguments, ValidationOptions } from 'class-validator';
 
 /**
  * Creates a property decorator that requires the value to be a supported IANA time zone.
@@ -20,11 +20,15 @@ import { registerDecorator } from 'class-validator';
  * ```
  */
 function isSupportedTimeZone(validationOptions?: ValidationOptions) {
-  return function (object: object, propertyName: string) {
+  return function isSupportedTimeZoneDecorator(
+    // eslint-disable-next-line tslop/no-object-parameters -- the decorator signature is fixed by TypeScript and class-validator, `object` is the class prototype
+    object: object,
+    propertyName: string,
+  ) {
     registerDecorator({
       name: 'IsSupportedTimeZone',
       target: object.constructor,
-      propertyName: propertyName,
+      propertyName,
       options: validationOptions,
       validator: {
         validate(value: string) {

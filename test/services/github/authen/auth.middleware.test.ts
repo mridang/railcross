@@ -2,10 +2,10 @@
  * @file Tests for the authentication middleware.
  */
 import { jest, expect } from '@jest/globals';
-import type { NextFunction, Request, Response } from '@mridang/nestjs-defaults';
-import { AuthMiddleware } from '../../../../src/services/github/authen/auth.middleware.js';
 import { UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { AuthMiddleware } from '../../../../src/services/github/authen/auth.middleware.js';
+import type { NextFunction, Request, Response } from '@mridang/nestjs-defaults';
 
 function createMockResponse(): Partial<Response> {
   return {
@@ -51,6 +51,7 @@ describe('auth.middleware tests', () => {
       mockResponse as Response,
       nextFunction,
     );
+    expect(mockRequest).toHaveProperty('user.id', 'user123');
     expect(nextFunction).toHaveBeenCalled();
   });
 

@@ -4,6 +4,7 @@
 import { afterAll, beforeAll, jest, expect } from '@jest/globals';
 import { cloudflareWorkersStub } from '../../helpers/cloudflare-workers-stub.js';
 
+// eslint-disable-next-line tslop/no-module-mocking -- `cloudflare:workers` exists only inside the Workers runtime, so a virtual module mock is the only seam
 jest.unstable_mockModule('cloudflare:workers', cloudflareWorkersStub, {
   virtual: true,
 });

@@ -22,8 +22,8 @@ export type ContextAttributes = Readonly<
 
 /** The part of a Workers span this file uses. */
 interface ContextSpan {
-  setAttribute(key: string, value: ContextValue): unknown;
-  recordException(exception: { name: string; message: string }): unknown;
+  setAttribute(key: string, value: ContextValue): void;
+  recordException(exception: { name: string; message: string }): void;
 }
 
 /** The part of `tracing` from `cloudflare:workers` this file uses. */
@@ -36,8 +36,10 @@ interface ContextTracing {
  * @param workers - The loaded module.
  * @returns The tracing API, or `undefined` when the module has none.
  */
-function tracingOf(workers: object): ContextTracing | undefined {
-  const tracing: unknown = Reflect.get(workers, 'tracing');
+function tracingOf(
+  workers: Readonly<Record<string, unknown>>,
+): ContextTracing | undefined {
+  const tracing = workers.tracing;
   if (typeof tracing !== 'object' || tracing === null) {
     return undefined;
   }
@@ -51,6 +53,7 @@ function tracingOf(workers: object): ContextTracing | undefined {
 const MAX_TEXT = 256;
 
 /** The tracing API once loaded; `null` where there is none. */
+// eslint-disable-next-line functional/no-let -- module-level cache of the lazily loaded runtime module, reassigned on first load
 let loaded: ContextTracing | null | undefined;
 
 /**
@@ -123,20 +126,20 @@ async function withActiveSpan(
  * ```
  */
 function accepted(attributes: ContextAttributes): [string, ContextValue][] {
-  const kept: [string, ContextValue][] = [];
-  for (const [key, value] of Object.entries(attributes)) {
-    if (typeof value === 'string') {
-      kept.push([key, value.slice(0, MAX_TEXT)]);
-    } else if (
-      typeof value === 'boolean' ||
-      (typeof value === 'number' && Number.isFinite(value))
-    ) {
-      kept.push([key, value]);
-    } else {
-      // Undefined, non-finite numbers and other kinds of value are dropped.
-    }
-  }
-  return kept;
+  return Object.entries(attributes).flatMap(
+    ([key, value]): [string, ContextValue][] => {
+      if (typeof value === 'string') {
+        return [[key, value.slice(0, MAX_TEXT)]];
+      }
+      if (
+        typeof value === 'boolean' ||
+        (typeof value === 'number' && Number.isFinite(value))
+      ) {
+        return [[key, value]];
+      }
+      return [];
+    },
+  );
 }
 
 /**
@@ -162,6 +165,7 @@ export async function setErrorContext(
       return;
     }
     await withActiveSpan((span) => {
+      // eslint-disable-next-line functional/no-loop-statements -- only reports to the span, nothing is built from the loop
       for (const [key, value] of kept) {
         span.setAttribute(key, value);
       }

@@ -2,12 +2,13 @@
  * @file Tests for the Permissions-Policy header middleware.
  */
 import { expect, jest } from '@jest/globals';
-// eslint-disable-next-line e18e/ban-dependencies -- type-only import of Express request types, erased at build time, so nothing ships
-import type { NextFunction, Request, Response } from 'express';
+
 import {
   PERMISSIONS_POLICY,
   permissionsPolicy,
 } from '../../src/utils/permissions-policy.js';
+// eslint-disable-next-line e18e/ban-dependencies -- type-only import of Express request types, erased at build time, so nothing ships
+import type { NextFunction, Request, Response } from 'express';
 
 describe('permissionsPolicy', () => {
   test('sets the full policy and continues', () => {
@@ -32,6 +33,6 @@ describe('permissionsPolicy', () => {
     expect(features).toHaveLength(29);
     expect(features).toContain('clipboard-write=()');
     expect(features).toContain('interest-cohort=()');
-    expect(PERMISSIONS_POLICY).toContain('sync-xhr=()');
+    expect(PERMISSIONS_POLICY.split(', ')).toContain('sync-xhr=()');
   });
 });
