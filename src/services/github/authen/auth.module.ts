@@ -25,12 +25,11 @@ export class AuthModule {
       providers: [
         {
           provide: JwtService,
-          useFactory: (authOptions: AuthModuleOptions) => {
-            return new JwtService({
+          useFactory: (authOptions: AuthModuleOptions) =>
+            new JwtService({
               secret: authOptions.authConfig.clientSecret,
               signOptions: { expiresIn: authOptions.authTTL || 60 * 60 },
-            });
-          },
+            }),
           inject: [AuthModuleOptions],
         },
         {

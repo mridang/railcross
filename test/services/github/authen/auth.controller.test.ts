@@ -8,6 +8,7 @@ import { HttpStatus } from '@nestjs/common';
 import { CryptoImpl, FetchImpl } from '@mridang/nestjs-defaults';
 import { cloudflareWorkersStub } from '../../../helpers/cloudflare-workers-stub.js';
 
+// eslint-disable-next-line tslop/no-module-mocking -- `cloudflare:workers` exists only inside the Workers runtime, so a virtual module mock is the only seam
 jest.unstable_mockModule('cloudflare:workers', cloudflareWorkersStub, {
   virtual: true,
 });
@@ -26,10 +27,10 @@ const testModule = new End2EndModule({
 
 /** The Set-Cookie header the auth callback sends with the session and nonce cookies. */
 const SESSION_COOKIE_PATTERN =
-  /^nonce=; Path=\/; Expires=[^;]* GMT,jwt=[^.;]+\.[^.;]+\.[^.;]+; Max-Age=3600; Path=\/; Expires=[^;]* GMT; HttpOnly; Secure; SameSite=Strict$/;
+  /^nonce=; Path=\/; Expires=[^;]* GMT,jwt=[^.;]+\.[^.;]+\.[^.;]+; Max-Age=3600; Path=\/; Expires=[^;]* GMT; HttpOnly; Secure; SameSite=Strict$/u;
 
 /** The Set-Cookie header that clears the jwt cookie on logout. */
-const CLEARED_JWT_PATTERN = /jwt=;/;
+const CLEARED_JWT_PATTERN = /jwt=;/u;
 
 // eslint-disable-next-line sonarjs/max-lines-per-function -- one describe block holds the whole suite and shares one fixture
 describe('auth.controller tests', () => {
@@ -338,17 +339,13 @@ describe('auth.controller tests', () => {
     nock.cleanAll();
   });
 
-  test('responds with 400 Bad Request when `code` query parameter is missing', () => {
-    return request(testModule.server)
-      .get('/auth')
-      .expect(HttpStatus.BAD_REQUEST);
-  });
+  test('responds with 400 Bad Request when `code` query parameter is missing', () =>
+    request(testModule.server).get('/auth').expect(HttpStatus.BAD_REQUEST));
 
-  test('responds with 400 Bad Request when `code` query parameter is invalid', () => {
-    return request(testModule.server)
+  test('responds with 400 Bad Request when `code` query parameter is invalid', () =>
+    request(testModule.server)
       .get('/auth?code=invalidCode')
-      .expect(HttpStatus.BAD_REQUEST);
-  });
+      .expect(HttpStatus.BAD_REQUEST));
 
   test('handles GitHub OAuth callback successfully', async () => {
     const response = await request(testModule.server)
@@ -359,10 +356,9 @@ describe('auth.controller tests', () => {
     expect(response.status).toBe(HttpStatus.FOUND);
   });
 
-  test('clears jwt cookie and redirects on logout', () => {
-    return request(testModule.server)
+  test('clears jwt cookie and redirects on logout', () =>
+    request(testModule.server)
       .get('/auth/logout')
       .expect(HttpStatus.FOUND)
-      .expect('Set-Cookie', CLEARED_JWT_PATTERN);
-  });
+      .expect('Set-Cookie', CLEARED_JWT_PATTERN));
 });

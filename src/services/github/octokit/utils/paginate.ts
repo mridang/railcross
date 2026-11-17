@@ -32,11 +32,18 @@ export function doPaginate<T>(
           firstPage.totalRows / firstPage.resultItems.length,
         );
 
-        for (const item of firstPage.resultItems) subscriber.next(item);
+        // eslint-disable-next-line functional/no-loop-statements -- only reports each item to the subscriber
+        for (const item of firstPage.resultItems) {
+          subscriber.next(item);
+        }
 
+        // eslint-disable-next-line functional/no-loop-statements, functional/no-let -- pages are fetched one after the other, and the next fetch waits for the previous page
         for (let pageNumber = 2; pageNumber <= totalPages; pageNumber++) {
           const { resultItems } = await fetchPage(pageNumber);
-          for (const item of resultItems) subscriber.next(item);
+          // eslint-disable-next-line functional/no-loop-statements -- only reports each item to the subscriber
+          for (const item of resultItems) {
+            subscriber.next(item);
+          }
         }
 
         subscriber.complete();

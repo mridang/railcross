@@ -3,7 +3,6 @@
  */
 import { Injectable, Logger } from '@nestjs/common';
 import { Octokit } from '@octokit/rest';
-import SchedulerService from './scheduler.service.js';
 import {
   lastValueFrom,
   mergeMap,
@@ -15,6 +14,7 @@ import {
   filter,
 } from 'rxjs';
 import { doPaginate } from '../github/octokit/utils/paginate.js';
+import SchedulerService from './scheduler.service.js';
 
 @Injectable()
 export default class RailcrossService {
@@ -202,9 +202,10 @@ export default class RailcrossService {
                 resultItems: response.data.repositories,
               };
             }).pipe(
-              filter((repository) => {
-                return repoIds.length === 0 || repoIds.includes(repository.id);
-              }),
+              filter(
+                (repository) =>
+                  repoIds.length === 0 || repoIds.includes(repository.id),
+              ),
               tap((repository) => {
                 this.logger.log(
                   `Fetching schedules for ${repository.full_name}`,

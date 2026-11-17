@@ -7,8 +7,8 @@ import {
   NestMiddleware,
   UnauthorizedException,
 } from '@nestjs/common';
-import type { NextFunction, Request, Response } from '@mridang/nestjs-defaults';
 import { JwtService } from '@nestjs/jwt';
+import type { NextFunction, Request, Response } from '@mridang/nestjs-defaults';
 
 @Injectable()
 export class AuthMiddleware implements NestMiddleware<
@@ -47,6 +47,7 @@ export class AuthMiddleware implements NestMiddleware<
 
     if (token) {
       try {
+        // eslint-disable-next-line functional/immutable-data -- attaching the verified user to the request is the contract with the handlers that follow
         request.user = this.jwtService.verify(token);
         return next();
       } catch {

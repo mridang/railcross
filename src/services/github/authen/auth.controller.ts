@@ -19,15 +19,15 @@ import { JwtService } from '@nestjs/jwt';
 import { Octokit } from '@octokit/rest';
 import { IsString, Length } from 'class-validator';
 import murmurhash from 'murmurhash';
-import { ensure } from '../../../utils/ensure.js';
-import { AuthConfig } from './auth.interfaces.js';
 import { from, forkJoin, map, switchMap, lastValueFrom, toArray } from 'rxjs';
-import { AuthService } from './auth.service.js';
 import { ConfigService } from '@nestjs/config';
 import { CryptoImpl, FetchImpl } from '@mridang/nestjs-defaults';
-import type { Request, Response } from '@mridang/nestjs-defaults';
+import { ensure } from '../../../utils/ensure.js';
 import { doPaginate } from '../octokit/utils/paginate.js';
+import { AuthService } from './auth.service.js';
+import { AuthConfig } from './auth.interfaces.js';
 import expiredView from './expired.view.js';
+import type { Request, Response } from '@mridang/nestjs-defaults';
 
 class CallbackDto {
   @IsString()

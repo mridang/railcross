@@ -13,10 +13,10 @@ const css = await readFile(
 
 /** The rule that gives every clickable control a pointer cursor. */
 const CURSOR_RULE_PATTERN =
-  /(button:not\(:disabled\),[^{]*)\{\s*cursor: pointer;/;
+  /(button:not\(:disabled\),[^{]*)\{\s*cursor: pointer;/u;
 
 /** A button rule that is not left alone when its control is disabled. */
-const UNDISABLED_BUTTON_PATTERN = /(^|,)\s*button,/;
+const UNDISABLED_BUTTON_PATTERN = /(^|,)\s*button,/u;
 
 describe('app.css', () => {
   describe('cursor', () => {

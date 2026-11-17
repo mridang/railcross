@@ -2,12 +2,12 @@
  * @file Tests for the schedule storage service.
  */
 import { expect, describe, test, beforeEach } from '@jest/globals';
+import { installFakeTracing } from '../../utils/observability/fake-tracing.js';
+import SchedulerService from '../../../src/services/railcross/scheduler.service.js';
 import type {
   KVNamespace,
   DurableObjectNamespace,
 } from '@cloudflare/workers-types';
-import { installFakeTracing } from '../../utils/observability/fake-tracing.js';
-import SchedulerService from '../../../src/services/railcross/scheduler.service.js';
 import type { ScheduleAlarm } from '../../../src/scheduler/schedule-alarm.js';
 
 const fake = installFakeTracing();
@@ -15,12 +15,17 @@ const fake = installFakeTracing();
 class FakeKv {
   readonly store = new Map<string, string>();
 
-  async get(key: string, type?: string): Promise<unknown> {
+  async get(
+    key: string,
+    type?: string,
+  ): Promise<string | Record<string, unknown> | null> {
     const value = this.store.get(key);
     if (value === undefined) {
       return null;
     }
-    return type === 'json' ? JSON.parse(value) : value;
+    return type === 'json'
+      ? (JSON.parse(value) as Record<string, unknown>)
+      : value;
   }
 
   async put(key: string, value: string): Promise<void> {
@@ -35,9 +40,9 @@ class FakeKv {
     keys: { name: string }[];
     list_complete: true;
   }> {
-    const keys = [...this.store.keys()]
-      .filter((key) => !prefix || key.startsWith(prefix))
-      .map((name) => ({ name }));
+    const keys = [...this.store.keys()].flatMap((name) =>
+      !prefix || name.startsWith(prefix) ? [{ name }] : [],
+    );
     return { keys, list_complete: true };
   }
 }

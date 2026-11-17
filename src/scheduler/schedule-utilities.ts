@@ -20,6 +20,14 @@ export interface ScheduleConfig {
   taskName: string;
 }
 
+/** The wall-clock year, month (1–12), day and hour (0–23) of an instant. */
+interface WallClock {
+  year: number;
+  month: number;
+  day: number;
+  hour: number;
+}
+
 /**
  * Extract the wall-clock parts of an instant as observed in a timezone.
  * @param timeZone - The IANA timezone to read the instant in.
@@ -30,10 +38,7 @@ export interface ScheduleConfig {
  * wallClockParts('Europe/London', Date.UTC(2026, 10, 11, 12)); // { year: 2026, month: 11, day: 11, hour: 12 }
  * ```
  */
-function wallClockParts(
-  timeZone: string,
-  epochMs: number,
-): { year: number; month: number; day: number; hour: number } {
+function wallClockParts(timeZone: string, epochMs: number): WallClock {
   const formatter = new Intl.DateTimeFormat('en-US', {
     timeZone,
     year: 'numeric',
@@ -44,10 +49,11 @@ function wallClockParts(
     second: 'numeric',
     hour12: false,
   });
-  const parts: Record<string, string> = {};
-  for (const part of formatter.formatToParts(new Date(epochMs))) {
-    parts[part.type] = part.value;
-  }
+  const parts: Record<string, string> = Object.fromEntries(
+    formatter
+      .formatToParts(new Date(epochMs))
+      .map(({ type, value }) => [type, value]),
+  );
   const hour = Number(parts.hour);
   return {
     year: Number(parts.year),
@@ -118,20 +124,22 @@ export function nextOccurrence(
   nowMs: number,
 ): number {
   const today = wallClockParts(timeZone, nowMs);
-  const base = Date.UTC(today.year, today.month - 1, today.day);
-  for (let dayOffset = 0; dayOffset <= 2; dayOffset++) {
-    const day = new Date(base);
-    day.setUTCDate(day.getUTCDate() + dayOffset);
-    const candidate = epochForWallClock(
-      timeZone,
-      day.getUTCFullYear(),
-      day.getUTCMonth() + 1,
-      day.getUTCDate(),
-      hour,
-    );
-    if (candidate > nowMs) {
-      return candidate;
-    }
+  const candidate = [0, 1, 2]
+    .map((dayOffset) => {
+      const day = new Date(
+        Date.UTC(today.year, today.month - 1, today.day + dayOffset),
+      );
+      return epochForWallClock(
+        timeZone,
+        day.getUTCFullYear(),
+        day.getUTCMonth() + 1,
+        day.getUTCDate(),
+        hour,
+      );
+    })
+    .find((instant) => instant > nowMs);
+  if (candidate !== undefined) {
+    return candidate;
   }
   throw new Error(`Unable to compute next occurrence for hour ${hour}`);
 }

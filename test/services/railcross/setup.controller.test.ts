@@ -8,6 +8,7 @@ import { JwtService } from '@nestjs/jwt';
 import { cloudflareWorkersStub } from '../../helpers/cloudflare-workers-stub.js';
 import { hourOf } from '../../../src/services/railcross/setup.controller.js';
 
+// eslint-disable-next-line tslop/no-module-mocking -- `cloudflare:workers` exists only inside the Workers runtime, so a virtual module mock is the only seam
 jest.unstable_mockModule('cloudflare:workers', cloudflareWorkersStub, {
   virtual: true,
 });
@@ -114,7 +115,7 @@ describe('setup.controller test', () => {
     const jwtService = testModule.app.get(JwtService);
     railcrossServiceMock.updateSchedules.mockResolvedValue(null as never);
 
-    await request(testModule.server)
+    const response = await request(testModule.server)
       .post('/app/setup')
       .set(
         'Cookie',
@@ -130,6 +131,7 @@ describe('setup.controller test', () => {
       })
       .expect(HttpStatus.FOUND);
 
+    expect(response.status).toBe(HttpStatus.FOUND);
     expect(railcrossServiceMock.updateSchedules).toHaveBeenCalledWith(
       expect.any(Object),
       undefined,
@@ -143,7 +145,7 @@ describe('setup.controller test', () => {
     const jwtService = testModule.app.get(JwtService);
     railcrossServiceMock.updateSchedules.mockClear();
 
-    await request(testModule.server)
+    const response = await request(testModule.server)
       .post('/app/setup')
       .set(
         'Cookie',
@@ -159,6 +161,7 @@ describe('setup.controller test', () => {
       })
       .expect(HttpStatus.BAD_REQUEST);
 
+    expect(response.status).toBe(HttpStatus.BAD_REQUEST);
     expect(railcrossServiceMock.updateSchedules).not.toHaveBeenCalled();
   });
 
@@ -170,7 +173,7 @@ describe('setup.controller test', () => {
       timezone: 'X',
     };
 
-    await request(testModule.server)
+    const response = await request(testModule.server)
       .post('/app/setup')
       .set(
         'Cookie',
@@ -189,6 +192,7 @@ describe('setup.controller test', () => {
       .send(scheduleDto)
       .expect(HttpStatus.BAD_REQUEST);
 
+    expect(response.status).toBe(HttpStatus.BAD_REQUEST);
     expect(railcrossServiceMock.updateSchedules).not.toHaveBeenCalled();
   });
 });

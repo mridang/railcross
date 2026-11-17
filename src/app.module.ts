@@ -2,9 +2,9 @@
  * @file Root Nest module that wires the Railcross, GitHub and defaults modules together.
  */
 import { Global, Module } from '@nestjs/common';
+import { DefaultsModule } from '@mridang/nestjs-defaults';
 import { RailcrossModule } from './services/railcross/railcross.module.js';
 import { GithubModule } from './services/github/github.module.js';
-import { DefaultsModule } from '@mridang/nestjs-defaults';
 import { HomeController } from './home/home.controller.js';
 
 @Global()

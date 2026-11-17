@@ -16,12 +16,10 @@ import { OctokitImpl } from './types.js';
   providers: [
     {
       provide: OctokitImpl,
-      useFactory: async (
-        configService: ConfigService,
-        fetchImpl: typeof FetchImpl,
-      ) => {
-        return (accessTokenOrInstallationId: string | number) => {
-          return new (Octokit.plugin(retry))(
+      useFactory:
+        async (configService: ConfigService, fetchImpl: typeof FetchImpl) =>
+        (accessTokenOrInstallationId: string | number) =>
+          new (Octokit.plugin(retry))(
             typeof accessTokenOrInstallationId === 'string'
               ? {
                   auth: accessTokenOrInstallationId,
@@ -42,9 +40,7 @@ import { OctokitImpl } from './types.js';
                     fetch: fetchImpl,
                   },
                 },
-          );
-        };
-      },
+          ),
       inject: [ConfigService, FetchImpl],
     },
   ],
