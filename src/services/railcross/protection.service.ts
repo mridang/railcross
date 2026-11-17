@@ -59,7 +59,7 @@ export default class ProtectionService {
         allow_deletions: allow_deletions?.enabled,
         allow_force_pushes: allow_force_pushes?.enabled,
         block_creations: block_creations?.enabled,
-        enforce_admins: enforce_admins?.enabled || null,
+        enforce_admins: enforce_admins?.enabled === true ? true : null,
         required_conversation_resolution:
           required_conversation_resolution?.enabled,
         required_linear_history: required_linear_history?.enabled,
@@ -68,17 +68,17 @@ export default class ProtectionService {
             required_pull_request_reviews?.dismissal_restrictions
               ? {
                   users:
-                    required_pull_request_reviews?.dismissal_restrictions?.users?.map(
+                    required_pull_request_reviews.dismissal_restrictions.users?.map(
                       (user) => user.name!,
-                    ) || [],
+                    ) ?? [],
                   teams:
-                    required_pull_request_reviews?.dismissal_restrictions?.teams?.map(
+                    required_pull_request_reviews.dismissal_restrictions.teams?.map(
                       (team) => team.name,
-                    ) || [],
+                    ) ?? [],
                   apps:
-                    required_pull_request_reviews?.dismissal_restrictions?.apps?.map(
+                    required_pull_request_reviews.dismissal_restrictions.apps?.map(
                       (app) => ensure(app?.name),
-                    ) || [],
+                    ) ?? [],
                 }
               : undefined,
           dismiss_stale_reviews:
@@ -91,32 +91,32 @@ export default class ProtectionService {
             required_pull_request_reviews?.bypass_pull_request_allowances
               ? {
                   users:
-                    required_pull_request_reviews?.bypass_pull_request_allowances?.users?.map(
+                    required_pull_request_reviews.bypass_pull_request_allowances.users?.map(
                       (user) => user.name!,
-                    ) || [],
+                    ) ?? [],
                   teams:
-                    required_pull_request_reviews?.bypass_pull_request_allowances?.teams?.map(
+                    required_pull_request_reviews.bypass_pull_request_allowances.teams?.map(
                       (team) => team.name,
-                    ) || [],
+                    ) ?? [],
                   apps:
-                    required_pull_request_reviews?.bypass_pull_request_allowances?.apps?.map(
+                    required_pull_request_reviews.bypass_pull_request_allowances.apps?.map(
                       (app) => ensure(app?.name),
-                    ) || [],
+                    ) ?? [],
                 }
               : undefined,
         },
         required_status_checks: required_status_checks
           ? {
-              strict: required_status_checks?.strict || false,
-              contexts: required_status_checks?.contexts || [],
+              strict: required_status_checks.strict ?? false,
+              contexts: required_status_checks.contexts,
               checks: [],
             }
           : null,
         restrictions: restrictions
           ? {
-              users: restrictions?.users.map((u) => u.login!) || [],
-              teams: restrictions?.teams.map((u) => u.name) || [],
-              apps: restrictions?.apps.map((u) => u.name!) || [],
+              users: restrictions.users.map((u) => u.login!),
+              teams: restrictions.teams.map((u) => u.name),
+              apps: restrictions.apps.map((u) => u.name!),
             }
           : null,
         owner,

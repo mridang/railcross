@@ -15,17 +15,16 @@ const fake = installFakeTracing();
 class FakeKv {
   readonly store = new Map<string, string>();
 
-  async get(
-    key: string,
-    type?: string,
-  ): Promise<string | Record<string, unknown> | null> {
+  async get(key: string, type?: string): Promise<string | object | null> {
     const value = this.store.get(key);
     if (value === undefined) {
       return null;
     }
-    return type === 'json'
-      ? (JSON.parse(value) as Record<string, unknown>)
-      : value;
+    if (type !== 'json') {
+      return value;
+    }
+    const parsed: unknown = JSON.parse(value);
+    return typeof parsed === 'object' ? parsed : null;
   }
 
   async put(key: string, value: string): Promise<void> {
@@ -61,6 +60,7 @@ describe('SchedulerService (KV + Durable Object alarms)', () => {
     kv = new FakeKv();
     armed = [];
     disarmed = [];
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion -- DurableObjectNamespace is a Workers runtime binding with a large overloaded surface, so the fake implements only idFromName, get, arm and disarm, which is all the service calls
     alarms = {
       idFromName: (name: string) => name,
       get: (name: string) => ({
@@ -72,6 +72,7 @@ describe('SchedulerService (KV + Durable Object alarms)', () => {
         },
       }),
     } as unknown as DurableObjectNamespace<ScheduleAlarm>;
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion -- KVNamespace is a Workers runtime binding with generic overloads of get, so the in-memory fake implements only the calls the service makes
     service = new SchedulerService(kv as unknown as KVNamespace, alarms);
   });
 

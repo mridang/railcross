@@ -29,7 +29,9 @@ export class WebhookController {
     //
   }
 
-  private static getPayload(request: Request): Promise<string> | null {
+  private static getPayload(
+    request: Request,
+  ): Promise<string | undefined> | null {
     if ('body' in request) {
       return typeof request.body === 'object' &&
         'rawBody' in request &&
@@ -54,9 +56,17 @@ export class WebhookController {
    */
   private static numericId(payload: string, key: string): number | undefined {
     try {
-      const id = (JSON.parse(payload) as Record<string, { id?: unknown }>)[key]
-        ?.id;
-      return typeof id === 'number' ? id : undefined;
+      const parsed: unknown = JSON.parse(payload);
+      if (typeof parsed !== 'object' || parsed === null) {
+        return undefined;
+      }
+      const entry: unknown = Object.entries(parsed).find(
+        ([name]) => name === key,
+      )?.[1];
+      if (typeof entry !== 'object' || entry === null || !('id' in entry)) {
+        return undefined;
+      }
+      return typeof entry.id === 'number' ? entry.id : undefined;
     } catch {
       return undefined;
     }
@@ -88,7 +98,6 @@ export class WebhookController {
       throw new BadRequestException('Missing x-hub-signature-256 header');
     }
     const payload = await WebhookController.getPayload(request);
-    // eslint-disable-next-line sonarjs/different-types-comparison -- the body can be undefined at runtime although its type says string
     if (payload === null || payload === undefined) {
       throw new BadRequestException('Missing webhook request body');
     }
@@ -110,6 +119,7 @@ export class WebhookController {
       id: Array.isArray(id) ? id.join('|') : id,
       signature,
       payload,
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion -- the event name is an arbitrary request header and @octokit/webhooks-types exports no runtime list of its names to check it against; verifyAndReceive reports an unknown event itself
       name: name as WebhookEventName,
     });
   }

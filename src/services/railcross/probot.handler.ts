@@ -25,7 +25,7 @@ export default class ProbotHandler {
         logger.log(`Some repositories removed on @${owner}`);
 
         // eslint-disable-next-line functional/no-loop-statements -- schedules are deleted one after the other
-        for (const repo of context.payload?.repositories_removed || []) {
+        for (const repo of context.payload.repositories_removed) {
           logger.log(`Removing schedules and rules for ${repo.full_name}`);
           await schedulerService.deleteSchedules(installationId, repo.id);
         }

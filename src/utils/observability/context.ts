@@ -45,7 +45,8 @@ function tracingOf(
   }
   return 'getActiveSpan' in tracing &&
     typeof tracing.getActiveSpan === 'function'
-    ? (tracing as ContextTracing)
+    ? // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion -- the module is the external cloudflare:workers runtime: its tracing object can only be checked for the method, not for the span it returns
+      (tracing as ContextTracing)
     : undefined;
 }
 

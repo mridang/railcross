@@ -8,17 +8,13 @@ import {
   permissionsPolicy,
 } from '../../src/utils/permissions-policy.js';
 // eslint-disable-next-line e18e/ban-dependencies -- type-only import of Express request types, erased at build time, so nothing ships
-import type { NextFunction, Request, Response } from 'express';
+import type { NextFunction, Response } from 'express';
 
 describe('permissionsPolicy', () => {
   test('sets the full policy and continues', () => {
-    const setHeader = jest.fn();
-    const next = jest.fn();
-    permissionsPolicy(
-      {} as Request,
-      { setHeader } as unknown as Response,
-      next as NextFunction,
-    );
+    const setHeader = jest.fn<Response['setHeader']>();
+    const next: NextFunction = jest.fn();
+    permissionsPolicy({}, { setHeader }, next);
     expect(setHeader).toHaveBeenCalledWith(
       'Permissions-Policy',
       PERMISSIONS_POLICY,

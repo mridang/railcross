@@ -46,15 +46,16 @@ describe('auth.guard tests', () => {
       const request = this.reqValue;
       return {
         getRequest<T = Request>(): T {
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion -- ExecutionContext.getRequest is generic in its return type, so a stub can only return the request it holds by claiming that type
           return request as T;
         },
 
         getResponse<T>(): T {
-          return {} as T;
+          throw new Error('Method not implemented.');
         },
 
         getNext<T>(): T {
-          return {} as T;
+          throw new Error('Method not implemented.');
         },
       };
     }

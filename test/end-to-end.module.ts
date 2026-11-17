@@ -1,10 +1,10 @@
 /**
  * @file Test module that builds the full application for end-to-end style tests.
  */
+import { Server } from 'node:http';
 import { configure } from '@mridang/nestjs-defaults';
 import { Logger } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
-import type { Server } from 'node:http';
 import type {
   DynamicModule,
   ForwardReference,
@@ -63,7 +63,11 @@ export class End2EndModule {
    * @returns The underlying Node HTTP server.
    */
   get server(): Server {
-    return this.app.getHttpServer() as Server;
+    const server: unknown = this.app.getHttpServer();
+    if (!(server instanceof Server)) {
+      throw new TypeError('The application did not create a Node HTTP server');
+    }
+    return server;
   }
 
   async afterAll(): Promise<void> {
