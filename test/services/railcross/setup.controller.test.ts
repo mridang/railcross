@@ -80,6 +80,7 @@ describe('setup.controller test', () => {
       unlock_time: 2,
       timezone: 'Asia/Bangkok',
     };
+    // eslint-disable-next-line unicorn/no-useless-undefined -- the mock of a void promise needs an explicit resolved value
     railcrossServiceMock.updateSchedules.mockResolvedValue(undefined);
 
     await request(testModule.server)
@@ -114,6 +115,7 @@ describe('setup.controller test', () => {
 
   test("/POST setup reads the form's clock times as hours of the day", async () => {
     const jwtService = testModule.app.get(JwtService);
+    // eslint-disable-next-line unicorn/no-useless-undefined -- the mock of a void promise needs an explicit resolved value
     railcrossServiceMock.updateSchedules.mockResolvedValue(undefined);
 
     const response = await request(testModule.server)
